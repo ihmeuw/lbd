@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# The parent commit to use for the new branch.
+BRANCH_PARENT='f4f94496d32572ff9ee3dede15f16571c9edb765'
+
+# TODO: validate the name choice
+git checkout -b "private-${1}" ${BRANCH_PARENT}
