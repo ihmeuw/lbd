@@ -1,4 +1,4 @@
-#Educational Attainment - Africa - 2018
+# Educational Attainment - Africa - 2018
 
 
 This repo contains cleaned code used to generate the _Mapping child growth failure in Africa between 2000 and 2015_ results published in _Nature_ on 3/1/2018.
