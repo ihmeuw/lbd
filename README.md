@@ -1,36 +1,20 @@
 # Local Burden of Disease
 
-This is where we will push a clean version of the code used to produce our published papers.
+This is repository contains cleaned code that the LBD team used to generate results for their publications.
 
-## Getting Started
+## Navigating this repository
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+By the time of each of our publications, cleaned code should be available in this repository. You can view the code for a particular publication by selecting the relevant banch from the dropdown menu, or by selecting a link below. For ease of navigation, direct links are only provided for the most recent publication for each topic.
 
-### Prerequisites
+### Links to publications
 
-What things you need to install the software and how to install them
+* Child Growth Failure (CGF) - [Africa - 2018](https://github.com/ihmeuw/lbd/tree/cgf_africa_2018)
+* Educational Attainment (EDU) - [Africa - 2018](https://github.com/ihmeuw/lbd/tree/edu-africa-2018)
+* Under-5 Mortality (U5M) - Africa - 2017
 
-```
-Give examples
-```
+## Links to IHME and LBD
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-#License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* You may find the [main IHME website here](http://www.healthdata.org).
+* You may find the [main LBD website here](http://www.healthdata.org/lbd).
+* You may find [interactive LBD visualizations here](http://www.healthdata.org/lbd/data-visualizations).
 
