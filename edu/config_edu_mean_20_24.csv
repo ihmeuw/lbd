@@ -1,0 +1,39 @@
+indicator,edu_mean_20_24
+indicator_family,gaussian
+keep_inla_files,FALSE
+fixed_effects,access + aridity + distrivers + dmspntl + elevation + evi + lstavg + worldpop + distriverslakes + fertility + mapincidence + ghslurbanicity + crutspre + crutsard + crutsdtr + crutsfrs + crutspet + crutstmn + crutstmp + crutstmx + crutswet + growingseason + irrigation + lstday + lstdiurnaldiff + lstnight + nexndvi + tcb + tcw + year_cov
+fixed_effects_measures,mean + mean + mean + mean + mean + median + median + total + mean + mean + mean + mean + sum + mean + mean + sum + mean + mean + mean + mean + sum + mean + mean + median + median + median + mean + median + median + median
+gbd_fixed_effects,
+mbg_fixed_effects,
+samples,250
+time_stamp,TRUE
+mesh_s_max_edge,"c(0.25, 5)"
+mesh_s_offset,"c(1, 5)"
+year_list,c(2000:2015)
+mesh_t_knots,"c(1,6,11,16)"
+intercept_prior,0
+slots,20
+transform,cell_all
+ss_col,N
+yr_col,year
+spat_strat,qt
+temp_strat,prop
+n_folds,5
+stacked_fixed_effects,gam + gbm + lasso + ridge
+model_type,full
+use_inla_nugget,TRUE
+use_child_country_fes,FALSE
+use_inla_country_fes,FALSE
+region_list,wssa + essa + name + cssa + sssa
+use_year_in_inla,TRUE
+log_data,FALSE
+logit_data,FALSE
+drop_pma_data,TRUE
+use_inla_country_res,TRUE
+beta_data,FALSE
+just_inla,FALSE
+skip_stacking,FALSE
+skip_fit,FALSE
+null_model,FALSE
+just_covs_model,FALSE
+drop_gp,FALSE

@@ -1,0 +1,46 @@
+indicator_family,gaussian
+keep_inla_files,FALSE
+fixed_effects,access + aridity + distrivers + dmspntl + elevation + evi + lstavg + worldpop + distriverslakes + fertility + mapincidence + ghslurbanicity + crutspre + crutsard + crutsdtr + crutsfrs + crutspet + crutstmn + crutstmp + crutstmx + crutswet + growingseason + irrigation + lstday + lstdiurnaldiff + lstnight + nexndvi + tcb + tcw + year_cov
+fixed_effects_measures,mean + mean + mean + mean + mean + median + median + total + mean + mean + mean + mean + sum + mean + mean + sum + mean + mean + mean + mean + sum + mean + mean + median + median + median + mean + median + median + median
+gbd_fixed_effects,
+year_list,c(2000:2016)
+yearload,annual
+withtag,FALSE
+datatag,
+samples,100
+time_stamp,TRUE
+use_inla_nugget,FALSE
+mesh_s_max_edge,"c(2.5, 5)"
+mesh_s_offset,"c(1, 5)"
+intercept_prior,0
+slots,10
+stacked_fixed_effects,gam + lasso + ridge
+inla_cores,5
+use_share,TRUE
+interval_mo,12
+use_child_country_fes,FALSE
+use_inla_country_fes,FALSE
+n_stack_folds,5
+gbm_tc,3
+gbm_lr,0.005
+gbm_bf,0.75
+mesh_t_knots,"c(1,6,11,16)"
+intstrat,eb
+constrain_children_0_inf,FALSE
+other_weight,
+transform,inverse-logit
+test_pct,1
+skipinla,FALSE
+skiptoinla_from_rundate,2017_06_16_17_22_04
+pop_measure,wocba
+st_targ,0.05
+target_type,less
+yr_col,year
+ss_col,weighted_n
+long_col,longitude
+lat_col,latitude
+n_ho_folds,5
+ho_ts,500
+ho_mb,10
+coefs_sum1,TRUE
+skiptoinla,FALSE
