@@ -1,6 +1,6 @@
 # Child Growth Failure - Africa - 2018
 
-This repo contains cleaned code used to generate the 'Mapping child growth failure in Africa between 2000 and 2015' and ‘Mapping local variation in educational attainment across Africa’ published in _Nature_ on 3/1/2018.
+This repo contains cleaned code used to generate the _Mapping child growth failure in Africa between 2000 and 2015_ results published in _Nature_ on 3/1/2018.
 
 The repo contains two directories:
 1) cgf - containing child growth failure specific code
