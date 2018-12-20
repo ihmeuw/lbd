@@ -1,0 +1,513 @@
+FID,Shape ,loc_id,parent_id,level,loc_name,loc_nm_sh,spr_reg_id,region_id,ihme_lc_id,GAUL_CODE
+0,Polygon,160,138,3,Afghanistan,Afghanistan,137,138,AFG,1
+1,Polygon,168,167,3,Angola,Angola,166,167,AGO,8
+2,Polygon,43,42,3,Albania,Albania,31,42,ALB,3
+3,Polygon,156,138,3,United Arab Emirates,UAE,137,138,ARE,255
+4,Polygon,97,96,3,Argentina,Argentina,64,96,ARG,12
+5,Polygon,33,32,3,Armenia,Armenia,31,32,ARM,13
+6,Polygon,71,70,3,Australia,Australia,64,70,AUS,17
+7,Polygon,75,73,3,Austria,Austria,64,73,AUT,18
+8,Polygon,34,32,3,Azerbaijan,Azerbaijan,31,32,AZE,19
+9,Polygon,175,174,3,Burundi,Burundi,166,174,BDI,43
+10,Polygon,76,73,3,Belgium,Belgium,64,73,BEL,27
+11,Polygon,200,199,3,Benin,Benin,166,199,BEN,29
+12,Polygon,201,199,3,Burkina Faso,Burkina Faso,166,199,BFA,42
+13,Polygon,161,159,3,Bangladesh,Bangladesh,158,159,BGD,23
+14,Polygon,45,42,3,Bulgaria,Bulgaria,31,42,BGR,41
+15,Polygon,106,104,3,The Bahamas,Bahamas,103,104,BHS,20
+16,Polygon,44,42,3,Bosnia and Herzegovina,Bosnia,31,42,BIH,34
+17,Polygon,57,56,3,Belarus,Belarus,31,56,BLR,26
+18,Polygon,108,104,3,Belize,Belize,103,104,BLZ,28
+19,Polygon,121,120,3,Bolivia,Bolivia,103,120,BOL,33
+20,Polygon,135,134,3,Brazil,Brazil,103,134,BRA,37
+21,Polygon,66,65,3,Brunei,Brunei,64,65,BRN,40
+22,Polygon,162,159,3,Bhutan,Bhutan,158,159,BTN,31
+23,Polygon,193,192,3,Botswana,Botswana,166,192,BWA,35
+24,Polygon,169,167,3,Central African Republic,C African Rep,166,167,CAF,49
+25,Polygon,101,100,3,Canada,Canada,64,100,CAN,46
+26,Polygon,94,73,3,Switzerland,Switzerland,64,73,CHE,237
+27,Polygon,98,96,3,Chile,Chile,64,96,CHL,51
+28,Polygon,6,5,3,China,China,4,5,CHN,147295
+29,Polygon,205,199,3,Cote d'Ivoire,Cote d'Ivoire,166,199,CIV,66
+30,Polygon,202,199,3,Cameroon,Cameroon,166,199,CMR,45
+31,Polygon,171,167,3,Democratic Republic of the Congo,Congo DR,166,167,COD,68
+32,Polygon,170,167,3,Congo,Congo,166,167,COG,59
+33,Polygon,125,124,3,Colombia,Colombia,103,124,COL,57
+34,Polygon,126,124,3,Costa Rica,Costa Rica,103,124,CRI,61
+35,Polygon,109,104,3,Cuba,Cuba,103,104,CUB,63
+36,Polygon,77,73,3,Cyprus,Cyprus,64,73,CYP,64
+37,Polygon,47,42,3,Czech Republic,Czech,31,42,CZE,65
+38,Polygon,81,73,3,Germany,Germany,64,73,DEU,93
+39,Polygon,177,174,3,Djibouti,Djibouti,166,174,DJI,70
+40,Polygon,78,73,3,Denmark,Denmark,64,73,DNK,69
+41,Polygon,111,104,3,Dominican Republic,Dominican Rep,103,104,DOM,72
+42,Polygon,139,138,3,Algeria,Algeria,137,138,DZA,4
+43,Polygon,122,120,3,Ecuador,Ecuador,103,120,ECU,73
+44,Polygon,141,138,3,Egypt,Egypt,137,138,EGY,40765
+45,Polygon,178,174,3,Eritrea,Eritrea,166,174,ERI,77
+46,Polygon,92,73,3,Spain,Spain,64,73,ESP,229
+47,Polygon,58,56,3,Estonia,Estonia,31,56,EST,78
+48,Polygon,179,174,3,Ethiopia,Ethiopia,166,174,ETH,79
+49,Polygon,79,73,3,Finland,Finland,64,73,FIN,84
+50,Polygon,22,21,3,Fiji,Fiji,4,21,FJI,83
+51,Polygon,80,73,3,France,France,64,73,FRA,85
+52,Polygon,173,167,3,Gabon,Gabon,166,167,GAB,89
+53,Polygon,95,73,3,United Kingdom,UK,64,73,GBR,256
+54,Polygon,35,32,3,Georgia,Georgia,31,32,GEO,92
+55,Polygon,207,199,3,Ghana,Ghana,166,199,GHA,94
+56,Polygon,208,199,3,Guinea,Guinea,166,199,GIN,106
+57,Polygon,206,199,3,The Gambia,Gambia,166,199,GMB,90
+58,Polygon,209,199,3,Guinea-Bissau,Guinea-Bissau,166,199,GNB,105
+59,Polygon,172,167,3,Equatorial Guinea,Eq Guinea,166,167,GNQ,76
+60,Polygon,82,73,3,Greece,Greece,64,73,GRC,97
+61,Polygon,349,73,3,Greenland,Greenland,64,73,GRL,98
+62,Polygon,128,124,3,Guatemala,Guatemala,103,124,GTM,103
+63,Polygon,113,104,3,Guyana,Guyana,103,104,GUY,107
+64,Polygon,129,124,3,Honduras,Honduras,103,124,HND,111
+65,Polygon,46,42,3,Croatia,Croatia,31,42,HRV,62
+66,Polygon,114,104,3,Haiti,Haiti,103,104,HTI,108
+67,Polygon,48,42,3,Hungary,Hungary,31,42,HUN,113
+68,Polygon,11,9,3,Indonesia,Indonesia,4,9,IDN,116
+69,Polygon,163,159,3,India,India,158,159,IND,115
+70,Polygon,84,73,3,Ireland,Ireland,64,73,IRL,119
+71,Polygon,142,138,3,Iran,Iran,137,138,IRN,117
+72,Polygon,143,138,3,Iraq,Iraq,137,138,IRQ,118
+73,Polygon,83,73,3,Iceland,Iceland,64,73,ISL,114
+74,Polygon,85,73,3,Israel,Israel,64,73,ISR,121
+75,Polygon,86,73,3,Italy,Italy,64,73,ITA,122
+76,Polygon,115,104,3,Jamaica,Jamaica,103,104,JAM,123
+77,Polygon,144,138,3,Jordan,Jordan,137,138,JOR,130
+78,Polygon,67,65,3,Japan,Japan,64,65,JPN,126
+79,Polygon,36,32,3,Kazakhstan,Kazakhstan,31,32,KAZ,132
+80,Polygon,180,174,3,Kenya,Kenya,166,174,KEN,133
+81,Polygon,37,32,3,Kyrgyzstan,Kyrgyzstan,31,32,KGZ,138
+82,Polygon,10,9,3,Cambodia,Cambodia,4,9,KHM,44
+83,Polygon,68,65,3,South Korea,S Korea,64,65,KOR,202
+84,Polygon,145,138,3,Kuwait,Kuwait,137,138,KWT,137
+85,Polygon,12,9,3,Laos,Laos,4,9,LAO,139
+86,Polygon,146,138,3,Lebanon,Lebanon,137,138,LBN,141
+87,Polygon,210,199,3,Liberia,Liberia,166,199,LBR,144
+88,Polygon,147,138,3,Libya,Libya,137,138,LBY,145
+89,Polygon,17,9,3,Sri Lanka,Sri Lanka,4,9,LKA,231
+90,Polygon,194,192,3,Lesotho,Lesotho,166,192,LSO,142
+91,Polygon,60,56,3,Lithuania,Lithuania,31,56,LTU,147
+92,Polygon,87,73,3,Luxembourg,Luxembourg,64,73,LUX,148
+93,Polygon,59,56,3,Latvia,Latvia,31,56,LVA,140
+94,Polygon,148,138,3,Morocco,Morocco,137,138,MAR,169
+95,Polygon,61,56,3,Moldova,Moldova,31,56,MDA,165
+96,Polygon,181,174,3,Madagascar,Madagascar,166,174,MDG,150
+97,Polygon,130,124,3,Mexico,Mexico,103,124,MEX,162
+98,Polygon,49,42,3,Macedonia,Macedonia,31,42,MKD,241
+99,Polygon,211,199,3,Mali,Mali,166,199,MLI,155
+100,Polygon,15,9,3,Myanmar,Myanmar,4,9,MMR,171
+101,Polygon,50,42,3,Montenegro,Montenegro,31,42,MNE,2647
+102,Polygon,38,32,3,Mongolia,Mongolia,31,32,MNG,167
+103,Polygon,184,174,3,Mozambique,Mozambique,166,174,MOZ,170
+104,Polygon,212,199,3,Mauritania,Mauritania,166,199,MRT,159
+105,Polygon,182,174,3,Malawi,Malawi,166,174,MWI,152
+106,Polygon,13,9,3,Malaysia,Malaysia,4,9,MYS,153
+107,Polygon,195,192,3,Namibia,Namibia,166,192,NAM,172
+108,Polygon,213,199,3,Niger,Niger,166,199,NER,181
+109,Polygon,214,199,3,Nigeria,Nigeria,166,199,NGA,182
+110,Polygon,131,124,3,Nicaragua,Nicaragua,103,124,NIC,180
+111,Polygon,89,73,3,Netherlands,Netherlands,64,73,NLD,177
+112,Polygon,90,73,3,Norway,Norway,64,73,NOR,186
+113,Polygon,164,159,3,Nepal,Nepal,158,159,NPL,175
+114,Polygon,72,70,3,New Zealand,New Zealand,64,70,NZL,179
+115,Polygon,150,138,3,Oman,Oman,137,138,OMN,187
+116,Polygon,165,159,3,Pakistan,Pakistan,158,159,PAK,188
+117,Polygon,132,124,3,Panama,Panama,103,124,PAN,191
+118,Polygon,123,120,3,Peru,Peru,103,120,PER,195
+119,Polygon,16,9,3,Philippines,Philippines,4,9,PHL,196
+120,Polygon,26,21,3,Papua New Guinea,PNG,4,21,PNG,192
+121,Polygon,51,42,3,Poland,Poland,31,42,POL,198
+122,Polygon,385,104,3,Puerto Rico,Puerto Rico,103,104,PRI,200
+123,Polygon,7,5,3,North Korea,N Korea,4,5,PRK,67
+124,Polygon,91,73,3,Portugal,Portugal,64,73,PRT,199
+125,Polygon,136,134,3,Paraguay,Paraguay,103,134,PRY,194
+126,Polygon,151,138,3,Qatar,Qatar,137,138,QAT,201
+127,Polygon,52,42,3,Romania,Romania,31,42,ROU,203
+128,Polygon,62,56,3,Russia,Russia,31,56,RUS,204
+129,Polygon,185,174,3,Rwanda,Rwanda,166,174,RWA,205
+130,Polygon,152,138,3,Saudi Arabia,Saudi Arabia,137,138,SAU,215
+131,Polygon,522,138,3,Sudan,Sudan,137,138,SDN,6
+132,Polygon,435,174,3,South Sudan,S Sudan,166,174,SSD,74
+133,Polygon,216,199,3,Senegal,Senegal,166,199,SEN,217
+134,Polygon,28,21,3,Solomon Islands,Solomon,4,21,SLB,225
+135,Polygon,217,199,3,Sierra Leone,Sierra Leone,166,199,SLE,221
+136,Polygon,127,124,3,El Salvador,El Salvador,103,124,SLV,75
+137,Polygon,187,174,3,Somalia,Somalia,166,174,SOM,226
+138,Polygon,53,42,3,Serbia,Serbia,31,42,SRB,2648
+139,Polygon,118,104,3,Suriname,Suriname,103,104,SUR,233
+140,Polygon,54,42,3,Slovakia,Slovakia,31,42,SVK,223
+141,Polygon,55,42,3,Slovenia,Slovenia,31,42,SVN,224
+142,Polygon,93,73,3,Sweden,Sweden,64,73,SWE,236
+143,Polygon,197,192,3,Swaziland,Swaziland,166,192,SWZ,235
+144,Polygon,153,138,3,Syria,Syria,137,138,SYR,238
+145,Polygon,204,199,3,Chad,Chad,166,199,TCD,50
+146,Polygon,218,199,3,Togo,Togo,166,199,TGO,243
+147,Polygon,18,9,3,Thailand,Thailand,4,9,THA,240
+148,Polygon,39,32,3,Tajikistan,Tajikistan,31,32,TJK,239
+149,Polygon,40,32,3,Turkmenistan,Turkmenistan,31,32,TKM,250
+150,Polygon,19,9,3,Timor-Leste,Timor-Leste,4,9,TLS,242
+151,Polygon,119,104,3,Trinidad and Tobago,Trinidad Tobago,103,104,TTO,246
+152,Polygon,154,138,3,Tunisia,Tunisia,137,138,TUN,248
+153,Polygon,155,138,3,Turkey,Turkey,137,138,TUR,249
+154,Polygon,8,5,3,Taiwan,Taiwan,4,5,TWN,147296
+155,Polygon,189,174,3,Tanzania,Tanzania,166,174,TZA,257
+156,Polygon,190,174,3,Uganda,Uganda,166,174,UGA,253
+157,Polygon,63,56,3,Ukraine,Ukraine,31,56,UKR,254
+158,Polygon,99,96,3,Uruguay,Uruguay,64,96,URY,260
+159,Polygon,102,100,3,United States,US,64,100,USA,259
+160,Polygon,41,32,3,Uzbekistan,Uzbekistan,31,32,UZB,261
+161,Polygon,133,124,3,Venezuela,Venezuela,103,124,VEN,263
+162,Polygon,20,9,3,Vietnam,Vietnam,4,9,VNM,264
+163,Polygon,30,21,3,Vanuatu,Vanuatu,4,21,VUT,262
+164,Polygon,149,138,3,Palestine,Palestine,137,138,PSE,267
+165,Polygon,157,138,3,Yemen,Yemen,137,138,YEM,269
+166,Polygon,196,192,3,South Africa,S Africa,166,192,ZAF,227
+167,Polygon,191,174,3,Zambia,Zambia,166,174,ZMB,270
+168,Polygon,198,192,3,Zimbabwe,Zimbabwe,166,192,ZWE,271
+169,Polygon,4709,11,4,Aceh,Aceh,4,9,IDN_4709,2059
+170,Polygon,4726,11,4,Bali,Bali,4,9,IDN_4726,-1
+171,Polygon,4717,11,4,Bangka Belitung,Bangka Belitung,4,9,IDN_4717,-1
+172,Polygon,4725,11,4,Banten,Banten,4,9,IDN_4725,-1
+173,Polygon,4715,11,4,Bengkulu,Bengkulu,4,9,IDN_4715,-1
+174,Polygon,4737,11,4,Gorontalo,Gorontalo,4,9,IDN_4737,-1
+175,Polygon,4741,11,4,Papua Barat,Papua Barat,4,9,IDN_4741,-1
+176,Polygon,4720,11,4,Jakarta,Jakarta,4,9,IDN_4720,-1
+177,Polygon,4713,11,4,Jambi,Jambi,4,9,IDN_4713,-1
+178,Polygon,4721,11,4,Jawa Barat,Jawa Barat,4,9,IDN_4721,-1
+179,Polygon,4722,11,4,Jawa Tengah,Jawa Tengah,4,9,IDN_4722,-1
+180,Polygon,4724,11,4,Jawa Timur,Jawa Timur,4,9,IDN_4724,-1
+181,Polygon,4729,11,4,Kalimantan Barat,Kalimantan Barat,4,9,IDN_4729,-1
+182,Polygon,4731,11,4,Kalimantan Selatan,Kalimantan Selatan,4,9,IDN_4731,-1
+183,Polygon,4730,11,4,Kalimantan Tengah,Kalimantan Tengah,4,9,IDN_4730,-1
+184,Polygon,4732,11,4,Kalimantan Timur,Kalimantan Timur,4,9,IDN_4732,-1
+185,Polygon,4719,11,4,Kalimantan Utara,Kalimantan Utara,4,9,IDN_4719,-1
+186,Polygon,4718,11,4,Kepulauan Riau,Kepulauan Riau,4,9,IDN_4718,-1
+187,Polygon,4716,11,4,Lampung,Lampung,4,9,IDN_4716,-1
+188,Polygon,4740,11,4,Maluku Utara,Maluku Utara,4,9,IDN_4740,-1
+189,Polygon,4739,11,4,Maluku,Maluku,4,9,IDN_4739,-1
+190,Polygon,4727,11,4,Nusa Tenggara Barat,Nusa Tenggara Barat,4,9,IDN_4727,-1
+191,Polygon,4728,11,4,Nusa Tenggara Timur,Nusa Tenggara Timur,4,9,IDN_4728,-1
+192,Polygon,4742,11,4,Papua,Papua,4,9,IDN_4742,-1
+193,Polygon,4712,11,4,Riau,Riau,4,9,IDN_4712,-1
+194,Polygon,4738,11,4,Sulawesi Barat,Sulawesi Barat,4,9,IDN_4738,-1
+195,Polygon,4735,11,4,Sulawesi Selatan,Sulawesi Selatan,4,9,IDN_4735,-1
+196,Polygon,4734,11,4,Sulawesi Tengah,Sulawesi Tengah,4,9,IDN_4734,-1
+197,Polygon,4736,11,4,Sulawesi Tenggara,Sulawesi Tenggara,4,9,IDN_4736,-1
+198,Polygon,4733,11,4,Sulawesi Utara,Sulawesi Utara,4,9,IDN_4733,-1
+199,Polygon,4711,11,4,Sumatera Barat,Sumatera Barat,4,9,IDN_4711,-1
+200,Polygon,4714,11,4,Sumatera Selatan,Sumatera Selatan,4,9,IDN_4714,-1
+201,Polygon,4710,11,4,Sumatera Utara,Sumatera Utara,4,9,IDN_4710,-1
+202,Polygon,4723,11,4,Yogyakarta,Yogyakarta,4,9,IDN_4723,-1
+203,Polygon,354,6,4,Hong Kong Special Administrative Region of China,Hong Kong,4,5,CHN_354,33364
+204,Polygon,44533,6,4,China (without Hong Kong and Macao),China w/o HKG MAC,4,5,CHN_44533,-1
+205,Polygon,35659,180,4,Turkana,Turkana,166,174,KEN_35659,-1
+206,Polygon,35641,180,4,Marsabit,Marsabit,166,174,KEN_35641,-1
+207,Polygon,35640,180,4,Mandera,Mandera,166,174,KEN_35640,-1
+208,Polygon,35662,180,4,Wajir,Wajir,166,174,KEN_35662,-1
+209,Polygon,35663,180,4,WestPokot,WestPokot,166,174,KEN_35663,-1
+210,Polygon,35653,180,4,Samburu,Samburu,166,174,KEN_35653,-1
+211,Polygon,35625,180,4,Isiolo,Isiolo,166,174,KEN_35625,-1
+212,Polygon,35617,180,4,Baringo,Baringo,166,174,KEN_35617,-1
+213,Polygon,35621,180,4,Elgeyo-Marakwet,Elgeyo-Marakwet,166,174,KEN_35621,-1
+214,Polygon,35658,180,4,TransNzoia,TransNzoia,166,174,KEN_35658,-1
+215,Polygon,35619,180,4,Bungoma,Bungoma,166,174,KEN_35619,-1
+216,Polygon,35623,180,4,Garissa,Garissa,166,174,KEN_35623,-1
+217,Polygon,35660,180,4,UasinGishu,UasinGishu,166,174,KEN_35660,-1
+218,Polygon,35627,180,4,Kakamega,Kakamega,166,174,KEN_35627,-1
+219,Polygon,35636,180,4,Laikipia,Laikipia,166,174,KEN_35636,-1
+220,Polygon,35620,180,4,Busia,Busia,166,174,KEN_35620,-1
+221,Polygon,35642,180,4,Meru,Meru,166,174,KEN_35642,-1
+222,Polygon,35648,180,4,Nandi,Nandi,166,174,KEN_35648,-1
+223,Polygon,35654,180,4,Siaya,Siaya,166,174,KEN_35654,-1
+224,Polygon,35647,180,4,Nakuru,Nakuru,166,174,KEN_35647,-1
+225,Polygon,35661,180,4,Vihiga,Vihiga,166,174,KEN_35661,-1
+226,Polygon,35651,180,4,Nyandarua,Nyandarua,166,174,KEN_35651,-1
+227,Polygon,35657,180,4,TharakaNithi,TharakaNithi,166,174,KEN_35657,-1
+228,Polygon,35628,180,4,Kericho,Kericho,166,174,KEN_35628,-1
+229,Polygon,35633,180,4,Kisumu,Kisumu,166,174,KEN_35633,-1
+230,Polygon,35652,180,4,Nyeri,Nyeri,166,174,KEN_35652,-1
+231,Polygon,35656,180,4,TanaRiver,TanaRiver,166,174,KEN_35656,-1
+232,Polygon,35634,180,4,Kitui,Kitui,166,174,KEN_35634,-1
+233,Polygon,35631,180,4,Kirinyaga,Kirinyaga,166,174,KEN_35631,-1
+234,Polygon,35622,180,4,Embu,Embu,166,174,KEN_35622,-1
+235,Polygon,35624,180,4,HomaBay,HomaBay,166,174,KEN_35624,-1
+236,Polygon,35618,180,4,Bomet,Bomet,166,174,KEN_35618,-1
+237,Polygon,35650,180,4,Nyamira,Nyamira,166,174,KEN_35650,-1
+238,Polygon,35649,180,4,Narok,Narok,166,174,KEN_35649,-1
+239,Polygon,35632,180,4,Kisii,Kisii,166,174,KEN_35632,-1
+240,Polygon,35645,180,4,Murang’a,Murang’a,166,174,KEN_35645,-1
+241,Polygon,35643,180,4,Migori,Migori,166,174,KEN_35643,-1
+242,Polygon,35629,180,4,Kiambu,Kiambu,166,174,KEN_35629,-1
+243,Polygon,35638,180,4,Machakos,Machakos,166,174,KEN_35638,-1
+244,Polygon,35626,180,4,Kajiado,Kajiado,166,174,KEN_35626,-1
+245,Polygon,35646,180,4,Nairobi,Nairobi,166,174,KEN_35646,-1
+246,Polygon,35639,180,4,Makueni,Makueni,166,174,KEN_35639,-1
+247,Polygon,35637,180,4,Lamu,Lamu,166,174,KEN_35637,-1
+248,Polygon,35630,180,4,Kilifi,Kilifi,166,174,KEN_35630,-1
+249,Polygon,35655,180,4,TaitaTaveta,TaitaTaveta,166,174,KEN_35655,-1
+250,Polygon,35635,180,4,Kwale,Kwale,166,174,KEN_35635,-1
+251,Polygon,35644,180,4,Mombasa,Mombasa,166,174,KEN_35644,-1
+252,Polygon,4842,163,4,Arun?chal Pradesh,Arunachal Pradesh,158,159,IND_4842,-1
+253,Polygon,4843,163,4,Assam,Assam,158,159,IND_4843,-1
+254,Polygon,4844,163,4,Bih?r,Bihar,158,159,IND_4844,-1
+255,Polygon,4846,163,4,Chhatt?sgarh,Chhattisgarh,158,159,IND_4846,-1
+256,Polygon,4849,163,4,Delhi,Delhi,158,159,IND_4849,-1
+257,Polygon,4850,163,4,Goa,Goa,158,159,IND_4850,-1
+258,Polygon,4851,163,4,Gujar?t,Gujarat,158,159,IND_4851,-1
+259,Polygon,4852,163,4,Hary?na,Haryana,158,159,IND_4852,-1
+260,Polygon,4853,163,4,Himachal Pradesh,Himachal Pradesh,158,159,IND_4853,-1
+261,Polygon,4854,163,4,Jammu and Kashm?r,Jammu & Kashmir,158,159,IND_4854,-1
+262,Polygon,4855,163,4,Jharkhand,Jharkhand,158,159,IND_4855,-1
+263,Polygon,4856,163,4,Karn?taka,Karnataka,158,159,IND_4856,-1
+264,Polygon,4857,163,4,Kerala,Kerala,158,159,IND_4857,-1
+265,Polygon,4859,163,4,Madhya Pradesh,Madhya Pradesh,158,159,IND_4859,-1
+266,Polygon,4860,163,4,Mah?r?shtra,Maharashtra,158,159,IND_4860,-1
+267,Polygon,4861,163,4,Manipur,Manipur,158,159,IND_4861,-1
+268,Polygon,4862,163,4,Megh?laya,Meghalaya,158,159,IND_4862,-1
+269,Polygon,4863,163,4,Mizoram,Mizoram,158,159,IND_4863,-1
+270,Polygon,4864,163,4,N?g?land,Nagaland,158,159,IND_4864,-1
+271,Polygon,4865,163,4,Orissa,Orissa,158,159,IND_4865,-1
+272,Polygon,4867,163,4,Punjab,Punjab,158,159,IND_4867,-1
+273,Polygon,4868,163,4,R?jasth?n,Rajasthan,158,159,IND_4868,-1
+274,Polygon,4869,163,4,Sikkim,Sikkim,158,159,IND_4869,-1
+275,Polygon,4870,163,4,Tamil N?du,Tamil Nadu,158,159,IND_4870,-1
+276,Polygon,4872,163,4,Tripura,Tripura,158,159,IND_4872,-1
+277,Polygon,4873,163,4,Uttar Pradesh,Uttar Pradesh,158,159,IND_4873,-1
+278,Polygon,4874,163,4,Uttarakhand,Uttarakhand,158,159,IND_4874,-1
+279,Polygon,4875,163,4,West Bengal,W Bengal,158,159,IND_4875,-1
+280,Polygon,4871,163,4,Telangana,Telangana,158,159,IND_4871,-1
+281,Polygon,4841,163,4,Andhra Pradesh,Andhra Pradesh,158,159,IND_4841,-1
+282,Polygon,44538,163,4,The Six Minor Territories,6 Minor Terr,158,159,IND_44538,-1
+283,Polygon,482,196,4,Eastern Cape,E Cape,166,192,ZAF_482,77310
+284,Polygon,483,196,4,Free State,Free State,166,192,ZAF_483,2707
+285,Polygon,484,196,4,Gauteng,Gauteng,166,192,ZAF_484,2708
+286,Polygon,485,196,4,KwaZulu-Natal,Kwazulu-Natal,166,192,ZAF_485,77311
+287,Polygon,487,196,4,Mpumalanga,Mpumalanga,166,192,ZAF_487,77313
+288,Polygon,488,196,4,North-West,NW,166,192,ZAF_488,77314
+289,Polygon,489,196,4,Northern Cape,N Cape,166,192,ZAF_489,77315
+290,Polygon,486,196,4,Limpopo,Limpopo,166,192,ZAF_486,77312
+291,Polygon,490,196,4,Western Cape,W Cape,166,192,ZAF_490,2714
+292,Polygon,4643,130,4,Aguascalientes,Aguascalientes,103,124,MEX_4643,2028
+293,Polygon,4644,130,4,Baja California,Baja CA,103,124,MEX_4644,2029
+294,Polygon,4645,130,4,Baja California Sur,Baja CA Sur,103,124,MEX_4645,2030
+295,Polygon,4646,130,4,Campeche,Campeche,103,124,MEX_4646,2031
+296,Polygon,4649,130,4,Chiapas,Chiapas,103,124,MEX_4649,2032
+297,Polygon,4650,130,4,Chihuahua,Chihuahua,103,124,MEX_4650,2033
+298,Polygon,4647,130,4,Coahuila,Coahuila,103,124,MEX_4647,2034
+299,Polygon,4648,130,4,Colima,Colima,103,124,MEX_4648,2035
+300,Polygon,4651,130,4,Distrito Federal,Distrito Federal,103,124,MEX_4651,671
+301,Polygon,4652,130,4,Durango,Durango,103,124,MEX_4652,2036
+302,Polygon,4653,130,4,Guanajuato,Guanajuato,103,124,MEX_4653,2037
+303,Polygon,4654,130,4,Guerrero,Guerrero,103,124,MEX_4654,2038
+304,Polygon,4655,130,4,Hidalgo,Hidalgo,103,124,MEX_4655,2039
+305,Polygon,4656,130,4,Jalisco,Jalisco,103,124,MEX_4656,2040
+306,Polygon,4657,130,4,México,Mexico,103,124,MEX_4657,2041
+307,Polygon,4658,130,4,Michoacán de Ocampo,Michoacan,103,124,MEX_4658,2042
+308,Polygon,4659,130,4,Morelos,Morelos,103,124,MEX_4659,2043
+309,Polygon,4660,130,4,Nayarit,Nayarit,103,124,MEX_4660,2044
+310,Polygon,4661,130,4,Nuevo León,Nuevo Leon,103,124,MEX_4661,2045
+311,Polygon,4662,130,4,Oaxaca,Oaxaca,103,124,MEX_4662,2046
+312,Polygon,4663,130,4,Puebla,Puebla,103,124,MEX_4663,2047
+313,Polygon,4664,130,4,Querétaro,Queretaro,103,124,MEX_4664,2048
+314,Polygon,4665,130,4,Quintana Roo,Quintana Roo,103,124,MEX_4665,2049
+315,Polygon,4666,130,4,San Luis Potosí,San Luis Potosi,103,124,MEX_4666,2050
+316,Polygon,4667,130,4,Sinaloa,Sinaloa,103,124,MEX_4667,2051
+317,Polygon,4668,130,4,Sonora,Sonora,103,124,MEX_4668,2052
+318,Polygon,4669,130,4,Tabasco,Tabasco,103,124,MEX_4669,2053
+319,Polygon,4670,130,4,Tamaulipas,Tamaulipas,103,124,MEX_4670,2054
+320,Polygon,4671,130,4,Tlaxcala,Tlaxcala,103,124,MEX_4671,2055
+321,Polygon,4672,130,4,Veracruz de Ignacio de la Llave,Veracruz,103,124,MEX_4672,2056
+322,Polygon,4673,130,4,Yucatán,Yucatan,103,124,MEX_4673,2057
+323,Polygon,4674,130,4,Zacatecas,Zacatecas,103,124,MEX_4674,2058
+324,Polygon,523,102,4,Alabama,Alabama,64,100,USA_523,3214
+325,Polygon,524,102,4,Alaska,Alaska,64,100,USA_524,3215
+326,Polygon,525,102,4,Arizona,Arizona,64,100,USA_525,3216
+327,Polygon,526,102,4,Arkansas,Arkansas,64,100,USA_526,3217
+328,Polygon,527,102,4,California,California,64,100,USA_527,3218
+329,Polygon,528,102,4,Colorado,Colorado,64,100,USA_528,3219
+330,Polygon,529,102,4,Connecticut,Connecticut,64,100,USA_529,3220
+331,Polygon,530,102,4,Delaware,Delaware,64,100,USA_530,3221
+332,Polygon,531,102,4,District of Columbia,DC,64,100,USA_531,3222
+333,Polygon,532,102,4,Florida,Florida,64,100,USA_532,3223
+334,Polygon,533,102,4,Georgia,Georgia,64,100,USA_533,3224
+335,Polygon,534,102,4,Hawaii,Hawaii,64,100,USA_534,3225
+336,Polygon,535,102,4,Idaho,Idaho,64,100,USA_535,3226
+337,Polygon,536,102,4,Illinois,Illinois,64,100,USA_536,3227
+338,Polygon,537,102,4,Indiana,Indiana,64,100,USA_537,3228
+339,Polygon,538,102,4,Iowa,Iowa,64,100,USA_538,3229
+340,Polygon,539,102,4,Kansas,Kansas,64,100,USA_539,3230
+341,Polygon,540,102,4,Kentucky,Kentucky,64,100,USA_540,3231
+342,Polygon,541,102,4,Louisiana,Louisiana,64,100,USA_541,3232
+343,Polygon,542,102,4,Maine,Maine,64,100,USA_542,3233
+344,Polygon,543,102,4,Maryland,Maryland,64,100,USA_543,3234
+345,Polygon,544,102,4,Massachusetts,Massachusetts,64,100,USA_544,3235
+346,Polygon,545,102,4,Michigan,Michigan,64,100,USA_545,3236
+347,Polygon,546,102,4,Minnesota,Minnesota,64,100,USA_546,3237
+348,Polygon,547,102,4,Mississippi,Mississippi,64,100,USA_547,3238
+349,Polygon,548,102,4,Missouri,Missouri,64,100,USA_548,3239
+350,Polygon,549,102,4,Montana,Montana,64,100,USA_549,3240
+351,Polygon,550,102,4,Nebraska,Nebraska,64,100,USA_550,3241
+352,Polygon,551,102,4,Nevada,Nevada,64,100,USA_551,3242
+353,Polygon,552,102,4,New Hampshire,New Hampshire,64,100,USA_552,3243
+354,Polygon,553,102,4,New Jersey,New Jersey,64,100,USA_553,3244
+355,Polygon,554,102,4,New Mexico,New Mexico,64,100,USA_554,3245
+356,Polygon,555,102,4,New York,New York,64,100,USA_555,3246
+357,Polygon,556,102,4,North Carolina,N Carolina,64,100,USA_556,3247
+358,Polygon,557,102,4,North Dakota,N Dakota,64,100,USA_557,3248
+359,Polygon,558,102,4,Ohio,Ohio,64,100,USA_558,3249
+360,Polygon,559,102,4,Oklahoma,Oklahoma,64,100,USA_559,3250
+361,Polygon,560,102,4,Oregon,Oregon,64,100,USA_560,3251
+362,Polygon,561,102,4,Pennsylvania,Pennsylvania,64,100,USA_561,3252
+363,Polygon,562,102,4,Rhode Island,Rhode Island,64,100,USA_562,3253
+364,Polygon,563,102,4,South Carolina,S Carolina,64,100,USA_563,3254
+365,Polygon,564,102,4,South Dakota,S Dakota,64,100,USA_564,3255
+366,Polygon,565,102,4,Tennessee,Tennessee,64,100,USA_565,3256
+367,Polygon,566,102,4,Texas,Texas,64,100,USA_566,3257
+368,Polygon,567,102,4,Utah,Utah,64,100,USA_567,3258
+369,Polygon,568,102,4,Vermont,Vermont,64,100,USA_568,3259
+370,Polygon,569,102,4,Virginia,Virginia,64,100,USA_569,3260
+371,Polygon,570,102,4,Washington,Washington,64,100,USA_570,3261
+372,Polygon,571,102,4,West Virginia,W Virginia,64,100,USA_571,3262
+373,Polygon,572,102,4,Wisconsin,Wisconsin,64,100,USA_572,3263
+374,Polygon,573,102,4,Wyoming,Wyoming,64,100,USA_573,3264
+375,Polygon,4750,135,4,Acre,Acre,103,134,BRA_4750,3182
+376,Polygon,4751,135,4,Alagoas,Alagoas,103,134,BRA_4751,665
+377,Polygon,4753,135,4,Amapá,Amapa,103,134,BRA_4753,668
+378,Polygon,4752,135,4,Amazonas,Amazonas,103,134,BRA_4752,666
+379,Polygon,4754,135,4,Bahia,Bahia,103,134,BRA_4754,667
+380,Polygon,4755,135,4,Ceará,Ceara,103,134,BRA_4755,669
+381,Polygon,4651,130,4,Distrito Federal,Distrito Federal,103,124,MEX_4651,671
+382,Polygon,4757,135,4,Espírito Santo,Espirito Santo,103,134,BRA_4757,672
+383,Polygon,4758,135,4,Goiás,Goias,103,134,BRA_4758,673
+384,Polygon,4759,135,4,Maranhão,Maranhao,103,134,BRA_4759,674
+385,Polygon,4762,135,4,Mato Grosso,Mato Grosso,103,134,BRA_4762,675
+386,Polygon,4761,135,4,Mato Grosso do Sul,Mato Grosso do Sul,103,134,BRA_4761,676
+387,Polygon,4760,135,4,Minas Gerais,Minas Gerais,103,134,BRA_4760,677
+388,Polygon,4763,135,4,Pará,Para,103,134,BRA_4763,678
+389,Polygon,4764,135,4,Paraíba,Paraiba,103,134,BRA_4764,679
+390,Polygon,4765,135,4,Paraná,Parana,103,134,BRA_4765,680
+391,Polygon,4766,135,4,Pernambuco,Pernambuco,103,134,BRA_4766,681
+392,Polygon,4767,135,4,Piaui,Piaui,103,134,BRA_4767,682
+393,Polygon,4768,135,4,Rio de Janeiro,Rio de Janeiro,103,134,BRA_4768,683
+394,Polygon,4769,135,4,Rio Grande do Norte,Rio Grande do Norte,103,134,BRA_4769,684
+395,Polygon,4772,135,4,Rio Grande do Sul,Rio Grande do Sul,103,134,BRA_4772,685
+396,Polygon,4770,135,4,Rondônia,Rondonia,103,134,BRA_4770,686
+397,Polygon,4771,135,4,Roraima,Roraima,103,134,BRA_4771,687
+398,Polygon,4773,135,4,Santa Catarina,Santa Catarina,103,134,BRA_4773,688
+399,Polygon,4775,135,4,São Paulo,Sao Paulo,103,134,BRA_4775,689
+400,Polygon,4774,135,4,Sergipe,Sergipe,103,134,BRA_4774,690
+401,Polygon,4776,135,4,Tocantins,Tocantins,103,134,BRA_4776,691
+402,Polygon,35446,67,4,Aichi,Aichi,64,65,JPN_35446,1672
+403,Polygon,35428,67,4,Akita,Akita,64,65,JPN_35428,1652
+404,Polygon,35425,67,4,Aomori,Aomori,64,65,JPN_35425,1653
+405,Polygon,35461,67,4,Ehime,Ehime,64,65,JPN_35461,1654
+406,Polygon,35441,67,4,Fukui,Fukui,64,65,JPN_35441,1655
+407,Polygon,35463,67,4,Fukuoka,Fukuoka,64,65,JPN_35463,1656
+408,Polygon,35430,67,4,Fukushima,Fukushima,64,65,JPN_35430,1657
+409,Polygon,35444,67,4,Gifu,Gifu,64,65,JPN_35444,1658
+410,Polygon,35433,67,4,Gunma,Gunma,64,65,JPN_35433,1659
+411,Polygon,35457,67,4,Hiroshima,Hiroshima,64,65,JPN_35457,1660
+412,Polygon,35424,67,4,Hokkaid?,Hokkaido,64,65,JPN_35424,1661
+413,Polygon,35451,67,4,Hy?go,Hyogo,64,65,JPN_35451,1677
+414,Polygon,35431,67,4,Ibaraki,Ibaraki,64,65,JPN_35431,1663
+415,Polygon,35440,67,4,Ishikawa,Ishikawa,64,65,JPN_35440,1664
+416,Polygon,35426,67,4,Iwate,Iwate,64,65,JPN_35426,1665
+417,Polygon,35460,67,4,Kagawa,Kagawa,64,65,JPN_35460,1666
+418,Polygon,35469,67,4,Kagoshima,Kagoshima,64,65,JPN_35469,1667
+419,Polygon,35437,67,4,Kanagawa,Kanagawa,64,65,JPN_35437,1668
+420,Polygon,35462,67,4,K?chi,Kochi,64,65,JPN_35462,1669
+421,Polygon,35466,67,4,Kumamoto,Kumamoto,64,65,JPN_35466,1670
+422,Polygon,35449,67,4,Ky?to,Kyoto,64,65,JPN_35449,1682
+423,Polygon,35447,67,4,Mie,Mie,64,65,JPN_35447,1685
+424,Polygon,35427,67,4,Miyagi,Miyagi,64,65,JPN_35427,1673
+425,Polygon,35468,67,4,Miyazaki,Miyazaki,64,65,JPN_35468,1674
+426,Polygon,35443,67,4,Nagano,Nagano,64,65,JPN_35443,1675
+427,Polygon,35465,67,4,Nagasaki,Nagasaki,64,65,JPN_35465,1676
+428,Polygon,35452,67,4,Nara,Nara,64,65,JPN_35452,1694
+429,Polygon,35438,67,4,Niagata,Niagata,64,65,JPN_35438,1678
+430,Polygon,35467,67,4,Ôita,Oita,64,65,JPN_35467,1679
+431,Polygon,35456,67,4,Okayama,Okayama,64,65,JPN_35456,1680
+432,Polygon,35470,67,4,Okinawa,Okinawa,64,65,JPN_35470,1681
+433,Polygon,35450,67,4,?saka,Osaka,64,65,JPN_35450,1662
+434,Polygon,35464,67,4,Saga,Saga,64,65,JPN_35464,1683
+435,Polygon,35434,67,4,Saitama,Saitama,64,65,JPN_35434,1684
+436,Polygon,35448,67,4,Shiga,Shiga,64,65,JPN_35448,1671
+437,Polygon,35455,67,4,Shimane,Shimane,64,65,JPN_35455,1687
+438,Polygon,35455,67,4,Shimane,Shimane,64,65,JPN_35455,1687
+439,Polygon,35432,67,4,Tochigi,Tochigi,64,65,JPN_35432,1688
+440,Polygon,35459,67,4,Tokushima,Tokushima,64,65,JPN_35459,1689
+441,Polygon,35436,67,4,T?ky?,Tokyo,64,65,JPN_35436,1690
+442,Polygon,35454,67,4,Tottori,Tottori,64,65,JPN_35454,1686
+443,Polygon,35439,67,4,Toyama,Toyama,64,65,JPN_35439,1692
+444,Polygon,35435,67,4,Chiba,Chiba,64,65,JPN_35435,1693
+445,Polygon,35453,67,4,Wakayama,Wakayama,64,65,JPN_35453,1691
+446,Polygon,35429,67,4,Yamagata,Yamagata,64,65,JPN_35429,1695
+447,Polygon,35458,67,4,Yamaguchi,Yamaguchi,64,65,JPN_35458,1696
+448,Polygon,35442,67,4,Yamanashi,Yamanashi,64,65,JPN_35442,1697
+449,Polygon,491,6,4,Anhui,Anhui,4,5,CHN_491,898
+450,Polygon,492,6,4,Beijing,Beijing,4,5,CHN_492,899
+451,Polygon,493,6,4,Chongqing,Chongqing,4,5,CHN_493,900
+452,Polygon,494,6,4,Fujian,Fujian,4,5,CHN_494,901
+453,Polygon,495,6,4,Gansu,Gansu,4,5,CHN_495,902
+454,Polygon,496,6,4,Guangdong,Guangdong,4,5,CHN_496,903
+455,Polygon,497,6,4,Guangxi,Guangxi,4,5,CHN_497,904
+456,Polygon,498,6,4,Guizhou,Guizhou,4,5,CHN_498,905
+457,Polygon,499,6,4,Hainan,Hainan,4,5,CHN_499,906
+458,Polygon,500,6,4,Hebei,Hebei,4,5,CHN_500,907
+459,Polygon,501,6,4,Heilongjiang,Heilongjiang,4,5,CHN_501,908
+460,Polygon,502,6,4,Henan,Henan,4,5,CHN_502,909
+461,Polygon,503,6,4,Hubei,Hubei,4,5,CHN_503,911
+462,Polygon,504,6,4,Hunan,Hunan,4,5,CHN_504,912
+463,Polygon,506,6,4,Jiangsu,Jiangsu,4,5,CHN_506,913
+464,Polygon,507,6,4,Jiangxi,Jiangxi,4,5,CHN_507,914
+465,Polygon,508,6,4,Jilin,Jilin,4,5,CHN_508,915
+466,Polygon,509,6,4,Liaoning,Liaoning,4,5,CHN_509,916
+467,Polygon,505,6,4,Inner Mongolia,Inner Mongolia,4,5,CHN_505,917
+468,Polygon,510,6,4,Ningxia,Ningxia,4,5,CHN_510,918
+469,Polygon,511,6,4,Qinghai,Qinghai,4,5,CHN_511,919
+470,Polygon,512,6,4,Shaanxi,Shaanxi,4,5,CHN_512,920
+471,Polygon,513,6,4,Shandong,Shandong,4,5,CHN_513,921
+472,Polygon,514,6,4,Shanghai,Shanghai,4,5,CHN_514,922
+473,Polygon,515,6,4,Shanxi,Shanxi,4,5,CHN_515,923
+474,Polygon,516,6,4,Sichuan,Sichuan,4,5,CHN_516,924
+475,Polygon,517,6,4,Tianjin,Tianjin,4,5,CHN_517,926
+476,Polygon,519,6,4,Xinjiang,Xinjiang,4,5,CHN_519,927
+477,Polygon,518,6,4,Tibet,Tibet,4,5,CHN_518,928
+478,Polygon,520,6,4,Yunnan,Yunnan,4,5,CHN_520,929
+479,Polygon,521,6,4,Zhejiang,Zhejiang,4,5,CHN_521,930
+480,Polygon,44551,152,4,'Asir,'Asir,137,138,SAU_44551,2622
+481,Polygon,44547,152,4,Bahah,Bahah,137,138,SAU_44547,2623
+482,Polygon,44553,152,4,Eastern Province,E Province,137,138,SAU_44553,2624
+483,Polygon,44541,152,4,Ha'il,Ha'il,137,138,SAU_44541,2625
+484,Polygon,44549,152,4,Jawf,Jawf,137,138,SAU_44549,2626
+485,Polygon,44550,152,4,Jizan,Jizan,137,138,SAU_44550,2627
+486,Polygon,44545,152,4,Madinah,Madinah,137,138,SAU_44545,2628
+487,Polygon,44546,152,4,Makkah,Makkah,137,138,SAU_44546,2629
+488,Polygon,44552,152,4,Najran,Najran,137,138,SAU_44552,2630
+489,Polygon,44548,152,4,Northern Borders,N Borders,137,138,SAU_44548,2631
+490,Polygon,44542,152,4,Qassim,Qassim,137,138,SAU_44542,2632
+491,Polygon,44543,152,4,Riyadh,Riyadh,137,138,SAU_44543,2633
+492,Polygon,44544,152,4,Tabuk,Tabuk,137,138,SAU_44544,2634
+493,Polygon,4940,93,4,Sweden except Stockholm,Sweden w/o Stockholm,64,73,SWE_4940,2786
+494,Polygon,4944,93,4,Stockholm,Stockholm,64,73,SWE_4944,2800
+495,Polygon,4749,95,4,England,England,64,73,GBR_4749,-1
+496,Polygon,433,95,4,Northern Ireland,N Ireland,64,73,GBR_433,3183
+497,Polygon,434,95,4,Scotland,Scotland,64,73,GBR_434,3184
+498,Polygon,4636,95,4,Wales,Wales,64,73,GBR_4636,3186
+499,Polygon,4618,4749,5,North East England,NE England,64,73,GBR_4618,-1
+500,Polygon,4619,4749,5,North West England,NW England,64,73,GBR_4619,-1
+501,Polygon,4620,4749,5,Yorkshire and the Humber,Yorkshire & Humber,64,73,GBR_4620,-1
+502,Polygon,4621,4749,5,East Midlands,E Midlands,64,73,GBR_4621,-1
+503,Polygon,4622,4749,5,West Midlands,W Midlands,64,73,GBR_4622,-1
+504,Polygon,4623,4749,5,East of England,E England,64,73,GBR_4623,-1
+505,Polygon,4624,4749,5,Greater London,Greater London,64,73,GBR_4624,-1
+506,Polygon,4625,4749,5,South East England,SE England,64,73,GBR_4625,-1
+507,Polygon,4626,4749,5,South West England,SW England,64,73,GBR_4626,-1
+508,Polygon,-1,0,0, , ,0,0, ,0
+509,Polygon,-1,0,0, , ,0,0, ,0
+510,Polygon,-1,0,0, , ,0,0, ,0
+511,Polygon,-1,0,0, , ,0,0, ,0

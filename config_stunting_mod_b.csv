@@ -1,0 +1,59 @@
+indicator_family,binomial
+keep_inla_files,FALSE
+fixed_effects,access2 + distrivers + dmspntlcalib + evi + lstavg + worldpop + sgocstha + sgphihox + distriverslakes + fertility + mapincidence + ghslurbanicity + crutspre + crutsard + crutsdtr + crutsfrs + crutspet + crutstmn + crutstmp + crutstmx + crutswet + growingseason + irrigation + lstday + lstdiurnaldiff + lstnight + nexndvi + tcb + tcw + herreroshannondiversity + herreronyieldcalcium + herreronyieldfolate + herreronyieldiron + herreronyieldprotein + herreronyieldvitb12 + herreronyieldzinc + herreronyieldvita + edu_mean_unraked
+fixed_effects_measures,mean + mean + mean + median + median + total + sum005to100cm + mean005to030cm + mean + mean + mean + mean + sum + mean + mean + sum + mean + mean + mean + mean + sum + mean + mean + median + median + median + mean + median + median + mean + calcium + folate + iron + protein + vitb12 + zinc + vita + mean
+gbd_fixed_effects,ldi_pc + sanitation_prop
+year_list,c(2000:2016)
+yearload,annual
+withtag,FALSE
+datatag,
+samples,1000
+time_stamp,TRUE
+use_inla_nugget,TRUE
+mesh_s_max_edge,"c(.2, 5)"
+mesh_s_offset,"c(1, 5)"
+intercept_prior,0
+slots,25
+mem,75
+stacked_fixed_effects,gam + gbm + lasso
+inla_cores,5
+stacking_cores,5
+use_share,TRUE
+interval_mo,12
+use_child_country_fes,TRUE
+use_inla_country_fes,FALSE
+use_inla_country_res,FALSE
+n_stack_folds,5
+gbm_tc,3
+gbm_lr,0.005
+gbm_bf,0.75
+mesh_t_knots,"c(1,6,11,16)"
+intstrat,eb
+constrain_children_0_inf,FALSE
+other_weight,
+transform,inverse-logit
+test,0
+test_pct,5
+skiptoinla,FALSE
+skiptoinla_from_rundate,NULL
+skipinla,FALSE
+pop_measure,a0004t
+st_targ,0.24183
+target_type,less
+yr_col,year
+ss_col,weighted_n
+long_col,longitude
+lat_col,latitude
+n_ho_folds,5
+ho_ts,500
+ho_mb,10
+spat_strat,qt
+temp_strat,prop
+use_geos_nodes,FALSE
+use_raw_covs,FALSE
+use_stacking_covs,TRUE
+use_gp,TRUE
+coefs_sum1,TRUE
+coefs.sum1,TRUE
+logit.stack.cov,TRUE
+jn,"sprintf('%s_%s_%s_%s_%s',indicator,ifelse(as.logical(use_raw_covs)|as.logical(use_stacking_covs),ifelse(as.logical(use_raw_covs), 'raw', 'stack'),''),ifelse(as.logical(use_gp),'gp', ''),ifelse(as.logical(coefs.sum1),'sum1','nosum'),ifelse(as.logical(logit.stack.cov),'logitstackers','prevstackers'))"

@@ -1,0 +1,359 @@
+## code to resample points to polygons
+
+############### SETUP ###########################
+
+# initiate timing
+start_time <- Sys.time()
+
+root <- ifelse(Sys.info()[1]=="Windows", <<<< FILEPATH REDACTED >>>>>, <<<< FILEPATH REDACTED >>>>>)
+
+repo <- <<<< FILEPATH REDACTED >>>>>
+setwd(repo)
+
+# set directories
+data_dir <- <<<< FILEPATH REDACTED >>>>>
+mbg_dir  <- <<<< FILEPATH REDACTED >>>>>
+save_dir <- <<<< FILEPATH REDACTED >>>>>
+root_dir <- <<<< FILEPATH REDACTED >>>>>
+
+# Loading libraries, scripts, etc.
+package_lib <- ifelse(grepl("geos", Sys.info()[4]),
+                      paste0(root, <<<< FILEPATH REDACTED >>>>>),
+                      paste0(root, <<<< FILEPATH REDACTED >>>>>))
+
+.libPaths(package_lib)                                  
+
+source('mbg_central/mbg_functions.R')                   
+source('mbg_central/prep_functions.R')                  
+source('mbg_central/covariate_functions.R')             
+source('mbg_central/misc_functions.R')                  
+source('mbg_central/post_estimation_functions.R')
+source('mbg_central/gbd_functions.R')
+source('mbg_central/graph_data_coverage.R')
+source('mbg_central/shiny_functions.R')
+source('mbg_central/holdout_functions.R')
+source('mbg_central/polygon_functions.R')
+source('mbg_central/collapse_functions.R')
+source('mbg_central/seegMBG_transform_functions.R')     
+
+package_list <- c('survey', 'pbapply', 'readstata13', 'foreign',
+                  'rgeos', 'data.table','raster','rgdal','INLA',
+                  'seegSDM','seegMBG','plyr','dplyr', 'foreach',
+                  'doParallel')
+for(package in package_list) {
+  library(package, lib.loc = package_lib, character.only=TRUE)
+}
+
+## Load iso3 to country name map
+iso3_to_country <- fread(paste0(root_dir,"ref/iso3_to_country.csv"))
+
+indicator <- "stunting_mod_b"
+
+##### 1. ################################################################################################################
+## Read all data - this looks like output from ubCov that has been mapped to geographies (via Brandon's post-processing code)
+
+########################################################################################################
+# DHS/MICS
+all_data <- read.csv(paste0(data_dir,"input_data.csv"), stringsAsFactors = FALSE)
+all_data <- as.data.table(all_data)
+
+
+## fix female coding
+all_data$sex[which(all_data$sex == 2)] <- 0
+
+## Somalia data (collapsed to clusters)
+somalia <- read.csv(paste0(root,<<<< FILEPATH REDACTED >>>>>))
+names(somalia)[names(somalia)=="Latitude"] <- "latitude"
+names(somalia)[names(somalia)=="Longitude"] <- "longitude"
+names(somalia)[names(somalia)=="Year.of.survey"] <- "start_year"
+names(somalia)[names(somalia)=="Number.of.children.examined"] <- "N"
+names(somalia)[names(somalia)=="Number.stunting"] <- "stunting_mod_b"
+somalia$end_year <- somalia$start_year
+somalia$source <- "FSNAU"
+somalia$country <- "SOM"
+somalia$psu <- 1:nrow(somalia)
+somalia$pweight <- NA
+somalia$NID <- 270669
+somalia$Proportion.wasting <- NULL
+somalia$Number.wasting <- NULL
+somalia$Proportion.stunting <- NULL
+somalia$Proportion.underweight <- NULL
+somalia$Number.underweight <- NULL
+somalia$Source_Citation <- NULL
+
+
+##### 2. ################################################################################################################
+## Save for  data coverage plot
+coverage_data <- all_data[, indicator := 1]
+coverage_data <- coverage_data[, N := 1]
+coverage_data <- coverage_data[, list(N = sum(N)),
+                               by = c('indicator','start_year','source','latitude','longitude','location_code','shapefile','country','psu')]
+
+##### 3. ################################################################################################################
+## Process your outcome. The result should still be the microdata (rows are individuals)
+##    but with a single column for your outcome, i.e. "stunting_binomial" = 0 or 1.
+## Example: calculate z-score and whether each individual is stunted (stunting_binomial==1) or not (stunting_binomial==0)
+
+## bring in growth charts
+HAZ_chart_months <- read.csv(paste0(mbg_dir,"growth_standards/HAZ_0_60_months.csv"), header = TRUE, sep =",")
+WHZ_chart_months <- read.csv(paste0(mbg_dir,"growth_standards/WHZ_0_60_months.csv"), header = TRUE, sep =",")
+WAZ_chart_months <- read.csv(paste0(mbg_dir,"growth_standards/WAZ_0_60_months.csv"), header = TRUE, sep =",")
+
+HAZ_chart_weeks <- read.csv(paste0(mbg_dir,"growth_standards/HAZ_0_13_weeks.csv"), header = TRUE, sep =",")
+WAZ_chart_weeks <- read.csv(paste0(mbg_dir,"growth_standards/WAZ_0_13_weeks.csv"), header = TRUE, sep =",")
+
+## HAZ
+all_data_HAZ <- all_data
+
+# prep all_data -- this needs to happen within each section, to maximize data use amidst missingness
+all_data_HAZ <- subset(all_data_HAZ, !is.na(age_wks))
+all_data_HAZ <- subset(all_data_HAZ, !is.na(child_height))
+all_data_HAZ <- subset(all_data_HAZ, all_data_HAZ$child_height < 999)
+
+# prep HAZ charts to be joined on
+names(HAZ_chart_months)[names(HAZ_chart_months)=="l"] <- "HAZ_l"
+names(HAZ_chart_months)[names(HAZ_chart_months)=="m"] <- "HAZ_m"
+names(HAZ_chart_months)[names(HAZ_chart_months)=="s"] <- "HAZ_s"
+names(HAZ_chart_months)[names(HAZ_chart_months)=="age_cat"] <- "age_cat_1"
+names(HAZ_chart_months)[names(HAZ_chart_months)=="month"] <- "age_mo"
+
+names(HAZ_chart_weeks)[names(HAZ_chart_weeks)=="l"] <- "HAZ_l"
+names(HAZ_chart_weeks)[names(HAZ_chart_weeks)=="m"] <- "HAZ_m"
+names(HAZ_chart_weeks)[names(HAZ_chart_weeks)=="s"] <- "HAZ_s"
+names(HAZ_chart_weeks)[names(HAZ_chart_weeks)=="week"] <- "age_wks"
+
+## subset data to get two datasets that will use different charts, then merge and rbind together
+all_data_HAZ_wks <- subset(all_data_HAZ, all_data_HAZ$age_wks <= 13)
+all_data_HAZ_wks <- merge(all_data_HAZ_wks, HAZ_chart_weeks, by=c("sex", "age_wks"), all.x = TRUE, allow.cartesian = TRUE)
+
+all_data_HAZ_mo <- subset(all_data_HAZ, all_data_HAZ$age_wks > 13)
+all_data_HAZ_mo <- merge(all_data_HAZ_mo, HAZ_chart_months, by=c("age_cat_1", "sex", "age_mo"), all.x = TRUE)
+
+all_data_HAZ <- rbind(all_data_HAZ_wks, all_data_HAZ_mo)
+
+# calculate HAZ score
+all_data_HAZ$HAZ <- (((all_data_HAZ$child_height/all_data_HAZ$HAZ_m) ^ all_data_HAZ$HAZ_l)-1)/(all_data_HAZ$HAZ_s*all_data_HAZ$HAZ_l)
+
+# create binary for stunting
+all_data_HAZ$stunting_mod_b <- ifelse(all_data_HAZ$HAZ <= -2, 1, 0)
+all_data_HAZ$N <- 1
+
+# drop if HAZ is blank
+all_data_HAZ <- subset(all_data_HAZ, !is.na(all_data_HAZ$HAZ))
+
+# drop unacceptable z scores # https://peerj.com/articles/380/ Crowe, Seal, Grijalva-Eternod, Kerac 2014
+all_data_HAZ <- subset(all_data_HAZ, all_data_HAZ$HAZ > -6)
+all_data_HAZ <- subset(all_data_HAZ, all_data_HAZ$HAZ < 6)
+
+all_data <- as.data.table(all_data_HAZ)
+all_data <- all_data[, indicator := 1]
+
+##### 5. ################################################################################################################
+## Split up into point and polygon datasets
+point_data <- all_data[point==1, ]
+poly_data <- all_data[point==0, ]
+
+## Add Somalia dataset
+somalia <- as.data.table(somalia)
+point_data <- rbind(point_data, somalia, fill = TRUE)
+
+##### 4. ################################################################################################################
+## Save for data coverage plot
+coverage_data <- rbind(point_data, poly_data, fill = TRUE)
+coverage_data <- coverage_data[, list(N = sum(N)),
+                               by = c('indicator','start_year','source','latitude','longitude','location_code','shapefile','country','psu')]
+
+##### 5. ################################################################################################################
+## Process point_data as you normally would, collapsing to cluster means. Let's call this new dt point_data_collapsed.
+## sum() for binomial indicators or mean() for Gaussian indicators
+all_point_data <- point_data[, list(N=sum(N), stunting_mod_b=sum(stunting_mod_b)), by=c('source', 'start_year','latitude','longitude','country', 'nid')]
+all_point_data <- all_point_data[!is.na(latitude)]
+all_point_data <- all_point_data[!is.na(longitude)]
+all_point_data$point <- 1
+
+##### 6. ################################################################################################################
+## Process poly_data
+
+setnames(all_point_data, "source", "survey_series")
+setnames(poly_data, "source", "survey_series")
+
+poly_data_test <- copy(poly_data)
+poly_data_test[, N := 1]
+poly_data_test <- poly_data_test[, list(N=sum(N)), by=c('start_year', 'country', 'location_code', 'shapefile', 'survey_series')]
+poly_data_bad <- poly_data_test[N==1, ]
+if(length(poly_data_bad[, survey_series]) > 0) {
+    message("This many polygons have 1 observation so will be dropped:")
+    print(table(poly_data_bad[, survey_series], poly_data_bad[, start_year]))
+    poly_data <- merge(poly_data, poly_data_test, by=c('start_year', 'country', 'location_code', 'shapefile', 'survey_series'))
+    poly_data <- poly_data[N.x != N.y, ] ## n.x and n.y are equal where both are 1, i.e. where poly had one cluster
+    setnames(poly_data, 'N.x', 'N') ## set the original N col back
+    poly_data[, N.y := NULL] ## remove the summed N col
+}
+
+## drop strata that have missing pweight so we don't need to drop the whole NID
+by_vars <- c('start_year', 'country', 'location_code', 'shapefile', 'survey_series', 'nid')
+na.strata <- aggregate(is.na(pweight) ~ start_year + country +
+                       location_code + shapefile + survey_series + nid,
+                       data = poly_data, sum)
+
+if(sum(na.strata[, 'is.na(pweight)']) > 0){ ## need to drop some
+  drop.strata <- na.strata[which(na.strata[, 'is.na(pweight)'] > 0), ]
+  drop.rows <- NULL
+  for(ds in 1:nrow(drop.strata)){
+    drop.rows <- c(drop.rows, which(poly_data$start_year == drop.strata$start_year[ds] &
+                                    poly_data$country == drop.strata$country[ds] &
+                                    poly_data$location_code == drop.strata$location_code[ds] &
+                                    poly_data$shapefile == drop.strata$shapefile[ds] &
+                                    poly_data$survey_series == drop.strata$survey_series[ds] &
+                                    poly_data$nid == drop.strata$nid[ds])
+                   )
+  }
+  poly_data <- poly_data[-drop.rows, ]
+}
+
+point.keepers <- point_data[, c('source', 'start_year','latitude',
+                                'longitude','country','nid',
+                                "geospatial_id", "master.ind",
+                                "cluster_number"), with = FALSE]
+
+na.pw <- aggregate(is.na(pweight) ~ nid, data = poly_data, sum)
+drop.nids <- na.pw$nid[which(na.pw[, 2] > 0)]
+poly.keepers <- subset(poly_data, !(nid %in% drop.nids))
+setnames(poly.keepers, "survey_series", "source")
+poly.keepers <- poly.keepers[, c('source', 'start_year','latitude',
+                                 'longitude','country','nid',
+                                 "geospatial_id", "master.ind",
+                                 "cluster_number"), with = FALSE]
+
+keeper.dat <- rbind(point.keepers, poly.keepers)
+
+write.csv(keeper.dat, file = paste0(<<<< FILEPATH REDACTED >>>>>), row.names=FALSE)
+
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+poly_surveys <- unique(poly_data[, nid])
+
+collapse_each_nid <- function(this_nid) {
+
+    message(paste0('Collapsing NID: ', this_nid))
+    test_poly_data <- poly_data[nid==this_nid,]
+    test_poly_data$strata <- 0
+    names(test_poly_data)[names(test_poly_data)=='cluster_number'] <- 'psu'
+    names(test_poly_data)[names(test_poly_data)=='weight'] <- 'pweight'
+
+    # Check for missings
+    if(length(test_poly_data$pweight[is.na(test_poly_data$pweight)])>0) {
+        message(paste0(length(test_poly_data$pweight[is.na(test_poly_data$pweight)]), ' / ', length(test_poly_data$pweight), ' are missing pweight'))
+        return(NULL)
+    }
+
+    else {
+        collapse_polys <- function(x) {
+            setup_design(df = test_poly_data, var = x)
+            by_vars <- c('start_year', 'country', 'location_code', 'shapefile', 'survey_series', 'nid')
+            poly <- collapse_by(df = test_poly_data,
+                                var = x,
+                                by_vars = by_vars)
+            collapsed <- poly[, c(by_vars, 'mean', 'ss')] ## this converts to ratespace!!
+            names(collapsed)[names(collapsed)=='mean'] <- x
+            names(collapsed)[names(collapsed)=='ss'] <- 'N'
+            collapsed[, eval(x)] <- collapsed[, eval(x)] * collapsed[, 'N'] ## convert back to count space!!
+            return(collapsed)
+            }
+        polys <- c('stunting_mod_b')
+        polys <- lapply(polys, collapse_polys)
+        merged_polys <- Reduce(function(...) merge(..., all=T), polys)
+        return(merged_polys)
+    }
+}
+
+poly_nids <- unique(poly_data[, nid])
+poly_data_collapsed  <- lapply(poly_nids, collapse_each_nid)
+
+# Append all collapsed polygon surveys together
+poly_data_collapsed <- do.call(rbind.fill, poly_data_collapsed)
+poly_data_collapsed$point <- 0
+all_poly_data <- poly_data_collapsed
+
+##### 7. ################################################################################################################
+## Append and save a copy for data coverage Shiny before resampling polygons
+collapsed <- rbind(all_poly_data, all_point_data, fill=TRUE)
+
+## save the collapsed data so we can report how many point and
+## polygons we use from which NIDs post-cleaning
+write.csv(collapsed, file = paste0(<<<< FILEPATH REDACTED >>>>>), row.names=FALSE)
+
+# ##### 7.1 ################################################################################################################
+# ## new data coverage plot - grab data plot later
+coverage_data <- copy(collapsed)
+coverage_data <- coverage_data[, latitude := as.numeric(latitude)]
+coverage_data <- coverage_data[, longitude := as.numeric(longitude)]
+coverage_data <- coverage_data[, stunting_mod_b := stunting_mod_b / N] #transform from count space to rate space
+setnames(coverage_data, 'nid', 'svy_id')
+setnames(coverage_data, 'survey_series', 'source')
+
+##### 8. ################################################################################################################
+## Resample collapsed polygon data to weighted point data 
+poly_data_collapsed <- as.data.table(poly_data_collapsed)
+poly_data_collapsed$stunting_mod_b_count <- poly_data_collapsed$stunting_mod_b
+resampled_poly_data <- resample_polygons_dev(data = poly_data_collapsed,
+                                         cores = 20,
+                                         indic = 'stunting_mod_b_count') #outcome in count space
+
+all_point_data <- point_data[, list(N=sum(N), stunting_mod_b=sum(stunting_mod_b)),
+                             by=c('source', 'start_year','latitude','longitude','country', 'nid')]
+all_point_data$point <- 1
+all_point_data <- all_point_data[, pseudocluster := FALSE]
+all_point_data <- all_point_data[, weight := 1]
+all_point_data <- all_point_data[, shapefile := ""]
+all_point_data <- all_point_data[, location_code := ""]
+
+resampled_poly_data <- resampled_poly_data[, stunting_mod_b := stunting_mod_b_count]
+resampled_poly_data <- resampled_poly_data[, stunting_mod_b_count := NULL]
+
+## rename survey_series to source for poly data
+setnames(resampled_poly_data, 'survey_series', 'source')
+
+##### 9. ################################################################################################################
+## Append point and polygon collapsed data
+all_processed_data <- rbind(all_point_data, resampled_poly_data)
+setnames(all_processed_data, 'start_year', 'year')
+all_collapsed <- all_processed_data
+
+## Replace year with period 1998-2002, 2003-2007, 2008-2012, 2013-2017
+all_collapsed <- subset(all_collapsed, year >= 1997)
+names(all_collapsed)[names(all_collapsed) == "year"] = "original_year"
+all_collapsed <- all_collapsed[original_year >= 1998 & original_year <= 2002, year := 2000]
+all_collapsed <- all_collapsed[original_year >= 2003 & original_year <= 2007, year := 2005]
+all_collapsed <- all_collapsed[original_year >= 2008 & original_year <= 2012, year := 2010]
+all_collapsed <- all_collapsed[original_year >= 2013 & original_year <= 2017, year := 2015]
+
+all_collapsed <- all_collapsed[, latitude := as.numeric(latitude)]
+all_collapsed <- all_collapsed[, longitude := as.numeric(longitude)]
+all_collapsed <- all_collapsed[!is.na(latitude)]
+all_collapsed <- all_collapsed[!is.na(longitude)]
+all_collapsed <- all_collapsed[latitude>=-90 & latitude<=90]
+all_collapsed <- all_collapsed[longitude>=-180 & longitude<=180]
+all_collapsed <- all_collapsed[, stunting_mod_b := round(stunting_mod_b, 0)]
+## In clusters where LRI > N (due to tiny samples and every child having LRI), cap at N
+all_collapsed <- all_collapsed[stunting_mod_b > N, stunting_mod_b := N]
+
+write.csv(all_collapsed, file = paste0("<<<< FILEPATH REDACTED >>>>>/stunting_mod_b.csv"), row.names = FALSE)
+
+Sys.time() - start_time
+
+###### 10 ##########################################################################################################
+## make the plot now that the data is ready
+coverage_maps <- graph_data_coverage_values(df = coverage_data,
+                                            var = 'stunting_mod_b',
+                                            title = '',
+                                            year_min = '1998',
+                                            year_max = '2016',
+                                            year_var = 'start_year',
+                                            region = 'africa',
+                                            sum_by = 'n',
+                                            cores = 10,
+                                            indicator = 'stunting_mod_b',
+                                            high_is_bad = TRUE,
+                                            return_maps = TRUE,
+                                            legend_title = 'Prevalence \n of MSS')
