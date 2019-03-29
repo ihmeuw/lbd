@@ -1,0 +1,65 @@
+use_share,FALSE
+indicator_family,binomial
+keep_inla_files,FALSE
+Regions,"c('cssa', 'essa_sdn', 'sssa', 'wssa')"
+individual_countries,FALSE
+year_list,c(2000:2017)
+yearload,annual
+interval_mo,12
+withtag,FALSE
+datatag,""
+time_stamp,TRUE
+makeholdouts,FALSE
+holdout_strategy,nids
+n_stack_folds,5
+yr_col,year
+ss_col,weighted_n
+long_col,longitude
+lat_col,latitude
+n_ho_folds,5
+ho_ts,500
+ho_mb,10
+slots,10
+inla_cores,5
+test,FALSE
+test_pct,5
+transform,inverse-logit
+gbd_fixed_effects_age,24
+stacked_fixed_effects,gam + xgboost + lasso
+other_weight,""
+use_child_country_fes,FALSE
+gbm_tc,2
+gbm_lr,0.005
+gbm_bf,0.75
+use_stacking_covs,TRUE
+use_raw_covs,FALSE
+use_gp,TRUE
+skiptoinla,FALSE
+skiptoinla_from_rundate,""
+skipinla,FALSE
+stackers_in_transform_space,TRUE
+coefs_sum1,FALSE
+use_inla_nugget,TRUE
+constrain_children_0_inf,FALSE
+use_inla_country_fes,FALSE
+use_inla_country_res,TRUE
+mesh_s_max_edge,"c(0.25, 5)"
+mesh_s_offset,"c(1, 5)"
+intercept_prior,0
+mesh_t_knots,c(1:18)
+intstrat,eb
+samples,1000
+rake_transform,none
+pop_measure,a1549t
+st_targ,0.05
+target_type,less
+summstats,"c('mean', 'lower', 'upper', 'cirange')"
+fit_with_tmb,FALSE
+anc_in_stacking,FALSE
+anc_correction,gp
+rho_prior,"list(prior = 'normal', param = c(4, 1/(1.2^2)))"
+nugget_prior,"list(prior = 'pc.prec', param = c(4, 0.05))"
+ctry_re_prior,"list(prior = 'pc.prec', param = c(4, 0.05))"
+pc_prior,TRUE
+range_lower_tail,0.05
+sigma_upper_tail,4

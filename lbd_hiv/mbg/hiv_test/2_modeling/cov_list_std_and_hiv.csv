@@ -1,0 +1,15 @@
+covariate,measure,gbd,include
+access2,mean,FALSE,TRUE
+dmspntlcalib,mean,FALSE,TRUE
+ghslurbanicity,mean,FALSE,TRUE
+map_pf_incidence,mean,FALSE,TRUE
+worldpop,total,FALSE,TRUE
+year_cov,median,FALSE,TRUE
+male_circumcision,mean,FALSE,TRUE
+sti_symptoms,mean,FALSE,TRUE
+condom_last_time,mean,FALSE,TRUE
+had_intercourse,mean,FALSE,TRUE
+partner_away,mean,FALSE,TRUE
+in_union,mean,FALSE,TRUE
+partners_year_mn,mean,FALSE,TRUE
+partners_year_wn,mean,FALSE,TRUE
