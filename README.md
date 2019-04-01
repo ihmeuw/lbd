@@ -11,6 +11,7 @@ By the time of each of our publications, cleaned code should be available in thi
 * [Child Growth Failure (CGF) - Africa - 2018](https://github.com/ihmeuw/lbd/tree/cgf-africa-2018)
 * [Educational Attainment (EDU) - Africa - 2018](https://github.com/ihmeuw/lbd/tree/edu-africa-2018)
 * Under-5 Mortality (U5M) - Africa - 2017
+* [Vaccines (DPT) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/dpt-africa-2019)
 
 ## Links to IHME and LBD
 
