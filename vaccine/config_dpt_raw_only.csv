@@ -1,0 +1,59 @@
+indicator_family,binomial
+keep_inla_files,FALSE
+year_list,c(2000:2016)
+Regions,"c('wssa', 'essa', 'cssa', 'name', 'sssa')"
+yearload,annual
+withtag,FALSE
+datatag,NULL
+samples,1000
+time_stamp,TRUE
+use_inla_nugget,TRUE
+mesh_s_max_edge,"c(0.2, 5)"
+mesh_s_offset,"c(1, 5)"
+intercept_prior,0
+slots,16
+stacked_fixed_effects,gam + gbm + lasso
+inla_cores,10
+use_share,FALSE
+interval_mo,12
+use_child_country_fes,TRUE
+use_inla_country_fes,FALSE
+use_inla_country_res,TRUE
+n_stack_folds,5
+gbm_tc,3
+gbm_lr,0.005
+gbm_bf,0.75
+gbm_bounded_0_1,FALSE
+mesh_t_knots,"c(1,6.33,11.66,17)"
+intstrat,eb
+constrain_children_0_inf,FALSE
+other_weight,
+transform,inverse-logit
+test_pct,5
+skiptoinla,FALSE
+skiptoinla_from_rundate,NULL
+skipinla,FALSE
+pop_measure,a0004t
+st_targ,0.8
+target_type,greater
+yr_col,year
+ss_col,weighted_n
+long_col,longitude
+lat_col,latitude
+n_ho_folds,5
+ho_ts,500
+ho_mb,10
+individual_countries,FALSE
+test,FALSE
+rake_transform,logit
+makeholdouts,TRUE
+coefs_sum1,FALSE
+stackers_in_transform_space,FALSE
+use_stacking_covs,FALSE
+use_raw_covs,TRUE
+use_gp,FALSE
+load_other_holdouts,TRUE
+holdout_rundate,2018_03_13_13_58_08
+summstats,"c('mean', 'cirange', 'upper', 'lower', 'cfb')"
+validation_metrics_only,TRUE
+gbd_date,2018-12-12

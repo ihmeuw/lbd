@@ -1,0 +1,14 @@
+*.so
+*.o
+*.dll
+*.pyc
+*.Rout
+*.RData
+*.RHistory
+*.aux
+*.log
+*.gz
+*.pdf
+*.html
+
+*_cache*
