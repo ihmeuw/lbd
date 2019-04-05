@@ -1,6 +1,6 @@
 # Diphtheria-Pertussis-Tetanus Coverage - Africa - 2019
 
-This repo contains cleaned code used to generate estimates of diphtheria-pertussis-tetanus (DPT) vaccine coverage from 'Mapping diphtheria-pertussis-tetanus vaccine coverage in Africa, 2000–2016: a spatial and temporal modelling study'  published in _Lancet_ on MM/DD/YYYY.
+This repo contains cleaned code used to generate estimates of diphtheria-pertussis-tetanus (DPT) vaccine coverage from 'Mapping diphtheria-pertussis-tetanus vaccine coverage in Africa, 2000–2016: a spatial and temporal modelling study'  published in _Lancet_ on 04/05/2019.
 
 The repo contains two directories:
 1) vaccine - containing vaccine-specific code
