@@ -1,0 +1,2 @@
+nrounds,max_depth,eta
+1000,c(2:7),(3:8)/1000
