@@ -1,0 +1,54 @@
+covariate,measure,gbd,include
+access2 ,mean,F,T
+distrivers ,mean,F,F
+dmspntlcalib,mean,F,T
+evi,median,F,F
+lstavg ,median ,F,F
+worldpop ,total ,F,T
+sgocstha ,sum005to100cm,F,F
+sgphihox ,mean005to030cm,F,F
+distriverslakes,mean,F,F
+fertility ,mean,F,F
+map_pv_incidence,mean,F,F
+map_pf_incidence,mean ,F,F
+ghslurbanicity,mean,F,T
+crutspre ,sum,F,F
+crutsard,mean,F,F
+crutsdtr,mean ,F,F
+crutsfrs,sum ,F,F
+crutspet,mean,F,F
+crutstmn,mean,F,F
+crutstmp,mean,F,F
+crutstmx,mean,F,F
+crutswet,sum,F,F
+growingseason,mean,F,F
+irrigation,mean,F,F
+lstday,median,F,F
+lstdiurnaldiff,median,F,F
+lstnight,median,F,F
+nexndvi,mean,F,F
+tcb,median,F,F
+tcw,median,F,F
+herreroshannondiversity,mean,F,F
+herreronyieldcalcium,calcium,F,F
+herreronyieldfolate,folate,F,F
+herreronyieldiron,iron,F,F
+herreronyieldprotein,protein,F,F
+herreronyieldvitb12,vitb12,F,F
+herreronyieldzinc,zinc,F,F
+herreronyieldvita ,vita,F,T
+edu_mean_stage2,mean,F,T
+year_cov,median,F,T
+diarrhea_prev,mean,F,F
+s_imp,mean,F,F
+s_od,mean,F,F
+w_imp,mean,F,F
+aridity,mean,F,F
+elevation,mean,F,F
+hdi,mean,F,T
+ldi_pc,mean,T,F
+sanitation_prop,mean,T,F
+haqi,mean,T,F
+anc1_coverage_prop,mean,T,F
+anc4_coverage_prop,mean,T,F
+hiv_test,mean,F,T
