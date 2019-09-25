@@ -1,0 +1,13 @@
+covariate,measure,include,gbd
+access2,mean,TRUE,FALSE
+crutstmp,mean,TRUE,FALSE
+dmspntlcalib,mean,TRUE,FALSE
+edu_mean,mean,TRUE,FALSE
+elevation,mean,TRUE,FALSE
+evi,median,TRUE,FALSE
+hib3_cov,mean,TRUE,FALSE
+ihmepm25,mean,TRUE,FALSE
+mapincidence,mean,TRUE,FALSE
+pcv3_cov,mean,TRUE,FALSE
+s_imp,mean,TRUE,FALSE
+stunting_mod_b_raked_stage1,mean,TRUE,FALSE
