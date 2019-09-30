@@ -1,4 +1,4 @@
-# Lower Respiratory Infection - LMIC - 2019
+# Lower Respiratory Infection - Africa - 2019
 
 This repo contains cleaned code used to generate estimates of Lower Respiratory Infection prevalence, incidence, and mortality and the number of children effected by LRI among children under the age of 5 years old as reported in 'Identifying residual hot-spots and mapping lower respiratory infection morbidity and mortality in African children from 2000 to 2017' published in Nature Microbiology on Spetember 30, 2019.
 
