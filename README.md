@@ -12,6 +12,7 @@ By the time of each of our publications, cleaned code should be available in thi
 * [Educational Attainment (EDU) - Africa - 2018](https://github.com/ihmeuw/lbd/tree/edu-africa-2018)
 * [Exclusive Breastfeeding (EBF) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/ebf-africa-2019)
 * [HIV prevalence and the number of people living with HIV (PLHIV) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/hiv-africa-2019)
+* [Lower Respiratory Infection (LRI) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/lri-africa-2019)
 * Under-5 Mortality (U5M) - Africa - 2017
 * [Vaccines (DPT) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/dpt-africa-2019)
 
