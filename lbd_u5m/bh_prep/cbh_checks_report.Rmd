@@ -1,0 +1,205 @@
+---
+title: ""
+output: pdf_document
+params: 
+  dt: NA
+  outlier_path: "<<<< FILEPATH REDACTED >>>>"
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+#read in necessary libraries
+library(data.table)
+library(ggplot2)
+library(gridExtra)
+library(Biograph)
+library(dplyr)
+
+d <- params$dt
+
+#order dataset so pages for each country are grouped in the output pdf
+setorder(d, country, nid)
+nids <- unique(d$nid)
+
+#covert cmc dates all at once to save time on graphs
+d[,interview_date := cmc_as_Date(interview_date_cmc,format.out = "%Y-%m")]
+d[,child_dob := cmc_as_year(child_dob_cmc)]
+
+#read in flat file with GBD outliers
+outliers <- read.csv(params$outlier_path)
+#keep outliers marked for CBH data only
+outliers <- subset(outliers, method_name == 'CBH')
+
+#generate indicators used in warning checks
+summary <- d %>% 
+  group_by(nid, source, country, year) %>% 
+  summarise(n = n(),
+            point_true = sum(point == 1, na.rm=T),
+            point_false = sum(point == 0, na.rm=T),
+            no_geog = sum(no_geog, na.rm=T),
+            yrborn_discr = sum(yrborn != yrborn2, na.rm=T),
+            yrborn_missing = sum(is.na(yrborn2)),
+            child_dob_cmc_missing = sum(is.na(yrborn2)),
+            birthtointerview_cmc_missing = sum(is.na(birthtointerview_cmc)),
+            interview_date_cmc_missing = sum(is.na(interview_date_cmc)),
+            aod_mode = as.numeric(names(sort(-table(aod))))[1],
+            missing_died = sum(is.na(aod)),
+            missing_alive = sum(is.na(alive)),
+            no_dead = sum(died,na.rm=TRUE)==0,
+            negative_age = sum(childage<0, na.rm = T),
+            min_age = min(childage, na.rm=T),
+            max_age = max(childage, na.rm=T),
+            weights_missing = sum(is.na(weight)),
+            must_drop = sum(must_drop, na.rm=T))
+```
+
+
+
+```{r x, echo=FALSE,message=FALSE,results="asis",fig.align='center', warning=FALSE, message=FALSE}
+message("Generating checks pdf - this typically takes ~20 minutes")
+
+#for tracking progress in console
+counter <- 0
+#loop through all the nids in the dataset
+for(i in nids){
+  #prints a status message every 10 surveys
+  counter <- counter + 1
+  if(counter %% 10 == 0) {
+    message(paste0("On survey ", counter, " of ", length(nids)))
+  }
+  
+  #subset the dataset, summary dataset, and outlier dataset to the nid
+  setkey(d, nid)
+  df <- d[J(i), nomatch=0L]
+  df_sum <- subset(summary, nid == i)
+  df_outlier <- subset(outliers, nid == i)
+  df_outlier <- subset(df_outlier, outlier == 1)
+  
+  
+  #print identifying information
+  cat("Nid: ", df_sum$nid[1], "  \n")
+  cat("Country: ", df_sum$country[1], "  \n")
+  cat("Source: ", df_sum$source[1], "  \n")
+  cat("Year: ", df_sum$year[1], "  \n")
+  cat("Rows of data: ", df_sum$n[1], "  \n")
+  cat("There are ", df_sum$point_true[1], ' rows of point data and ', df_sum$point_false[1], ' (', round(((df_sum$point_false[1] / df_sum$n[1]) * 100), digits = 2), '%) rows of polygon data  \n  \n')
+  
+  #generate warning checks (based on checks in the CBH_collapse code)
+  cat('## Warning checks  \n  \n')
+  
+  #flag for warnings - used for "all clear" if no warnings
+  warning_flag <- F
+  #rows with no geographic indicators
+  if(df_sum$no_geog[1] > 0) {
+    cat("There are ", df_sum$no_geog[1], ' rows (', round(((df_sum$no_geog[1] / df_sum$n[1]) * 100), digits = 2), '%) with no geographic identifiers.  \n \n')
+  }
+  #rows where (interview_date_cmc - birthtointerview_cmc) does not equal child_dob_cmc
+  if(df_sum$yrborn_discr[1] >0) {
+    cat("Two methods of targetting yrborn resulted in ", df_sum$yrborn_discr[1], 'rows (', round(((df_sum$yrborn_discr[1] / df_sum$n[1]) * 100), digits = 2), '%) of non agreement.  \n')
+    warning_flag <- T
+  }
+  #rows where child_dob_cmc is missing
+  if(df_sum$yrborn_missing[1] > 0) {
+    if(round(((df_sum$yrborn_missing[1] / df_sum$n[1]) * 100), digits = 2) > 5) {
+      cat("*****")
+    }
+    cat("There are ", df_sum$yrborn_missing[1], ' rows (', round(((df_sum$yrborn_missing[1] / df_sum$n[1]) * 100), digits = 2), '%) with a missing yrborn variable.  \n')
+    warning_flag <- T
+  }
+  #The mode of age of death is not 6000 (6000 = alive)
+  if(df_sum$aod_mode[1] != 6000) {
+    cat("the mode of AOD is ", df_sum$aod_mode, "  \n")
+    warning_flag <- T
+  }
+  #rows where age of death is missing
+  if(df_sum$missing_died[1] > 0) {
+    if(round(((df_sum$missing_died[1] / df_sum$n[1]) * 100), digits = 2) > 5){
+      cat("*****")
+    }
+    cat("A total of ", df_sum$missing_died[1], 'rows (', round(((df_sum$missing_died[1] / df_sum$n[1]) * 100), digits = 2), '%) have missing age of death (aod).  \n')
+    warning_flag <- T
+  }
+  #rows where age of death or child_alive is missing
+  if(df_sum$missing_alive[1] > 0) {
+        if(round(((df_sum$missing_alive[1] / df_sum$n[1]) * 100), digits = 2) > 5){
+      cat("*****")
+    }
+    cat("A total of ", df_sum$missing_alive[1], 'rows (', round(((df_sum$missing_alive[1] / df_sum$n[1]) * 100), digits = 2), '%) have missing alive/died indicators.  \n')
+    warning_flag <- T
+  }
+  #no dead children in dataset
+  if(df_sum$no_dead[1]){
+    cat("There are no dead children in this dataset. Very unlikely. Please confirm.  \n")
+    warning_flag <- T
+  }
+  #negative aged children in dataset
+  if(df_sum$negative_age[1] > 0 ) {
+    cat("There are negative aged children in the data! Something could be wrong with dates.  \n")
+    warning_flag <- T
+  }
+  #min_age and max_age are infinite when there are no values
+  if(!is.infinite(df_sum$min_age[1])) {
+    #minimum child age is not 0.0001 (adjusted from 0 to play nice with age bins)
+    if(df_sum$min_age[1] > 0.0001) {
+      cat("The youngest child in this data is ", df_sum$min_age[1], ", this number should be 0.  \n")
+      warning_flag <- T
+    }
+    #maximum age is > 42 years old
+    if(df_sum$max_age[1] > 42 * 12) {
+      cat("The oldest child is >42yo, this is highly unlikely as max mother age responding is 49. Confirm.  \n")
+      warning_flag <- T
+    }
+  } else{ 
+    cat("Childage has no values.  \n")
+  }
+  #rows where weights are missing
+  if(df_sum$weights_missing[1] > 0){
+    cat(df_sum$weights_missing[1], "rows (", round(df_sum$weights_missing[1]/df_sum$n * 100, digits = 2), "%) have no weight info.  \n")
+    warning_flag <- T
+  }
+  #rows where data is being dropped due to missing information - Weight, birth date, interview date, alive, aod if died, and geographic indicators
+  if(df_sum$must_drop[1] > 0) {
+    cat("The minimum amount of information needed to use a child record are the following: Weight, Birth date, Interview Date, Alive Indicator, Age at Death if died, geographic identifiers-  \n")
+    cat('Dropping', df_sum$must_drop[1], "rows (",  round(df_sum$must_drop[1]/df_sum$n * 100, digits = 2), '%) from the final dataset due to missingess in these variables.  \n')
+    warning_flag <- T
+  }
+  #prints years marked as outliered in GBD analysis
+  if(nrow(df_outlier) > 0) {
+    cat("There are ", nrow(df_outlier), " years marked as outliered from the GBD analysis:  \n")
+    cat(paste( unlist(list(df_outlier$year_id)), collapse=', '), "  \n")
+    warning_flag <- T
+  }
+  #prints all clear if no warnings were triggered
+  if(!warning_flag) {
+    cat("All clear  \n")
+  }
+  cat("  \n")
+  cat('## Plots  \n  \n')
+  
+  ## plots
+  # childage histogram (childage = age at survey for alive children, age at death for dead children)
+  childage_plot <- ggplot(data = df) +
+    geom_histogram(aes(childage / 12)) +
+    xlab("Child age (yrs)")
+    
+  interview_date_plot <- ggplot(data=df) +
+    geom_bar(aes(interview_date)) +
+    theme(axis.text.x = element_text(angle=45, vjust=0.5)) + 
+    xlab("Interview date")
+  
+  child_dob_plot <- ggplot(data=df) +
+    geom_histogram(aes(child_dob)) +
+     xlab("Date of Birth")
+  
+  birthtointerview_plot <- ggplot(data=df) +
+    geom_histogram(aes(birthtointerview_cmc / 12)) +
+     xlab("Birth to Interview (yrs)")
+  
+  suppressMessages(grid.arrange(childage_plot, interview_date_plot, child_dob_plot, birthtointerview_plot, ncol=2))
+  
+  cat("\n\n\\pagebreak\n")
+}
+```
+

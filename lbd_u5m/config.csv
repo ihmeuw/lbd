@@ -1,0 +1,74 @@
+use_share,TRUE
+indicator_family,binomial
+keep_inla_files,FALSE
+individual_countries,FALSE
+year_list,2000:2017
+yearload,annual
+interval_mo,12
+withtag,TRUE
+datatag,_global_7ab_annual_weightedSS_20190606_rtr
+time_stamp,TRUE
+makeholdouts,TRUE
+n_stack_folds,5
+yr_col,year
+ss_col,weighted_n
+long_col,longitude
+lat_col,latitude
+n_ho_folds,5
+ho_ts,500
+ho_mb,10
+slots,10
+inla_cores,5
+test,FALSE
+test_pct,5
+transform,inverse-logit
+stacked_fixed_effects,gam
+other_weight,
+use_child_country_fes,FALSE
+gbm_tc,3
+gbm_lr,0.005
+gbm_bf,0.75
+skiptoinla,FALSE
+skiptoinla_from_rundate,2017_06_16_17_22_04
+skipinla,FALSE
+stackers_in_transform_space,TRUE
+coefs_sum1,FALSE
+constrain_children_0_inf,FALSE
+use_stacking_covs,FALSE
+use_raw_covs,TRUE
+use_inla_country_fes,FALSE
+use_inla_country_res,TRUE
+use_gp,TRUE
+use_inla_nugget,FALSE
+mesh_s_max_edge,"c(1, 5)"
+mesh_s_offset,"c(1, 5)"
+intercept_prior,0
+mesh_t_knots,"c(1,6,11,16)"
+intstrat,eb
+samples,1000
+rake_transform,none
+pop_measure,a0004t
+st_targ,0.05
+target_type,less
+fit_with_tmb,TRUE
+z_list,c(1:7)
+zcol,age
+use_nid_res,TRUE
+use_geo_res,FALSE
+no_nugget_predict,TRUE
+non_pred_fes,
+gp_sum_to_zero,FALSE
+use_s2_mesh,TRUE
+s2_mesh_params,"c(100, 500, 1000)"
+subnational_raking,TRUE
+modeling_shapefile_version,2019_05_06
+raking_shapefile_version,2019_05_06
+check_cov_pixelcount,TRUE
+sparse_ordering,TRUE
+nugget_prior, "list(prior = 'normal', param = c(-4, 2))"
+ctry_re_prior, "list(prior = 'normal', param = c(-4, 2))"
+geo_re_prior, "list(prior = 'normal', param = c(-4, 2))"
+nid_re_prior, "list(prior = 'normal', param = c(-4, 2))"
+memory,30
+countries_not_to_rake,ESH+GUF
+countries_not_to_subnat_rake,PHL+NGA+PAK+ETH+KEN+IRN+ZAF

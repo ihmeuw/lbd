@@ -1,0 +1,264 @@
+---
+title: ""
+output: pdf_document
+params: 
+  dt: NA
+  summary_predrop: NA
+  summary_complete: NA
+  summary_ceb_is_0: NA
+  summary_ceb_age_bin: NA
+  outlier_path: "<<<< FILEPATH REDACTED >>>>"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#read in necessary libraries
+library(knitr)
+library(data.table)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(Biograph)
+library(dplyr)
+
+#read in data
+d <- params$dt
+
+#read in summary datasets
+summary_predrop <- data.table(params$summary_predrop)
+summary_complete <- data.table(params$summary_complete)
+summary_ceb_is_0 <- data.table(params$summary_ceb_is_0)
+summary_ceb_age_bin <- data.table(params$summary_ceb_age_bin)
+
+#order dataset so pages for each country are grouped in the output pdf
+setorder(d, country, nid)
+nids <- unique(d$nid)
+
+#read in flat file with GBD outliers
+outliers <- read.csv(params$outlier_path)
+#keep outliers marked for SBH data only
+outliers <- subset(outliers, method_name == 'SBH')
+```
+
+
+
+```{r x, echo=FALSE,message=FALSE,results="asis",fig.align='center', warning=FALSE, message=FALSE,fig.height=11,fig.width=8}
+#for tracking progress in console
+counter <- 0
+pointpoly_surveys <- c()
+#loop through all the nids in the dataset
+for(i in nids){
+  #prints a status message every 10 surveys
+  counter <- counter + 1
+  if(counter %% 10 == 0) {
+    message(paste0("On survey ", counter, " of ", length(nids)))
+  }
+  
+  #subset the dataset, summary datasets, and outlier dataset to the nid
+  setkey(d, nid)
+  df <- d[J(i), nomatch=0L]
+  df_sum_pre <- subset(summary_predrop, nid == i)
+  df_sum_ceb <- subset(summary_ceb_is_0, nid == i)
+  
+  #format complete summary to get it ready to print as table
+  df_sum_com <- subset(summary_complete, nid == i)
+  df_sum_ceb_age_bin <- subset(summary_ceb_age_bin, nid == i)
+  
+  #merge on mean ceb and ceb is 0 stats
+  df_sum_com <- merge(df_sum_com, df_sum_ceb_age_bin, by=c("nid", "mother_age_bin"))
+  
+  #order and create age bin character column
+  df_sum_com <- df_sum_com[order(mother_age_bin),]
+  df_sum_com[mother_age_bin==1, mother_age_bin_char := "15-19"]
+  df_sum_com[mother_age_bin==2, mother_age_bin_char := "20-24"]
+  df_sum_com[mother_age_bin==3, mother_age_bin_char := "25-29"]
+  df_sum_com[mother_age_bin==4, mother_age_bin_char := "30-34"]
+  df_sum_com[mother_age_bin==5, mother_age_bin_char := "35-39"]
+  df_sum_com[mother_age_bin==6, mother_age_bin_char := "40-44"]
+  df_sum_com[mother_age_bin==7, mother_age_bin_char := "45-49"]
+  
+  #reorder columns and rename
+  df_sum_com <- subset(df_sum_com, select=c(mother_age_bin_char, n, ceb, ced, raw_ced_ceb, mean_child, ceb_0, ceb_0_percent))
+  colnames(df_sum_com) <- c("maternal age bin", "# mothers", "ceb", "ced", "raw ced/ceb", "mean ceb", "# ceb is 0", "% ceb is 0")
+  
+  df_outlier <- subset(outliers, nid == i)
+  df_outlier <- subset(df_outlier, outlier == 1)
+  
+  #print identifying information
+  cat("Nid: ", df_sum_pre$nid[1], "  \n")
+  cat("Country: ", df_sum_pre$country[1], "  \n")
+  cat("Source: ", df_sum_pre$source[1], "  \n")
+  cat("Year: ", df_sum_pre$year[1], "  \n")
+  cat("Rows of data: ", df_sum_pre$n[1], "  \n")
+  cat("There are ", df_sum_pre$point_true[1], ' rows of point data and ', df_sum_pre$point_false[1], ' (', round(((df_sum_pre$point_false[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) rows of polygon data  \n  \n')
+  
+  #CEB, CED, and raw CED/CEB by maternal age groups
+  cat('## Stats by Maternal Age  \n \n')
+  cat('###### (columns up to raw ced/ceb exclude ceb == 0, last 3 columns include) \n \n')
+  print(kable(df_sum_com))
+  cat("\n \n")
+
+  #generate warning checks (based on checks in the CBH_collapse code)
+  cat('## Warning Checks  \n  \n')
+
+  #flag for warnings - used for "all clear" if no warnings
+  warning_flag <- F
+  
+  #surveys matched to both points and polygons
+  if(df_sum_pre$point_true[1] & df_sum_pre$point_false[1]) {
+    cat("*****This survey is geomatched to both point and polygons.  \n \n")
+    pointpoly_surveys <- c(pointpoly_surveys, i)
+    warning_flag <- T
+  }
+  #rows with no geographic indicators
+  if(df_sum_pre$no_geog[1] > 0) {
+    cat("There are ", df_sum_pre$no_geog[1], ' rows (', round(((df_sum_pre$no_geog[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) with no geographic identifiers.  \n \n')
+    warning_flag <- T
+  }
+  #rows where point is na
+  if(df_sum_pre$point_na[1] > 0) {
+    cat("*****There are ", df_sum_pre$point_na[1], ' rows (', round(((df_sum_pre$point_na[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) where point is na.  \n \n')
+    warning_flag <- T
+  }
+  #rows where ceb is missing
+  if(df_sum_pre$missing_ceb[1] >0) {
+    cat("There are ", df_sum_pre$missing_ceb[1], 'rows (', round(((df_sum_pre$missing_ceb[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) missing ceb.  \n')
+    warning_flag <- T
+  }
+  #rows where ced is missing
+  if(df_sum_pre$missing_ced[1] >0) {
+    cat("There are ", df_sum_pre$missing_ced[1], 'rows (', round(((df_sum_pre$missing_ced[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) missing ced.  \n')
+    warning_flag <- T
+  }
+  #rows where ced > ceb
+  if(df_sum_pre$ced_over_ceb[1] > 0) {
+    cat("*****There are ", df_sum_pre$ced_over_ceb[1], ' rows (', round(((df_sum_pre$ced_over_ceb[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) where ced is greater than ceb.  \n')
+    warning_flag <- T
+  }
+  #rows where interview date is missing
+  if(df_sum_pre$interview_date_cmc_missing[1] > 0) {
+    cat("There are ", df_sum_pre$interview_date_cmc_missing[1], ' rows (', round(((df_sum_pre$interview_date_cmc_missing[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) where interview date is missing.  \n')
+    warning_flag <- T
+  }
+  #rows where maternal age is missing
+  if(df_sum_pre$mothers_age_missing[1] > 0) {
+    cat("*****There are ", df_sum_pre$mothers_age_missing[1], ' rows (', round(((df_sum_pre$mothers_age_missing[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) where maternal age is missing.  \n')
+    warning_flag <- T
+  }
+  #rows where maternal age bin is missing
+  if(df_sum_pre$mothers_age_bin_missing[1] > 0) {
+    cat("*****There are ", df_sum_pre$mothers_age_bin_missing[1], ' rows (', round(((df_sum_pre$mothers_age_bin_missing[1] / df_sum_pre$n[1]) * 100), digits = 2), '%) where maternal age bin is missing.  \n')
+    warning_flag <- T
+  }
+  #rows where ceb = 0
+  if(df_sum_ceb$ceb_is_0[1] > 0){
+    cat(df_sum_ceb$ceb_is_0[1], "rows (", round(df_sum_ceb$ceb_is_0[1]/df_sum_ceb$n[1] * 100, digits = 2), "%) dropped who reported 0 ceb.  \n")
+  }
+  #rows where weights are missing
+  if(sum(is.na(df$weight))/nrow(df)==1){
+    cat('WARNING: There are no survey weights in this survey and they will be set to 1.  \n')
+    df$weight <- 1
+  } else if(sum(is.na(df$weight))==0){
+  } else {
+    cat(df_sum_pre$weights_missing[1], "rows (", round(df_sum_pre$weights_missing[1]/df_sum_pre$n[1] * 100, digits = 2), "%) have no weight info.  \n")
+    warning_flag <- T
+  }
+
+  #rows where data is being dropped due to missing information - Weight, birth date, interview date, alive, aod if died, and geographic indicators
+  if(df_sum_pre$must_drop[1] > 0) {
+    cat("The minimum amount of information needed to use a child record are the following: Weight, Birth date, Interview Date, Alive Indicator, Age at Death if died, geographic identifiers-  \n")
+    cat('Dropping', df_sum_pre$must_drop[1], "rows (",  round(df_sum_pre$must_drop[1]/df_sum_pre$n * 100, digits = 2), '%) from the final dataset due to missingess in these variables.  \n')
+    warning_flag <- T
+  }
+  #prints years marked as outliered in GBD analysis
+  if(nrow(df_outlier) > 0) {
+    cat("There are ", nrow(df_outlier), " years marked as outliered from the GBD analysis:  \n")
+    cat(paste( unlist(list(df_outlier$year_id)), collapse=', '), "  \n")
+    warning_flag <- T
+  }
+  #prints all clear if no warnings were triggered
+  if(!warning_flag) {
+    cat("All clear  \n")
+  }
+  cat("  \n")
+
+  cat('## Plots  \n  \n')
+
+  mat_plots <- df %>% 
+  group_by(mothage_atint) %>% 
+  summarise(n = n(),
+            ceb_missing = sum(is.na(ceb)),
+            ced_missing = sum(is.na(ced))) %>%
+  mutate(per_ceb_missing = (ceb_missing / n) * 100,
+         per_ced_missing = (ced_missing / n) * 100)
+  
+  setnames(df_sum_com,c("maternal age bin","# mothers","raw ced/ceb","% ceb is 0"),
+           c("mat_age_bin","num_wn","raw_ced_ceb","perc_ceb_0"))
+  
+  ## plots
+  ceb_hist <- ggplot(data=df) +
+    geom_histogram(aes(ceb), binwidth = 1) +
+    xlab("ceb")
+
+  ced_hist <- ggplot(data=df) +
+    geom_histogram(aes(ced), binwidth = 1) +
+    xlab("ced")
+  
+  ceb_maternal <- ggplot(data = mat_plots) +
+    geom_col(aes(x=mothage_atint, y = per_ceb_missing)) +
+    xlab("Maternal age (yrs)") +
+    ylab("Percent ceb missing")
+
+  ced_maternal <- ggplot(data = mat_plots) +
+    geom_col(aes(x=mothage_atint, y = per_ced_missing)) +
+    xlab("Maternal age (yrs)") +
+    ylab("Percent ced missing")
+  
+  if (i %in% unique(summary_complete$nid)){
+    nwn_hist <- ggplot(data = df_sum_com) +
+      geom_col(aes(x=mat_age_bin, y=num_wn)) +
+      xlab("Maternal Age Bin") + 
+      ylab("Number of Mothers")
+  
+    nceb_hist <- ggplot(data = df_sum_com) +
+      geom_col(aes(x=mat_age_bin, y=ceb)) +
+      xlab("Maternal Age Bin") +
+      ylab("CEB")
+    
+    ced_ceb <- ggplot(data = df_sum_com, aes(x=mat_age_bin,y=raw_ced_ceb,group=1)) +
+      geom_line() + 
+      geom_point() +
+      xlab("Maternal Age Bin") +
+      ylab("Raw CED / CEB")
+    
+    perc_ceb_0 <- ggplot(df_sum_com, aes(x=mat_age_bin,y=perc_ceb_0,group=1)) +
+      geom_line() +
+      geom_point() +
+      xlab("Maternal Age Bin") +
+      ylab("Percent of CEB = 0")
+  } else {
+    nwn_hist <- textGrob("No Data")
+    nceb_hist <- textGrob("No Data")
+    ced_ceb <- textGrob("No Data")
+    perc_ceb_0 <- textGrob("No Data")
+    
+    cat("\n Survey dropped from dataset and not in Summary Complete table \n")
+  }
+  
+
+  suppressMessages(grid.arrange(ceb_hist, ced_hist, ceb_maternal, ced_maternal,
+                                nwn_hist, nceb_hist, ced_ceb, perc_ceb_0,
+                                ncol=2))
+  
+  
+  cat("\n\n\\pagebreak\n")
+}
+
+cat("Surveys matched to both point and polygon info: \n")
+for(i in pointpoly_surveys) {
+  cat(i)
+  cat("\n")
+}
+```
+
