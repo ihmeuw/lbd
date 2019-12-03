@@ -1,0 +1,104 @@
+,V1,V2
+1,indicator_family,binomial
+2,coefs_sum1,TRUE
+3,constrain_children_0_inf,FALSE
+4,crossval,TRUE
+5,datatag,
+6,gbm_bf,0.75
+7,gbm_lr,0.005
+8,gbm_tc,3
+9,ho_mb,10
+10,ho_ts,500
+11,inla_cores,5
+12,intercept_prior,0
+13,interval_mo,12
+14,intstrat,eb
+15,lat_col,latitude
+16,long_col,longitude
+17,mesh_s_max_edge,"c(0.25, 5)"
+18,mesh_s_offset,"c(1, 5)"
+19,mesh_t_knots,c(1:18)
+20,n_ho_folds,5
+21,n_stack_folds,5
+22,other_weight,
+23,rake_transform,TRUE
+24,region_list,noaf cssa sssa wssa essa seas eaas soas ocea caca bra ansa+pry+sur+guy+guf mide stan
+25,samples,1000
+26,skipinla,FALSE
+27,skiptoinla,FALSE
+28,skiptoinla_from_rundate,2018_10_11_11_21_22
+29,slots,10
+30,ss_col,weighted_n
+31,st_targ,0.05
+32,stacked_fixed_effects,gbm + gam + lasso
+33,stackers_in_transform_space,FALSE
+34,target_type,less
+35,test_pct,1
+36,time_stamp,TRUE
+37,transform,inverse-logit
+38,use_child_country_fes,TRUE
+39,use_inla_country_fes,FALSE
+40,use_inla_country_res,TRUE
+41,use_inla_nugget,TRUE
+42,use_share,TRUE
+43,withtag,FALSE
+44,year_list,c(2000:2017)
+45,yearload,annual
+46,yr_col,year
+47,gbm_bounded_0_1,TRUE
+48,re_weight,TRUE
+49,keep_inla_files,TRUE
+50,fit_with_tmb,FALSE
+51,use_s2_mesh,TRUE
+52,s2_mesh_params,"c(25, 500, 1000)"
+53,subnational_raking,FALSE
+54,modeling_shapefile_version,current
+55,raking_shapefile_version,current
+56,rho_prior,"list(prior = 'normal', param = c(3, 25))"
+57,nugget_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+58,ctry_re_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+59,pc_prior,F
+60,range_lower_tail,
+61,sigma_upper_tail,
+62,use_raw_covs,FALSE
+63,use_stacking_covs,TRUE
+64,pop_measure,wocba
+65,fixed_effects,access2 + aridity + dmspntlcalib + elevation + worldpop + ghslurbanicity + growingseason + irrigation + year_cov
+66,fixed_effects_measures,mean + mean + mean + mean + total + mean + mean + mean + median
+67,gbd_fixed_effects,
+68,gbd_fixed_effects_measures,
+69,check_cov_pixelcount,FALSE
+70,countries_not_to_rake,ESH+GUF
+71,countries_not_to_subnat_rake,PHL+NGA+PAK+ETH+KEN
+72,gbd_fixed_effects_age,"c(2, 3, 4, 5)"
+73,holdout_strategy,nids
+74,individual_countries,FALSE
+75,jn,sprintf('')
+76,makeholdouts,FALSE
+77,memory,10
+78,queue,long.q
+79,rake_countries,TRUE
+80,run_time,16:00:00:00
+81,scale_gaussian_variance_N,TRUE
+82,singularity_version,default
+83,skip.inla,0
+84,skip.stacking,0
+85,solve,TRUE
+86,spat_strat,qt
+87,subnat_country_to_get,NA
+88,summstats,"c('mean', 'cirange', 'upper', 'lower')"
+89,temp_strat,prop
+90,test,FALSE
+91,use_geos_nodes,TRUE
+92,use_gp,TRUE
+93,use_nid_res,FALSE
+94,use_subnat_res,FALSE
+95,z_list,0
+96,zcol,z_column_default_blank
+97,metric_space,rates
+98,use_space_only_gp,FALSE
+99,use_time_only_gmrf,FALSE
+100,time_only_gmrf_type,rw2
+101,st_gp_int_zero,FALSE
+102,s_gp_int_zero,TRUE
+103,pop_release,2017_04_27

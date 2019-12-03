@@ -1,0 +1,164 @@
+#!/usr/bin/env perl
+
+# Run this as a background process (e.g., ./psample --sample=5 --showthreads my-output-file.csv &`
+#   Then end it with a kill command (SIGTERM)
+#
+# Saves output of ps -wwo (-wwLo IFF --showthreads)
+#   ps $psargs 'uname pid %cpu %mem rss size sz vsz nlwp wchan psr args'
+#
+# Outputs a CSV with columns
+#   host,elapsed,user,pid,load,cpu_pct,mem_pct,rss,size,sz,vsz,thread_count,wchan,psr,args
+#
+# -ww specifies unlimited width in output
+# -o specifies output format
+# -L enables the "nlwp" output (thread_count in the CSV output)
+#
+# Description of format options passed to ps:
+#
+# host: hostname
+# elapsed: time elapsed since start of script
+# user (uname): user who ran script
+# pid (pid): process id for row
+# load: system load (from /proc/loadavg; first value)
+# cpu_pct (%cpu): CPU utilization. CPU time used divided by the process has been running.
+# mem_pct (%mem): ratio of the processes' resident set size to the physical memory on machine.
+# rss (rss): resident set size; the non-swapped physical memory that a task has used in kB.
+# size (size): *very rough* amount of swap space required to dirty all writable pages adn swap out.
+# sz (sz): size in physical pages of the core image of the process. Includes text, data, and stack space.
+# vsz (vsz): virtual memory size in KiB.
+# thread_count (nlwp): number of threads in process
+# wchan (wchan): "-" if the process is running; otherwise the kernel function name if it is sleeping.
+# psr (psr): processor that the process is currently assigned to.
+# ppid (ppid): parent process id.
+# args (args): command with all its arguments as a string.
+#
+# 
+# start: adds a HH:MM:SS column to output
+#
+# 
+
+use strict;
+use POSIX qw(floor);
+use English;
+
+my $output;
+my $sample = 5;
+my $showthreads = 0;
+my $Rpid = 0;
+
+
+foreach my $arg (@ARGV)
+{
+  if(($arg eq '--help') || ($arg eq '-h'))
+  {
+    die "Usage: psample [--help|-h] [--sample=<seconds>] [--showthreads] [--pid=<Process ID from R::Sys.getpid()>] [<output>]\n";
+  }
+  if($arg =~ /--sample=(\d+)/)
+  {
+    $sample = $1;
+  }
+  elsif($arg eq '--showthreads')
+  {
+    $showthreads = 1;
+  }
+  elsif($arg =~ /--pid=(\d+)/)
+  {
+    $Rpid = $1;
+  }
+  else
+  {
+    $output = $arg;
+  }
+}
+
+my $hostname = `hostname`;
+chomp $hostname;
+
+#getppid();
+# $PID;
+my $parent_process_id = $Rpid;
+print $parent_process_id;
+$output = "$hostname-sample.$parent_process_id.csv"
+  if not $output;
+
+die "$output exists\n"
+  if -e $output;
+
+my $pidfile = "$ENV{HOME}/$hostname.$parent_process_id.pid";
+
+die "PID file $pidfile exists. Sample script may already be running.\n"
+  if -e $pidfile;
+
+open(PID, ">$pidfile") or die "Couldn't open $pidfile for writing\n";
+print PID $$;
+close(PID);
+
+my $running = 1;
+
+# Wow, why is it not this easy everywhere...
+# http://perltricks.com/article/37/2013/8/18/Catch-and-Handle-Signals-in-Perl/
+$SIG{TERM} = sub { $running = 0; };
+
+open(OUT, ">>$output") or die "Couldn't open $output for writing\n";
+
+print OUT "host,elapsed,user,pid,load,cpu_pct,mem_pct,rss,size,sz,vsz,thread_count,wchan,psr,ppid,args\n";
+
+close(OUT);
+
+my $psargs = $showthreads ? '-wwLo' : '-wwo';
+
+my $start = time;
+
+while($running)
+{
+  die "PID file $pidfile is gone\n"
+    if not -e $pidfile;
+
+  my $secondsElapsed = time - $start;
+  my $seconds = $secondsElapsed % 60;
+  my $minutesElapsed = POSIX::floor($secondsElapsed/60);
+  my $minutes = $minutesElapsed % 60;
+  my $hours = POSIX::floor($minutesElapsed/60);
+
+  my $elapsed = sprintf("%03d:%02d:%02d", $hours, $minutes, $seconds);
+
+  my @lines = `ps $psargs 'uname pid %cpu %mem rss size sz vsz nlwp wchan psr ppid args'`;
+
+  shift @lines;
+
+  my @load = `cat /proc/loadavg`;
+
+  my @parts = split /\s+/, $load[0];
+  my $load = shift @parts;
+
+  open(OUT, ">>$output") or die "Couldn't open $output for writing\n";
+
+  foreach my $line (@lines)
+  {
+    chomp $line;
+
+    my @parts = split /\s+/, $line;
+
+    my $user = shift @parts;
+    my $pid = shift @parts;
+    my $cpu_pct = shift @parts;
+    my $mem_pct = shift @parts;
+    my $rss = shift @parts;
+    my $size = shift @parts;
+    my $sz = shift @parts;
+    my $vsz = shift @parts;
+    my $thread_count = shift @parts;
+    my $wchan = shift @parts;
+    my $psr = shift @parts;
+    my $ppid = shift @parts;
+    my $args = "@parts";
+
+    print OUT qq{$hostname,"$elapsed","$user",$pid,$load,$cpu_pct,$mem_pct,$rss,$size,$sz,$vsz,$thread_count,"$wchan",$psr,$ppid,"$args"\n};
+  }
+
+  close(OUT);
+
+  sleep($sample);
+}
+
+unlink $pidfile;
