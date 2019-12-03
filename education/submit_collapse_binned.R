@@ -92,7 +92,7 @@ for (i in 1:length(unique(edu.data$file))){
   slashes <- gregexpr("/",c.file)[[1]]
   c.name <- substr(c.file, slashes[length(slashes)]+1, nchar(c.file)-4)
 
-  system(paste0("qsub -o ", log_dir, " -e ", log_dir, " -N ", c.name  ," -P proj_geo_nodes -l geos_node=TRUE -pe multi_slot 10 /ihme/code/geospatial/kwilson7/lbd_core/mbg_central/share_scripts/shell_singularity10.sh /ihme/code/geospatial/kwilson7/edu/education/parallel_collapse_binned.R",
+  system(paste0("qsub -o ", log_dir, " -e ", log_dir, " -N ", c.name  ," -P proj_geo_nodes -l geos_node=TRUE -pe multi_slot 10 <<<< FILEPATH REDACTED >>>>",
                  " ",c.year," ",c.level," " ,c.file))
   
 }

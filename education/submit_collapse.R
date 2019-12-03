@@ -44,7 +44,7 @@ for(indicator in all_inds) {
   
   ind_log_dir <- paste0(log_dir, '/', indicator)
   dir.create(ind_log_dir, showWarnings = TRUE)
-  qsub <- paste0('qsub -e ', ind_log_dir, ' -o ', ind_log_dir,' -l m_mem_free=200G -q geospatial.q -l h_rt=03:00:00:00 -l fthread=4 -P ', proj, ' -N ', indicator, ' ', '-v sing_image=default /ihme/code/geospatial/nathenry/lbd_core/mbg_central/share_scripts/shell_sing.sh ', repo, '/', indicator_group,
+  qsub <- paste0('qsub -e ', ind_log_dir, ' -o ', ind_log_dir,' -l m_mem_free=200G -q geospatial.q -l h_rt=03:00:00:00 -l fthread=4 -P ', proj, ' -N ', indicator, ' ', '-v sing_image=default <<<< FILEPATH REDACTED >>>> ', repo, '/', indicator_group,
                  '/', collapse_script, ' ', indicator) 
   system(qsub)
   
