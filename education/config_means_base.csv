@@ -1,0 +1,64 @@
+indicator_family,gaussian
+coefs_sum1,TRUE
+constrain_children_0_inf,FALSE
+crossval,TRUE
+datatag,
+gbm_bf,0.75
+gbm_lr,0.005
+gbm_tc,3
+ho_mb,10
+ho_ts,500
+inla_cores,5
+intercept_prior,0
+interval_mo,12
+intstrat,eb
+lat_col,latitude
+long_col,longitude
+mesh_s_max_edge,"c(0.25, 5)"
+mesh_s_offset,"c(1, 5)"
+mesh_t_knots,c(1:18)
+n_ho_folds,5
+n_stack_folds,5
+other_weight,
+rake_transform,FALSE
+region_list,noaf cssa sssa wssa essa seas eaas soas ocea caca bra ansa+pry+sur+guy+guf mide stan
+samples,1000
+skipinla,FALSE
+skiptoinla,FALSE
+skiptoinla_from_rundate,2018_10_11_11_21_22
+slots,10
+ss_col,weighted_n
+st_targ,0.05
+stacked_fixed_effects,gbm + gam + lasso
+stackers_in_transform_space,FALSE
+target_type,less
+test_pct,1
+time_stamp,TRUE
+transform,cell_all
+use_child_country_fes,TRUE
+use_inla_country_fes,FALSE
+use_inla_country_res,TRUE
+use_inla_nugget,TRUE
+use_share,TRUE
+withtag,FALSE
+year_list,c(2000:2017)
+yearload,annual
+yr_col,year
+gbm_bounded_0_1,FALSE
+re_weight,FALSE
+keep_inla_files,TRUE
+fit_with_tmb,FALSE
+use_s2_mesh,TRUE
+s2_mesh_params,"c(25, 500, 1000)"
+subnational_raking,FALSE
+modeling_shapefile_version,current
+raking_shapefile_version,current
+rho_prior,"list(prior = 'normal', param = c(3, 25))"
+nugget_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+ctry_re_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+pc_prior,F
+range_lower_tail,
+sigma_upper_tail,
+use_raw_covs,FALSE
+use_stacking_covs,TRUE
+pop_measure,wocba
