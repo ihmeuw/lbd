@@ -1,4 +1,4 @@
-# CGF - LMICs - 2019
+# CGF - LMICs - 2020
 This repo contains cleaned code used to generate estimates of child growth failure (CGF) prevalence among children under the age of 5 in low and middle income countries (LMICs) as reported in _Mapping child growth failure across low- and middle-income countries_ published in Nature on January 08, 2020.
 
 This repo contains two directories:
