@@ -8,7 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
-* [Child Growth Failure (CGF) - Africa - 2018](https://github.com/ihmeuw/lbd/tree/cgf-africa-2018)
+* [Child Growth Failure (CGF) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/cgf-lmic-2020)
 * [Educational Attainment (EDU) - LMIC - 2019](https://github.com/ihmeuw/lbd/tree/edu-lmic-2019)
 * [Exclusive Breastfeeding (EBF) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/ebf-africa-2019)
 * [HIV prevalence and the number of people living with HIV (PLHIV) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/hiv-africa-2019)
