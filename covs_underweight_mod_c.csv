@@ -1,0 +1,15 @@
+covariate,measure,gbd,include
+access2 ,mean,F,T
+evi,median,F,T
+worldpop ,total ,F,T
+fertility ,mean,F,T
+mapincidence,mean ,F,T
+ghslurbanicity,mean,F,T
+crutspre ,sum,F,T
+crutstmp,mean,F,T
+growingseason,mean,F,T
+irrigation,mean,F,T
+herreronyieldvita ,vita,F,T
+edu_mean_stage2,mean,F,T
+ldi_pc,mean,T,T
+sanitation_prop,mean,T,T
