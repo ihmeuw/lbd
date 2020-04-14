@@ -1,0 +1,79 @@
+check_cov_pixelcount,FALSE
+coefs_sum1,TRUE
+constrain_children_0_inf,FALSE
+countries_not_to_rake,NULL
+countries_not_to_subnat_rake,KEN
+ctry_re_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+datatag,
+fit_with_tmb ,FALSE
+gbd_fixed_effects_age ,"c(2, 3, 4, 5)"
+gbm_bf,0.75
+gbm_lr,0.005
+gbm_tc,3
+ho_mb,10
+ho_ts,100
+holdout_strategy,nids
+indicator_family,binomial
+individual_countries,FALSE
+inla_cores,5
+intercept_prior,0
+interval_mo,12
+intstrat,eb
+jn,"sprintf('%s_%s_%s',indicator,ifelse(as.logical(use_raw_covs)|as.logical(use_stacking_covs),ifelse(as.logical(use_raw_covs), 'raw', 'stack'),''),ifelse(as.logical(use_gp),'gp', ''))"
+keep_inla_files,FALSE
+lat_col,latitude
+long_col,longitude
+makeholdouts,FALSE
+mesh_s_max_edge,"c(0.75, 5)"
+mesh_s_offset,"c(1, 5)"
+mesh_t_knots,"c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)"
+metric_space,rate
+modeling_shapefile_version,2019_05_06
+n_ho_folds,5
+n_stack_folds,5
+nugget_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+pop_measure,a0004t
+pop_release,2017_04_27
+rake_countries,TRUE
+rake_subnational,TRUE
+rake_transform,none
+raking_shapefile_version,2019_05_06
+rho_prior,"list(prior = 'normal', param = c(4, 1/(1.2^2)))"
+samples,1000
+scale_gaussian_variance_N ,TRUE
+skip.inla,0
+skip.stacking,0
+skipinla,FALSE
+skiptoinla,FALSE
+skiptoinla_from_rundate,NULL
+spat_strat,qt
+ss_col,weighted_n
+st_targ,0.05
+stacked_fixed_effects,gam + gbm + lasso 
+stackers_in_transform_space,TRUE
+subnational_raking,TRUE
+summstats,"c('mean', 'cirange', 'upper', 'lower')"
+target_type,less
+temp_strat,prop
+test,FALSE
+test_pct,5
+time_only_gmrf_type,ar1
+time_stamp,TRUE
+transform,inverse-logit
+use_child_country_fes,FALSE
+use_geos_nodes,TRUE
+use_gp,TRUE
+use_inla_country_fes,FALSE
+use_inla_country_res,TRUE
+use_inla_nugget,TRUE
+use_raw_covs,FALSE
+use_share,TRUE
+use_stacking_covs,TRUE
+use_subnat_res,FALSE
+withtag,FALSE
+year_list,c(2000:2017)
+yearload,annual
+yr_col,year
+z_list ,0
+zcol,‘z_column_default_blank’ 
+Regions,"c('noaf', 'cssa', 'mide', 'caca', 'wssa', 'ansa', 'sssa', 'trsa', 'essa', 'eaas', 'south_asia_cgf', 'seas_ocea_cgf')"

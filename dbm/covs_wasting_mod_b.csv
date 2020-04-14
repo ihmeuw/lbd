@@ -1,0 +1,13 @@
+covariate,measure,gbd,include
+access2 ,mean,F,T
+worldpop ,total ,F,T
+fertility ,mean,F,F
+ghslurbanicity,mean,F,T
+crutspre ,sum,F,T
+growingseason,mean,F,T
+irrigation,mean,F,T
+herreronyieldiron,iron,F,T
+herreronyieldprotein,protein,F,T
+herreronyieldvita ,vita,F,T
+edu_mean_stage2,mean,F,T
+evi_v6,mean_mean,F,T
