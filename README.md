@@ -8,6 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
+* [Double Burden of Malnutrition (DBM) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/dbm-lmic-2020)
 * [Child Growth Failure (CGF) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/cgf-lmic-2019)
 * [Educational Attainment (EDU) - LMIC - 2019](https://github.com/ihmeuw/lbd/tree/edu-lmic-2019)
 * [Exclusive Breastfeeding (EBF) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/ebf-africa-2019)
