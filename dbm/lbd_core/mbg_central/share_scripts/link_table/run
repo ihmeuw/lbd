@@ -1,0 +1,48 @@
+# preamble
+core_repo <- Sys.getenv('core_dir')
+commondir <- sprintf('%s/mbg_central/share_scripts/common_inputs', core_repo)
+package_list <- c(t(read.csv(sprintf('%s/package_list.csv', commondir), header = FALSE)))
+source(sprintf('%s/mbg_central/setup.R', core_repo))
+mbg_setup(package_list = package_list, repos = core_repo)
+  
+# set a default core count in case environment variable can't be read
+default_core_count <- 1 
+
+# command-line arguments
+parser <- ArgumentParser()
+
+parser$add_argument('-c', '--command',
+  help="Link table command to run.")
+parser$add_argument('-d', '--tmpdir',
+  help="Temporary directory to read/write.")
+parser$add_argument('-s', '--shapedir',
+  help="Shapefile Directory.")
+parser$add_argument('-n', '--N',
+  help="Number of partitions.")
+parser$add_argument('--no-save', action='store_true',
+  help="for SingR - ignore.")
+    
+args <- parser$parse_args()
+
+# get number of cores and task_id from environment
+cores <- ifelse(Sys.getenv('SGE_HGR_fthread') != '', as.integer(Sys.getenv('SGE_HGR_fthread')) - 1, default_core_count)
+message(sprintf("Using %i cores for parallelization.", cores))
+
+# task id for array jobs, if applicable
+task_id <- ifelse(Sys.getenv('SGE_TASK_ID') != '', as.integer(Sys.getenv("SGE_TASK_ID")), 'NA')
+message(sprintf("Task ID is %s.", task_id))
+
+if (args$command == 'shapedir') {
+  sf_dir <- get_admin_shape_dir('')
+  print(substr(sf_dir, 1, nchar(sf_dir) - 1))
+} else if (args$command == 'partition') {
+  partition_link_table(args$N, args$tmpdir, args$shapedir)
+} else if (args$command == 'build') {
+  build_sub_link_tables(args$tmpdir, args$shapedir, task_id, cores)
+} else if (args$command == 'combine') {
+  combine_link_tables(args$N, args$tmpdir, args$shapedir, cores)
+} else if (args$command == 'cleanup') {
+  cleanup_link_tables(args$N, args$tmpdir, args$shapedir)
+} else {
+  stop(sprintf("Invalid command %s. Please use either 'partition', 'build', 'combine', or 'cleanup'.", args$command))
+}

@@ -1,0 +1,301 @@
+
+#### Parallel script for post-estimation and aggregation using FHS estimates! ###
+
+## SETUP ################################################################################
+
+stratum <- as.character(commandArgs()[4])
+run_date <- as.character(commandArgs()[5])
+indicator <- as.character(commandArgs()[6])
+indicator_group <- as.character(commandArgs()[7])
+geos_node <- as.logical(commandArgs()[8])
+
+interval_mo <- 12
+
+# Define directories
+main_dir <- paste0("/share/geospatial/mbg/", indicator_group, "/", indicator, "/output/", run_date, "/")
+temp_dir <- paste0(main_dir, "temp_post_est/")
+
+# Load objects from convenience temp file
+load(paste0(temp_dir, "post_est_temp_objs.RData"))
+
+
+# do we really need this again?
+sharedir <- sprintf("/share/geospatial/mbg/%s/%s", indicator_group, indicator)
+commondir <- sprintf("/share/geospatial/mbg/common_inputs")
+package_list <- c(t(read.csv(sprintf("%s/package_list.csv", commondir), header = FALSE)))
+
+message("Loading in required R packages and MBG functions")
+source(paste0(core_repo, "/mbg_central/setup.R"))
+mbg_setup(package_list = package_list, repos = core_repo)
+
+
+# Get the necessary variables out from the config object into global env
+rake_countries <- eval(parse(text = config[V1 == "rake_countries", V2]))
+rake_subnational <- eval(parse(text = config[V1 == "subnational_raking", V2]))
+modeling_shapefile_version <- config[V1 == "modeling_shapefile_version", V2]
+raking_shapefile_version <- config[V1 == "raking_shapefile_version", V2]
+countries_not_to_rake <- config[V1 == "countries_not_to_rake", V2]
+countries_not_to_subnat_rake <- config[V1 == "countries_not_to_subnat_rake", V2]
+year_list <- eval(parse(text = config[V1 == "year_list", V2]))
+metric_space <- config[V1 == "metric_space", V2]
+
+
+
+# Print some settings to console
+message(indicator)
+message(indicator_group)
+message(run_date)
+message(stratum)
+message(pop_measure)
+message(paste0("Summary stats: ", paste0(summstats, collapse = ", ")))
+
+# Print raking info
+print(paste0("Metric Space                       : ", metric_space))
+print(paste0("Subnational raking                 : ", rake_subnational))
+print(paste0("Countries not to rake at all       : ", countries_not_to_rake))
+print(paste0("Countries not to rake subnationally: ", countries_not_to_subnat_rake))
+print(paste0("Custom output folder               : ", fhs_raked_outputs))
+
+
+# For now just assign stratum to reg (will need to modify the below for strata beyond reg)
+reg <- stratum
+age <- 0
+holdout <- 0
+
+
+## PREPARE RASTERS, ETC. ################################################################
+
+# Load cell draws of the previously made projections!
+message("Loading Data...")
+cell_pred_proj_list <- lapply(proj_years, function(yr) {
+  readRDS(paste0(main_dir, "/pred_derivatives/proj/", indicator, "_", measure, "_", yr, "_projections_cell_draw_matrix_", reg, ".RDs")  )
+})
+cell_pred_proj <- do.call(rbind, cell_pred_proj_list)
+
+
+# Rake estimates
+if (rake_countries) {
+  if (!exists("gbd_forecast")) {
+    stop("rake_countries was specified as T in config, gbd raking targets must be provided.")
+  }
+
+  ## determine if a crosswalk is needed
+  if (modeling_shapefile_version == raking_shapefile_version) crosswalk <- F else crosswalk <- T
+
+  # Assume linear raking unless specified as logit
+  if (rake_transform == "logit") rake_method <- "logit" else rake_method <- "linear"
+
+
+  ##### Prep input data into raking:
+
+  ## Get the simple and new_simple rasters prepped up for us
+  print("Getting simple and prepped rasters")
+  raster_outputs <- prep_shapes_for_raking(
+    reg = reg,
+    modeling_shapefile_version = modeling_shapefile_version,
+    raking_shapefile_version = raking_shapefile_version,
+    field = 'loc_id'
+  )
+
+  ## Take out the objects from the list that actually matters to us:
+  simple_raster <- raster_outputs[["simple_raster"]]
+  new_simple_raster <- raster_outputs[["new_simple_raster"]]
+
+  simple_polygon <- raster_outputs[["simple_polygon"]]
+  new_simple_polygon <- raster_outputs[["new_simple_polygon"]]
+
+  pixel_id <- raster_outputs[["pixel_id"]]
+
+
+
+  ##### Using fractional raking #####
+
+  if (metric_space == "rates") {
+    print("Get FHS populations")
+
+    fhs_pops <- get_fhs_population(pop_measure = pop_measure, 
+                                   sex_ids = 3,
+                                   scenarios = 0, 
+                                   year_ids = proj_years,
+                                   gbd_regions = unique(gbd_forecast$name))
+    
+    
+    print("Using the rates raking and aggregation functions:")
+
+    ## First, create all the fractional rake factors
+    fractional_rake_rates(
+      cell_pred = cell_pred_proj,
+      simple_raster = simple_raster,
+      simple_polygon = simple_polygon,
+      pixel_id = pixel_id,
+      shapefile_version = raking_shapefile_version,
+      reg = reg,
+      pop_measure = pop_measure,
+      year_list = proj_years,
+      use_intermediate_years = FALSE,
+      interval_mo = interval_mo,
+      rake_subnational = rake_subnational,
+      age_group = age_group,
+      sex_id = sex_id,
+      sharedir = sharedir,
+      run_date = run_date,
+      indicator = indicator,
+      gbd = gbd_forecast,
+      gbd_pops = fhs_pops,
+      rake_method = rake_method,
+      countries_not_to_rake = countries_not_to_rake,
+      countries_not_to_subnat_rake = countries_not_to_subnat_rake,
+      custom_output_folder = fhs_raked_outputs
+    )
+
+    ## Now, create the raked cell pred files!
+    outputs <- fractional_agg_rates(
+      cell_pred = cell_pred_proj,
+      simple_raster = simple_raster,
+      simple_polygon = simple_polygon,
+      pixel_id = pixel_id,
+      shapefile_version = raking_shapefile_version,
+      reg = reg,
+      pop_measure = pop_measure,
+      year_list = proj_years,
+      use_intermediate_years = FALSE,
+      interval_mo = interval_mo,
+      rake_subnational = rake_subnational,
+      sharedir = sharedir,
+      run_date = run_date,
+      indicator = indicator,
+      main_dir = main_dir,
+      rake_method = rake_method,
+      age = age,
+      holdout = holdout,
+      countries_not_to_subnat_rake = countries_not_to_subnat_rake,
+      return_objects = TRUE,
+      custom_output_folder = fhs_raked_outputs
+    )
+
+    ## Get the necessary outputs and rename the columns
+    rf <- data.table(outputs[["rf"]])[, .(loc = location_id, year, start_point = mbg_prev, target = gbd_prev, raking_factor = rf)]
+    raked_cell_pred_proj <- outputs[["raked_cell_pred"]]
+
+    ## Raked simple raster has been made above
+    raked_simple_raster <- new_simple_raster
+
+  } else if (metric_space == "counts") {
+    print("Using the counts raking and aggregation functions:")
+
+    ## Rake counts
+    outputs <- fractionally_rake_counts(
+      count_cell_pred = data.table(cell_pred_proj),
+      rake_to = gbd,
+      reg = reg,
+      year_list = proj_years,
+      rake_subnational = rake_subnational,
+      countries_not_to_subnat_rake = countries_not_to_subnat_rake,
+      countries_not_to_rake = countries_not_to_rake,
+      simple_raster = simple_raster,
+      modeling_shapefile_version = modeling_shapefile_version,
+      raking_shapefile_version = raking_shapefile_version
+    )
+
+
+
+
+    ## Get the necessary outputs
+    rf <- outputs$raking_factors
+    raked_cell_pred_proj <- outputs$raked_cell_pred
+    raked_simple_raster <- new_simple_raster
+
+    ## Save out the aggregate files
+    raked_frax_counts_save(output_list = outputs, sharedir = sharedir, indicator = indicator, age = age, reg = reg, holdout = holdout)
+  }
+} else {
+  rf <- NULL
+  raked_cell_pred <- NULL
+
+  # Define simple raster for mask
+  simple_polygon_list <- load_simple_polygon(
+    gaul_list = get_adm0_codes(reg,
+      shapefile_version = modeling_shapefile_version
+    ),
+    buffer = 0.4, subset_only = FALSE,
+    shapefile_version = modeling_shapefile_version
+  )
+  subset_shape <- simple_polygon_list[[1]]
+  simple_polygon <- simple_polygon_list[[2]]
+  raster_list <- build_simple_raster_pop(subset_shape)
+  simple_raster <- raster_list[["simple_raster"]]
+  rm(simple_polygon_list)
+}
+
+## SAVE THE RESULTS #####################################################################
+message("Saving results...")
+
+## save RF
+save_post_est(rf, "csv", paste0(reg, "_rf_PROJ"))
+
+## save raked cell preds
+save(raked_cell_pred_proj, file = paste0(
+  fhs_raked_outputs, "/",
+  indicator, "_raked_cell_draws_eb_bin0_", reg, "_0.RData"
+))
+
+# make and save summaries
+
+save_cell_pred_summary <- function(summstat, raked, ...) {
+  message(paste0("Making summmary raster for: ", summstat, " (", raked, ")"))
+  
+  mask_raster <- "simple_raster"
+  
+  if (raked == "unraked") {
+    cpred <- "cell_pred_proj"
+  }
+  if (raked == "raked") {
+    cpred <- "raked_cell_pred_proj"
+    
+    ## Commenting this raster out because there will be issues
+    # mask_raster <- "raked_simple_raster"
+  }
+  ras <- make_cell_pred_summary(
+    draw_level_cell_pred = get(cpred),
+    mask = get(mask_raster),
+    return_as_raster = TRUE,
+    summary_stat = summstat,
+    ...
+  )
+  save_post_est(ras, "raster", paste0(reg, ifelse(raked == "raked", "_raked", ""), "_", summstat, "_raster_PROJ"))
+}
+
+# Do this as lapply to not fill up memory in global env with big obs
+if (is.null(gbd_forecast)) {
+    rake_list <- c("unraked")
+} else {
+    rake_list <- c("unraked", "raked")
+}
+
+summ_list <- expand.grid(summstats[summstats != "p_below"], rake_list)
+
+lapply(1:nrow(summ_list), function(i) {
+  summstat <- as.character(summ_list[i, 1])
+  raked <- as.character(summ_list[i, 2])
+  save_cell_pred_summary(summstat, raked)
+})
+
+## Can't pass additional params in the above framework, so will code by hand here
+for (r in rake_list) {
+  if ("p_below" %in% summstats) {
+    save_cell_pred_summary(
+      summstat = "p_below",
+      raked = r,
+      value = 0.8,
+      equal_to = F
+    )
+  }
+}
+
+# Write a file to mark done
+output_dir <- paste0("/share/geospatial/mbg/", indicator_group, "/", indicator, "/output/", run_date)
+pathaddin <- paste0("_bin0_", reg, "_0") # To allow us to use waitformodelstofinish()
+write(NULL, file = paste0(output_dir, "/fin_", pathaddin))
+
+# All done
+message(paste0("Done with projections' post-estimation and aggregation for ", stratum))
