@@ -1,0 +1,16 @@
+indi,region,gbm_tc,gbm_nminobs,gbm_ntrees,gbm_lr,gbm_bf,gbm_cv,date_added
+had_diarrhea,dia_afr_horn,4,12,933,0.088444148,0.5,3,20190917
+had_diarrhea,dia_central_asia,4,9,1397,0.03661389,0.5,3,20190917
+had_diarrhea,dia_cssa,4,13,997,0.061331882,0.5,3,20190917
+had_diarrhea,dia_mcaca,4,12,1374,0.034733846,0.5,3,20190917
+had_diarrhea,dia_mid_east,4,11,778,0.068743656,0.5,3,20190917
+had_diarrhea,dia_name,4,6,1680,0.058441882,0.5,3,20190917
+had_diarrhea,dia_s_america,4,14,3996,0.08972747,0.5,3,20190917
+had_diarrhea,dia_se_asia,4,13,1883,0.040441503,0.5,3,20190917
+had_diarrhea,dia_south_asia-ind,4,15,1323,0.043517094,0.5,3,20190917
+had_diarrhea,dia_sssa,4,9,758,0.067286795,0.5,3,20190917
+had_diarrhea,dia_wssa,4,14,982,0.073060191,0.5,3,20190917
+had_diarrhea,IND,4,15,9662,0.011108326,0.5,3,20190917
+had_diarrhea,MNG,4,12,1479,0.019964101,0.5,3,20190917
+had_diarrhea,dia_essa,4,8,4448,0.040783379,0.5,3,20190917
+had_diarrhea,dia_malay,4,14,5780,0.031840354,0.5,3,20190917
