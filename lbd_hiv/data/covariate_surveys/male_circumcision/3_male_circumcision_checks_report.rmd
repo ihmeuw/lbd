@@ -1,0 +1,314 @@
+---
+title: "Male Circumcision"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+params:
+  comments_path: "<<<< FILEPATH REDACTED >>>>"
+  vetted_path: "<<<< FILEPATH REDACTED >>>>"
+  input_version: "03-04-2020"
+  fast_checks: TRUE
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 2000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+
+```{r setup, echo=FALSE, eval=TRUE, include=FALSE}
+l <- "<<<< FILEPATH REDACTED >>>>"
+j <- "<<<< FILEPATH REDACTED >>>>"
+libs <- c("data.table", "raster", "foreign", "rgdal", "geosphere", "fossil", "dplyr", "rgeos", "ggplot2", "gridExtra", "kableExtra", "scales")
+sapply(libs, require, lib.loc=paste0(j,"<<<< FILEPATH REDACTED >>>>"), character.only = T)
+
+data <- readRDS(paste0(l,"<<<< FILEPATH REDACTED >>>>"))
+data <- data.frame(data)
+data$no_geog <- ifelse(is.na(data$point), 1, 0)
+data$int_year <- as.numeric(data$int_year)
+data$year <- as.numeric(data$year)
+data$end_year <- as.numeric(data$end_year)
+
+surveys <- sort(unique(c(data$nid)))
+comments <- read.csv(paste0(l,params$comments_path))
+
+survey_status <- read.csv(paste0(l,params$vetted_path))
+row.names(survey_status) <- as.numeric(survey_status$survey)
+```
+
+```{r summary, echo=FALSE, results='asis'}
+cat("<h2 align=\"center\">", length(surveys), "surveys for this extraction.</h2>")
+```
+  
+<h2 align="center">GEOGRAPHICAL INFORMATION</h2>
+```{r points, echo=FALSE, include=FALSE, warnings=FALSE}
+## THIS NEED TO BE RE-ADDED WITH THE NEW SHAPEFILE INFO
+# admin0 <- readOGR(paste0(j,"/WORK/11_geospatial/05_survey shapefile library/Shapefile directory/global_rasterized_admin0.shp"))
+# # Subset the dataset to containt only point locations
+# point.locations <- data[which(data$point == 1), c("nid", "survey_series", "country", "year", "end_year", "geospatial_id", "latitude", "longitude")]
+# 
+# n_svy_point <- length(unique(point.locations$nid))
+# 
+# point.locations <- unique(point.locations)
+# 
+# # List surveys in dataset
+# point_surveys <- sort(unique(point.locations$nid))
+# nids <- c(135416, 203654, 203663, 203664)
+# point_surveys <- point_surveys[!(point_surveys %in% nids)]
+# 
+# out_of_bounds <- data.frame()
+# #Loop through point_surveys and find points outside of national boundaries
+# for (i in 1:length(point_surveys)){
+#   survey <- point_surveys[i]
+#   
+#   #subset and prep survey to country
+#   sub <- unique(point.locations[point.locations$nid == survey, ])
+#   sub$latitude <- as.double(sub$latitude)
+#   sub$longitude <- as.double(sub$longitude)
+#   
+#   #subset shapefile to survey country
+#   sub.shapefile <- admin0[admin0@data$ISO3 == sub$country[1], ] # change COUNTRY_ID to ihme_lc_id for gbd shpfile
+#   
+#   #get points outside boundaries
+#   outside_pts <- sub[is.na(over(SpatialPoints(sub[, c("longitude", "latitude")], CRS(proj4string(sub.shapefile))), as(sub.shapefile, "SpatialPolygons"))),]
+#   
+#   if (nrow(outside_pts) != 0) {
+#     sp <- SpatialPoints(outside_pts[,c("longitude", "latitude")], CRS(proj4string(sub.shapefile)))
+#     outside_pts$min_distance_km <- dist2Line(sp, as(sub.shapefile, "SpatialPolygons"))[,1]/1000
+# 
+#     out_of_bounds <- rbind(out_of_bounds, outside_pts)
+#   }
+# }
+```
+
+```{r print_points, echo=FALSE, results='asis'}
+# cat("<h3 align=\"center\">", n_svy_point, "surveys have point data.</h3>")
+# 
+# cat("<h4 align=\"left\">", "There are", nrow(out_of_bounds), "points outside country borders.</h4>")
+# 
+# out_of_bounds$cell_color <- ifelse(out_of_bounds$min_distance_km >= 10, "red", ifelse(out_of_bounds$min_distance_km >= 5, "orange", "black"))
+# 
+# out_of_bounds[order(out_of_bounds$min_distance_km),] %>%
+#   mutate(
+#     nid = cell_spec(nid, "html", color=cell_color),
+#     survey.series = cell_spec(survey_series, "html", color=cell_color),
+#     country = cell_spec(country, "html", color=cell_color),
+#     start.year = cell_spec(year, "html", color=cell_color),
+#     end.year = cell_spec(end_year, "html", color=cell_color),
+#     geospatial.id = cell_spec(geospatial_id, "html", color=cell_color),
+#     latitude = cell_spec(round(latitude, digits=2), "html", color=cell_color),
+#     longitude = cell_spec(round(longitude, digits=2), "html", color=cell_color),
+#     distance = cell_spec(round(min_distance_km, digits=2), "html", color=cell_color)
+# 
+#   ) %>% dplyr::select(nid, survey.series, country, start.year, end.year, geospatial.id, latitude, longitude, distance) %>% 
+#   rename(series=survey.series, "start year" = start.year, "end year" = end.year, "geo id"=geospatial.id, "distance (km)"=distance) %>%
+#   kable("html", escape=FALSE, booktabs=TRUE, longtable=TRUE, linesep="", row.names=FALSE, align=c(rep('l',3),rep('c',4),'l')) %>% column_spec(8, width="20em") %>% 
+#   kable_styling() 
+```
+
+
+```{r polys, echo=FALSE, include=FALSE, warnings=FALSE}
+# 
+# # subset to get surveys with polygon data
+# polys <- data[which(data$point == 0), c("nid", "survey_series", "country", "year", "end_year", "shapefile", "location_code", "geospatial_id")]
+# 
+# n_svy_poly <- length(unique(polys$nid))
+# 
+# survey_locs <- polys %>% 
+#   group_by(nid, survey_series, country, year, end_year, shapefile, location_code) %>%
+#   dplyr::summarise(geo_ids = toString(unique(geospatial_id)))
+# 
+# for (ii in 1:ncol(survey_locs)) attributes(survey_locs[[ ii]]) <- NULL
+# 
+# missing_shapefiles <- subset(survey_locs, shapefile == "" | is.na(shapefile)) # polygon rows missing a shapefile
+# 
+# survey_locs <- survey_locs[which(survey_locs$shapefile!= "" & !is.na(survey_locs$shapefile)), ]
+# 
+# # make sure location codes are numeric to match shapefile gaul codes
+# survey_locs$location_code <- as.numeric(survey_locs$location_code)
+# 
+# # sort surveys based on shapefile name (should speed things up as we won't have to re-read in the dbf if the same shapefile
+# # is used for numerous surveys)
+# survey_locs <- survey_locs[order(survey_locs$shapefile), ]
+# 
+# # remove any NA/blanks from survey_locs location codes
+# missing_codes <- subset(survey_locs, is.na(location_code)) # rows that don't have a gaul code
+# survey_locs <- survey_locs[!is.na(survey_locs$location_code), ]
+# 
+# survey_locs <- survey_locs[-c(8)] # we don't need the geo ids column anymore because now we want to group by location code
+# 
+# # create file path leading to shapefile directory
+# path <- c(paste0(j,"/WORK/11_geospatial/05_survey shapefile library/Shapefile directory/"))
+# 
+# # subset out and save shapefiles that are not in the shapefile directory
+# invalid_shapefiles <- subset(subset(survey_locs, !(paste0(shapefile, '.shp') %in% list.files(path))), !is.na(nid)) # stupid hack to get around inner subset producing row of all NAs if survey_locs is empty
+# 
+# # create a list of unique surveys and (valid) shapefile combinations containing polygon data
+# poly_surveys <- unique(subset(survey_locs[c('nid','shapefile')], paste0(shapefile, '.shp') %in% list.files(path)))
+#   
+# # create empty dataframe to bind codes missing in a shapefile
+# invalid_codes <- data.frame()
+# 
+# # create empty shapefile name, to check if already loaded in environment
+# survey_shape <- data.frame(name ='x',shapefile='y')
+# 
+# # loop through each survey, load in the specific shapefile, and check which locs are not within
+# # the gaul code column
+# if (nrow(poly_surveys) > 0) {
+#   for(i in 1:nrow(poly_surveys)){
+#     
+#     # get the nid for that specific survey
+#     survey_nid <- poly_surveys$nid[i]
+#     survey_shp <- poly_surveys$shapefile[i]
+#     
+#     # create an index to the shapefile, and location codes within that survey
+#     idx <- which((survey_locs$nid == survey_nid) & (survey_locs$shapefile == survey_shp))
+#     survey_data <- survey_locs[idx, ]
+#   
+#     # create filepath for the shapefile
+#     shapefile_path <- paste(path, survey_shp, '.dbf', sep = '')
+#     
+#     # read in the shapefile for that survey
+#     # don't re-read in the dbf if it's already loaded however
+#     if (survey_shape$shapefile[1] != poly_surveys$shapefile[i]) {
+#       survey_shape <- read.dbf(shapefile_path, header=T)[[1]]
+#     }
+#     
+#     # add shapefile name into shapefile
+#     survey_shape$shapefile <- rep(survey_shp, nrow(survey_shape))
+#     
+#     # get a list of unique location codes within the survey
+#     survey_codes <- unique(survey_data$location_code)
+#     
+#     # get a list of unique location codes within the shapefile
+#     shape_codes <- unique(survey_shape$GAUL_CODE)
+#     
+#     mismatched_codes <- setdiff(survey_codes, shape_codes)
+#   
+#     # bind onto invalid_codes
+#     svy_invalid_codes <- subset(survey_data, location_code %in% mismatched_codes)
+#     if (nrow(invalid_codes) == 0) invalid_codes <- svy_invalid_codes
+#     else invalid_codes <- rbind(invalid_codes,svy_invalid_codes)
+#   }
+# }
+# 
+# invalid_codes <- invalid_codes %>% group_by(nid, survey_series, country, year, end_year, shapefile) %>% dplyr::summarise(location_codes=toString(sort(unique(location_code))))
+
+```
+  
+   
+   
+```{r print_polys, echo=FALSE, results='asis'}
+# cat("<h3 align=\"center\">", n_svy_poly, "surveys have polygon data.</h3>")
+# 
+# if (nrow(missing_shapefiles) > 0) {
+#   cat("<h4 align=\"left\">The following", nrow(missing_shapefiles), "surveys are missing a shapefile for one or more geo_ids: </h4>")
+#   missing_shapefiles$shapefile <- "MISSING"
+#   missing_shapefiles %>% kable("html", escape=FALSE, booktabs=TRUE, longtable=TRUE, linesep="", row.names=FALSE) %>% 
+#     column_spec(8, width="10em") %>% 
+#     column_spec(6, color="red") %>% 
+#   kable_styling() 
+# }
+# if (nrow(missing_codes) > 0) {
+#   cat("<h4 align=\"left\">The following", nrow(missing_shapefiles), "surveys are missing gaul codes for one or more geo_ids: </h4>")
+#   missing_codes$location_code <- "MISSING"
+#   missing_codes %>% kable("html", escape=FALSE, booktabs=TRUE, longtable=TRUE, linesep="", row.names=FALSE) %>% 
+#     column_spec(8, width="10em") %>% 
+#     column_spec(7, color="red") %>% 
+#   kable_styling() 
+# }
+# if (nrow(invalid_shapefiles) > 0) {
+#   cat("<h4 align=\"left\">The following", nrow(invalid_shapefiles), "surveys reference shapefiles not stored in the shapefile directory: </h4>")
+#   invalid_shapefiles %>% kable("html", escape=FALSE, booktabs=TRUE, longtable=TRUE, linesep="", row.names=FALSE) %>% 
+#     column_spec(6, color="red") %>% 
+#   kable_styling() 
+# }
+# if (nrow(invalid_codes) > 0) {
+#   cat("<h4 align=\"left\">The following", nrow(invalid_codes), "surveys reference gaul codes not found in the listed shapefile: </h4>")
+#   invalid_codes %>% kable("html", escape=FALSE, booktabs=TRUE, longtable=TRUE, linesep="", row.names=FALSE) %>% 
+#     column_spec(7, width="12em", color="red") %>% 
+#   kable_styling() 
+# }
+```
+
+<h2 align="left">SURVEY STATUS</h2>
+  
+```{r fast checks, echo=FALSE, results='asis'}
+# print the title of each survey already vetted and if fast checks is on, only print full diagnostics for unvetted surveys
+
+vetted_surveys <- as.character(subset(survey_status, vetted == 1)$survey)
+if (length(vetted_surveys) == 0) {
+  cat("<h3 align=\"left\">0 surveys have been vetted.</h3>")
+} else {
+  cat("<h3 align=\"left\">The following", length(vetted_surveys), "surveys have been vetted: </h3>")
+}
+```
+<div class="col2">
+```{r vetted surveys, echo=FALSE, results='asis'}
+for (vsvy in vetted_surveys) {
+  svy_dta <- subset(data, nid == vsvy)
+  cat("<p>", svy_dta$survey_name[1], svy_dta$country[1],svy_dta$year[1])
+  if (svy_dta$year[1] != svy_dta$end_year[1]) {
+    cat(paste0('-', svy_dta$end_year[1]))
+  }
+  cat(' ', paste0('(nid ', svy_dta$nid[1] ,')'), "</p>")
+}
+```
+</div>
+
+```{r remaining surveys, echo=FALSE, results='asis'}
+unvetted_svys <- setdiff(surveys, vetted_surveys)
+cat("<h3 align=\"left\">", length(unvetted_svys), "surveys remain to be vetted.</h3>")
+if (params$fast_checks) {
+  surveys <- unvetted_svys
+  data <- subset(data, nid %in% surveys)
+  cat("<h5 align=\"left\"><span style=\"color:blue\">Fast checks is turned on. Printing diagnostics only for unvetted surveys.</h5></span>")
+} else {
+  cat("<h5 align=\"left\"><span style=\"color:red\">Fast checks is turned off. Printing diagnostics for all surveys.</h5></span>")
+}
+```
+
+```{r reformat, echo=FALSE, include=FALSE}
+## Only reformat data for surveys we will print diagnostics for
+data$male_circumcision <- factor(data$male_circumcision, labels = c("False", "True"))
+```
+
+```{r indiv checks, echo=FALSE, eval=TRUE, include=FALSE}
+out <- NULL
+
+# this will hang if not in RStudio
+#curr_path <- strsplit(rstudioapi::getSourceEditorContext()$path, '/')[[1]]
+#curr_path[length(curr_path)] <- '3_male_circumcision_checks_individual_survey.rmd'
+#child_path <- paste(curr_path, collapse='/')
+
+opts_knit$set(output.dir='~/repos/lbd_hiv/data/covariate_surveys/microdata/male_circumcision') #paste(curr_path[1:length(curr_path)-1], collapse='/'))
+
+for (svy in surveys) {
+  svy_dta <- subset(data, nid == svy)
+  svy_comments <- subset(comments, survey == svy)$known_issues
+  vetted <- ifelse(!is.na(survey_status[svy,]$vetted), TRUE, FALSE)
+  out <- c(out, knit_child('3_male_circumcision_checks_individual_survey.rmd')) # by default, knit_child inherits the envir argument of knit() so it will inherit svy_dta
+}
+```
+
+```{r output, echo=FALSE, results='asis'}
+cat(out)
+```
+

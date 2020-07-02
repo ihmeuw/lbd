@@ -1,0 +1,126 @@
+---
+output:
+  html_document:
+    df_print: paged
+geometry: margin=1cm
+---
+
+
+```{r, echo=FALSE, results="asis"}
+# Print the title of the survey (including year, mod, nid, country, and survey series)
+cat("<h3 align=\"left\">", svy_dta$survey_name[1], " ", svy_dta$country[1], " ", svy_dta$year[1])
+if (svy_dta$year[1] != svy_dta$end_year[1]) {
+  cat(paste0("-", svy_dta$end_year[1]))
+}
+cat(" ", svy_dta$survey_module[1], paste0("(nid ", svy_dta$nid[1] ,") "))
+# Verify survey has been vetted or not
+if (!vetted) {
+  cat("<span style=\"color:red\"> (UNVETTED)</span></h3>")  
+} else {
+  cat("<span style=\"color:blue\"> (VETTED)</span></h3>")
+}
+```
+
+
+```{r, echo=FALSE, results="asis"}
+n_obs <- nrow(svy_dta)
+# Summarise the number of observations total and by geo information
+cat("<p>",n_obs, "rows of data: ", sum(svy_dta$point == "1", na.rm = T), "with point data", "and", sum(svy_dta$point == "0", na.rm=T), "with polygon data.</p>")
+```
+
+<h4 align="left">WARNINGS</h4>
+
+<span style="color:red">
+```{r, echo=FALSE, results="asis"}
+# Check for any warnings applicable to the whole survey and print 
+no_warnings = TRUE
+missing_geo <- sum(svy_dta$no_geog)
+if (missing_geo > 0) {
+  cat("There are", missing_geo, paste0("(", round(missing_geo/n_obs*100, digits=3), "%)"), "rows with no geography information.\n")
+  no_warnings = FALSE
+}
+
+missing_pweight <- sum(is.na(svy_dta$pweight))
+if (missing_pweight > 0) {
+  cat("There are", missing_pweight, paste0("(", round(missing_pweight/n_obs*100, digits=3), "%)"), "rows missing individual weights.\n")
+  no_warnings = FALSE
+}
+
+missing_int_year <- sum(is.na(svy_dta$int_year))
+invalid_int_year <- sum(svy_dta$int_year < svy_dta$year | svy_dta$int_year > svy_dta$end_year)
+
+if (missing_int_year > 0) {
+  cat("There are", missing_int_year, paste0("(", round(missing_int_year/n_obs*100, digits=3), "%)"), "rows missing interview years.\n")
+  no_warnings = FALSE
+}
+
+if (invalid_int_year > 0) {
+  cat("There are", invalid_int_year, paste0("(", round(invalid_int_year/n_obs*100, digits=3), "%)"), "rows with interview years outside of the survey range.\n")
+  no_warnings = FALSE
+}
+
+missing_sex_id <- sum(is.na(svy_dta$sex_id))
+if (missing_sex_id > 0) {
+  cat("There are", missing_sex_id, paste0("(", round(missing_sex_id/n_obs*100, digits=3), "%)"), "rows missing sex ids.\n")
+  no_warnings = FALSE  
+}
+
+missing_age_year <- sum(is.na(svy_dta$age_year))
+if (missing_age_year > 0) {
+  cat("There are", missing_age_year, paste0("(", round(missing_age_year/n_obs*100, digits=3), "%)"), "rows missing age years.\n")
+  no_warnings = FALSE  
+}
+
+incomplete_age_range <- (sum(svy_dta$age_year == 15, na.rm=T) == 0 | sum(svy_dta$age_year == 49, na.rm = T) == 0)
+if (incomplete_age_range) {
+  cat("This survey does NOT contain the complete age range 15-49.\n")
+  no_warnings = FALSE
+}
+
+if (missing_geo == n_obs | missing_pweight == n_obs | incomplete_age_range) {
+  cat("\n **THIS SURVEY WILL BE DROPPED.** \n")
+}
+  
+```
+</span>
+
+```{r, echo=FALSE, results="asis"}
+if (no_warnings) {
+  cat("There are 0 warnings for this survey. \n")
+}
+```
+
+```{r, echo=FALSE, results="asis", fig.width = 10, fig.height = 8}
+ggplot(data = data, aes(x=male_circumcision)) +
+    geom_bar(aes(y=100*(..count..)/sum(..count..))) +
+    xlab("") +
+    ylab("Percent") +
+    ggtitle("Male Circumcision") +
+    theme(axis.text.x=element_text(vjust=1))
+```
+ 
+<h4 align="left">INDICATORS</h4>
+```{r, echo=FALSE, results="asis"}
+# CALCULATE SAMPLE SIZE AND MISSINGNESS FOR EACH Non-dropped INDICATOR AND FORMAT INTO TABLE
+
+indic_sum = data.frame(sample_size = nrow(svy_dta), per_missing = sum(is.na(svy_dta$male_circumcision))/nrow(svy_dta)*100)
+row.names(indic_sum) <- c("Male circumcision")
+
+indic_sum[order(indic_sum$per_missing),] %>% 
+  mutate(
+    indicator = cell_spec(row.names(.), "html", color=ifelse(per_missing>=5, "red", "black")),
+    sample_size = cell_spec(sample_size, "html", color=ifelse(per_missing>=5, "red", "black")),
+    per_missing = cell_spec(round(per_missing, digits=3), "html", color=ifelse(per_missing>=5, "red", "black"))
+    
+  ) %>%
+  dplyr::select(indicator, per_missing, sample_size) %>% rename("Indicator"=indicator, "Percent Missing" = per_missing, "Sample Size" = sample_size) %>%
+  kable("html", escape=FALSE, booktabs=TRUE, longtable=TRUE, linesep="", row.names=FALSE, align = c("l", "c", "c")) %>% kable_styling()
+```
+<br>
+<h4 align="left">COMMENTS</h4>
+```{r, echo=FALSE, results="asis"}
+# PRINT COMMENTS FOR SURVEY
+for (c in svy_comments) {
+  cat("<p>", c, "</p>")
+}
+```

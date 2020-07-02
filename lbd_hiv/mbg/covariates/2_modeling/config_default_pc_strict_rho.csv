@@ -1,0 +1,77 @@
+indicator_family,binomial
+keep_inla_files,FALSE
+individual_countries,FALSE
+year_list,c(2000:2017)
+yearload,annual
+interval_mo,12
+withtag,FALSE
+datatag,
+samples,1000
+time_stamp,TRUE
+makeholdouts,FALSE
+holdout_strategy,nids
+n_stack_folds,5
+yr_col,year
+ss_col,weighted_n
+long_col,longitude
+lat_col,latitude
+n_ho_folds,5
+ho_ts,750
+ho_mb,10
+slots,10
+inla_cores,5
+test,FALSE
+test_pct,5
+transform,inverse-logit
+stacked_fixed_effects,ridge
+summstats,"c('mean', 'lower', 'upper', 'cirange', 'p_above')"
+other_weight,
+use_share,FALSE
+use_child_country_fes,FALSE
+gbm_tc,2
+gbm_lr,0.005
+gbm_bf,0.75
+skiptoinla,FALSE
+skiptoinla_from_rundate,
+stackers_in_transform_space,TRUE
+coefs_sum1,FALSE
+constrain_children_0_inf,FALSE
+use_inla_country_fes,FALSE
+use_inla_country_res,TRUE
+use_inla_nugget,TRUE
+use_s2_mesh,TRUE
+s2_mesh_params,"c(20, 500, 500)"
+mesh_s_max_edge,"c(0.25, 5)"
+mesh_s_offset,"c(1, 5)"
+mesh_t_knots,"c(1:18)"
+intercept_prior,0
+intstrat,eb
+rake_transform,none
+pop_measure,a1549m
+st_targ,0.05
+target_type,less
+use_geos_nodes,TRUE
+skipinla,FALSE
+Regions,"c('sssa', 'cssa-GNQ','wssa-CPV-GMB-MRT-STP','essa-DJI-SOM-SSD-YEM')"
+use_stacking_covs,FALSE
+use_raw_covs,TRUE
+use_gp,TRUE
+fit_with_tmb,FALSE
+anc_in_stacking,FALSE
+anc_correction,none
+rho_prior,"list(prior = 'normal', param = c(4, 1/(1.2^2)))"
+nugget_prior,"list(prior = 'pc.prec', param = c(3, 0.05))"
+ctry_re_prior,"list(prior = 'pc.prec', param = c(10, 0.05))"
+spde_prior,"list(type = 'pc', prior = list(sigma = c(10, 0.05), range = c(0.01, 0.05)))"
+modeling_shapefile_version,current
+raking_shapefile_version,current
+shapefile_version,current
+SGE_ENV,prod-el7
+queue,geospatial.q
+run_time,8:00:00:00
+metric_space,rates
+rake_countries,TRUE
+rake_subnational,FALSE
+countries_not_to_rake,"cssa+sssa+essa+wssa"
+pop_release,2017_04_27
+p_above_value,0.8
