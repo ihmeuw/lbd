@@ -8,6 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
+* [Male Circumcision - Africa - 2020](https://github.com/ihmeuw/lbd/tree/male_circumcision-africa-2020)
 * [Child Growth Failure (CGF) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/cgf-lmic-2019)
 * [Diarrhea - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/diarrhea-lmic-2020)
 * [Double Burden of Malnutrition (DBM) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/dbm-lmic-2020)
@@ -25,4 +26,3 @@ By the time of each of our publications, cleaned code should be available in thi
 * You may find the [main IHME website here](http://www.healthdata.org).
 * You may find the [main LBD website here](http://www.healthdata.org/lbd).
 * You may find [interactive LBD visualizations here](http://www.healthdata.org/lbd/data-visualizations).
-
