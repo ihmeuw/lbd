@@ -1,0 +1,11 @@
+"","covariate","measure","include","gbd"
+"1","access2","mean",TRUE,FALSE
+"2","distriverslakes","mean",TRUE,FALSE
+"3","edu_mean_stage2","mean",TRUE,FALSE
+"4","elevation","mean",TRUE,FALSE
+"5","ghslurbanicity","mean",TRUE,FALSE
+"6","haqi","mean",TRUE,TRUE
+"7","herreronyield","vita",TRUE,FALSE
+"8","irrigation","mean",TRUE,FALSE
+"9","wasting_mod_b","mean",TRUE,FALSE
+"10","worldpop_raked","a0004t",TRUE,FALSE

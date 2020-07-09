@@ -1,0 +1,275 @@
+---
+title: 'Oral rehydration therapy data scoping'
+output: html_document
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list=ls())
+```
+
+
+```{r packages, include = FALSE}
+source('<<<< FILEPATH REDACTED >>>>/ort/ort_data_scoping/data_scoping_functions.R')
+```
+
+
+<br>
+
+## Outline
+
+* Oral rehydration therapy (ORT): background and definitions
+* Example survey questionnaires
+* Proposed indicators and questions to map
+* Number of surveys that ask each question
+* Stage 1 and 2 data coverage plots
+* Considerations and limitations
+* Additional questions related to ORT
+* Next steps for mapping
+
+<br>
+
+## Oral rehydration therapy (ORT): background
+
+```{r background, echo=FALSE, out.width = '50%'}
+include_graphics('<<<< FILEPATH REDACTED >>>>/ors_by_region.png')
+```
+
+* Electrolyte solutions increase uptake of nutrients from food.
+* Oral rehydration salts (ORS) were created in various formulations.
+* ORS prevent mortality in children with diarrhea (Melinda et al. 2010).
+* Does not require a medical professional or a prescription.
+* Yet, coverage is low compared to other relatively simple interventions (e.g. 75% for vitamin A supplements).
+
+<br>
+
+## Oral rehydration therapy (ORT): definitions
+
+**Oral rehydration solution (ORS)**  
+An electrolyte solution containing sodium, chloride, potassium, bicarbonate or citrate and glucose or another form of sugar or starch. This includes reduced osmolarity ORS (total osmolarity ≤250 mmol/l) and higher osmolarity ORS (up to 370 mmol/l).
+
+**Recommended home fluids (RHF)**  
+All possible home fluid alternatives, including sugar–salt solution, cereal–salt solution, rice–water solution and additional fluids such as plain water, juice, tea or rice water.
+
+**Oral rehydration therapy (ORT)**  
+A combination of ORS and RHF or a scenario where the effects of ORS and/or RHF cannot be individually separated. 
+
+*Definitions are as described in the following systematic review:*  
+Melinda K. Munos, Christa L Fischer Walker, Robert E Black; **The effect of oral rehydration solution and recommended home fluids on diarrhoea mortality**, International Journal of Epidemiology, Volume 39, Issue suppl_1, 1 April 2010, Pages i75–i87, https://doi.org/10.1093/ije/dyq025
+
+<br>
+
+```{r data, echo = FALSE}
+# load data
+study_data <- fread('<<<< FILEPATH REDACTED >>>>/ort_preliminary_scoping.csv')
+
+# subset by stage 1 and 2
+study_data <- study_data[stage !=3]
+
+# create a general diarrhea indicator
+study_data[, q_diarrhea := had_diarrhea != '']
+
+# create one ORS indicator (ort/ors general, special packet, or ors liquid asked)
+study_data[, q_ors_all := (q_ort+q_packet+q_liquid) > 0]
+
+# create either/or ORT indicator (either ORS or RHF asked)
+study_data[, q_ort_or_rhf := (q_ors_all+q_rhf+q_other) > 0]
+
+# create both/and ORT indicator (both ORS and RHF asked)
+study_data[, q_ort_and_rhf := q_ors_all==TRUE & q_rhf==1]
+```
+
+
+## Examples of survey questionnaires
+
+### DHS phase 4 (~1997-2003)
+```{r dhs4, echo=FALSE, out.width = '75%'}
+include_graphics('<<<< FILEPATH REDACTED >>>>/dhs_quest_4.png')
+```
+
+### DHS phases 5-7 (~2003-2018)
+```{r dhs57, echo=FALSE, out.width = '75%'}
+include_graphics('<<<< FILEPATH REDACTED >>>>/dhs_quest_57.png')
+```
+
+### Bolivia household survey (2000)
+```{r bolivia, echo=FALSE, out.width = '75%'}
+include_graphics('<<<< FILEPATH REDACTED >>>>/bolivia_quest_2000.png')
+```
+
+<br>
+
+## Proposed indicators and questions to map
+
+**Oral rehydration solution (ORS)**   
+Proportion of children under 5 with diarrhea that received ORS.  
+
+* Did child receive a special packet called [local name for solution]?  
+* Did child receive a pre-packaged ORS liquid?  
+* This includes any pre-made ORS solution, including *“oral rehydration solution”, “ors”, “sro”, “serum from pharmacy”, “soro”, “suero”, “pre-packaged”, “special packet”, “pedialyte”*.
+
+**Recommended home fluids (RHF)**  
+Proportion of children under 5 with diarrhea that received RHF.  
+
+* Did child receive government-recommended home fluids?  
+* Did child receive any other fluid-based treatment [written in or listed]?  
+* This includes any home fluid that may increase hydration, including *“recommended home solution”, “suero casero”, “sugar and salt solution”, “cereal-water”, “sweetened”, “salted”, “rice water”, “soup”, “fruit juice”, “yoghurt-based drink”, “tea”*.
+
+**Oral rehydration therapy (ORT)**  
+Using the questions described above, this could be defined in one of two ways:
+
+* Proportion of children under 5 with diarrhea that received either ORS or RHF.  
+* Proportion of children under 5 with diarrhea that received both ORS and RHF.  
+
+<br>
+
+## Number of surveys that ask each question (2000-2017)
+
+```{r questions, echo = FALSE}
+# clean up data by ORT questions
+quest <- study_data[year_end >= 2000]
+qvars <- c('q_diarrhea', 'q_ort', 'q_packet', 'q_liquid', 'q_rhf', 'q_other', 'q_ort_or_rhf', 'q_ort_and_rhf')
+quest <- quest[, lapply(.SD, sum), by = survey_group, .SDcols = qvars]
+quest <- quest[order(-q_rhf)]
+colnames(quest) <- c('Survey', 'Had diarrhea', 'ORT/ORS (general)', 'ORS (special packet)', 'ORS (liquid)', 'Rec. home fluid', 'Other fluid', 'ORS or RHF', 'ORS and RHF')
+
+# make a pretty table
+pretty_table(quest) %>%
+  add_header_above(c(' ' = 1, 'Reference' = 1, 'ORS' = 3, 'RHF' = 2, 'ORT' = 2))
+
+# reshape to long format
+quest <- melt(quest, 
+              id.vars = 'Survey',
+              measure.vars = c('Had diarrhea', 'ORT/ORS (general)', 'ORS (special packet)', 'ORS (liquid)', 'Rec. home fluid', 'Other fluid', 'ORS or RHF', 'ORS and RHF'),
+              variable.name = 'Question',
+              value.name = 'Number')
+
+# create mapping groups ORT, RHF, and ORT
+for (i in 1:nrow(quest)) {
+  if (quest[i, Question == 'ORT/ORS (general)' | Question == 'ORS (special packet)' | Question == 'ORS (liquid)']) {
+    quest[i, Group := 'ORS']
+  }
+  if (quest[i, Question == 'Rec. home fluid' | Question == 'Other fluid']) {
+    quest[i, Group := 'RHF']
+  }
+  if (quest[i, Question == 'ORS or RHF' | Question == 'ORS and RHF']) {
+  quest[i, Group := 'ORT']
+  }
+  if (quest[i, Question == 'Had diarrhea']) {
+    quest[i, Group := 'Ref.']
+  }
+}
+# set order to plot the groups in
+quest$Group <- factor(quest$Group, levels = c('Ref.', 'ORS', 'RHF', 'ORT'))
+
+# make a pretty graph
+pretty_graph(quest)
+```
+
+<br>
+
+## Data coverage plots for ORT (either ORS or RHF)
+
+```{r coverage prep, echo = FALSE}
+# load data
+mapping_data <- copy(study_data)
+
+# load locations dataset for adding on iso3 column
+locations <- fread('<<<< FILEPATH REDACTED >>>>/locationmetadata.csv')
+
+# prep data table by removing columns
+mapping_data = unique(mapping_data[ , c('nid', 'iso3', 'year_end', 'q_ort_or_rhf')])
+mapping_data = setnames(mapping_data, 'iso3', 'ihme_loc_id')
+
+# create year groups
+for (i in 1:nrow(mapping_data)) {
+  if (mapping_data[ i, year_end > 2009]) {
+    mapping_data[ i, year_group := 2017]
+  }
+  if (mapping_data[ i, year_end <= 2009 & year_end > 1999]) {
+    mapping_data[ i, year_group := 2009]
+  }
+  if (mapping_data[ i, year_end <= 1999]) {
+    mapping_data[ i, year_group := 1999]
+  }
+}
+
+# count studies that ask about ORT by country and year group
+mapping_data <- mapping_data[ , mapvar := sum(q_ort_or_rhf), by = c('ihme_loc_id', 'year_group')]
+mapping_data <- mapping_data[ , c('ihme_loc_id', 'year_group', 'mapvar')]
+mapping_data <- unique(mapping_data)
+
+# add location data
+ort_inc_data <- merge(mapping_data, locations, by='ihme_loc_id', all.x=TRUE)
+```
+
+### 1985-1999
+```{r coverage plot 1, echo = FALSE, message = FALSE}
+coverage_map(ort_inc_data, year_end = 1999)
+```
+
+```{r coverage plot 1.1, echo = FALSE, message = FALSE}
+coverage_map(ort_inc_data, year_end = 1999) # Not sure why I need to put this in twice for it to show up in the HTML
+```
+
+### 2000-2009
+```{r coverage plot 2, echo = FALSE}
+coverage_map(ort_inc_data, year_end = 2009)
+```
+
+### 2010-2017
+```{r coverage plot 3, echo = FALSE}
+coverage_map(ort_inc_data, year_end = 2017)
+```
+
+<br>
+
+## Considerations and limitations
+
+* The definitions of ORS/RHF and the composition of ORS/RHF differ somewhat across countries and years.
+* Children who currently have diarrhea and are included in the surveys may not yet have had a chance to get ORS.
+* Efficacy of ORS is potentially confounded by treatment seeking behavior and/or healthcare quality and access.
+* The impact of RHF on diarrhea mortality is unknown.
+* Survey designs may vary (e.g. number of children surveyed, number of treatments listed, diarrhea recall period, age range of children surveyed).
+
+<br>
+
+## Additional questions related to oral reydration therapy (2000-2017)
+
+```{r additional questions, echo = FALSE}
+aquest <- study_data[year_end >= 2000]
+qvars <- c('q_diarrhea', 'q_ort_and_rhf', 'q_increased', 'q_ort_duration', 'q_ort_source', 'q_zinc', 'q_antibiotics', 'q_ort_knowledge', 'q_ort_general')
+aquest <- aquest[, lapply(.SD, sum), by = survey_group, .SDcols = qvars]
+aquest <- aquest[order(-q_ort_knowledge)]
+colnames(aquest) <- c('Survey', 'Had diarrhea', 'ORT and RHF', 'Increased fluids', 'Duration ORT given', 'ORT source', 'Zinc given', 'Antibiotics given', 'ORT knowledge', 'ORT nutrition')
+
+# make a pretty table
+pretty_table(aquest) %>%
+  add_header_above(c(' ' = 1, 'Reference' = 2, 'Diarrhea treatment' = 5, 'Other' = 2))
+
+# reshape to long format
+aquest <- melt(aquest, 
+               id.vars = 'Survey',
+               measure.vars = c('Had diarrhea', 'ORT and RHF', 'Increased fluids', 'Duration ORT given', 'ORT knowledge', 'ORT source', 'Zinc given', 'Antibiotics given', 'ORT nutrition'),
+               variable.name = 'Question',
+               value.name = 'Number')
+
+# create groups
+for (i in 1:nrow(aquest)) {
+  if (aquest[i, Question == 'Had diarrhea' | Question == 'ORT and RHF']) {
+    aquest[i, Group := 'Ref.']
+  } 
+  if (aquest[i, Question == 'Increased fluids' | Question == 'Duration ORT given' | Question == 'ORT source' | Question == 'Zinc given' | Question == 'Antibiotics given']) {
+    aquest[i, Group := 'Diarrhea treatment']
+  }
+  if (aquest[i, Question == 'ORT knowledge' | Question == 'ORT nutrition']) {
+    aquest[i, Group := 'Other']
+  }
+}
+# set order to plot the groups in
+aquest$Group <- factor(aquest$Group, levels = c('Ref.', 'Diarrhea treatment', 'Other'))
+
+# make a pretty graph
+pretty_graph(aquest)
+```

@@ -1,28 +1,17 @@
-# Local Burden of Disease
+# Oral rehydration therapies - low and middle-income countries - 2020
 
-This is repository contains cleaned code that the LBD team used to generate results for their publications.
+This repo contains cleaned code used to generate estimates of oral rehydration solution (ORS) and recommended home fluids (RHF) coverage in children under the age of five with diarrhoea from 'Mapping geographic inequalities in oral rehydration therapy coverage in low-income and middle-income countries, 2000–17' published in _Lancet Global Health_ on July 22, 2020.
 
-## Navigating this repository
+The repo contains six directories:
+1) covariate_selection - containing code to perform covariate selection by variance inflation factors
+2) custom_functions - containing data cleaning and analysis functions
+3) gbm_optim - containing code to perform gradient boosted machine (GBM) optimization
+4) mbg_central - containing model-based geostatistical code similar to code used across multiple projects at IHME
+5) ors - containing code for data scoping, extraction, and cleaning, as well as code to launch model-based geostatistical models for ORS, RHF, and ORT (ORS or RHF)
+6) post_estimation - containing code to clean, vet, and analyze modeled estimates
 
-By the time of each of our publications, cleaned code should be available in this repository. You can view the code for a particular publication by selecting the relevant banch from the dropdown menu, or by selecting a link below. For ease of navigation, direct links are only provided for the most recent publication for each topic.
+# Other LBD work
 
-### Links to recent publications
+To see what work our team has published, please visit the [main IHME LBD team page](http://www.healthdata.org/lbd).
 
-* [Male Circumcision - Africa - 2020](https://github.com/ihmeuw/lbd/tree/male_circumcision-africa-2020)
-* [Child Growth Failure (CGF) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/cgf-lmic-2019)
-* [Diarrhea - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/diarrhea-lmic-2020)
-* [Double Burden of Malnutrition (DBM) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/dbm-lmic-2020)
-* [Educational Attainment (EDU) - LMIC - 2019](https://github.com/ihmeuw/lbd/tree/edu-lmic-2019)
-* [Exclusive Breastfeeding (EBF) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/ebf-africa-2019)
-* [HIV prevalence and the number of people living with HIV (PLHIV) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/hiv-africa-2019)
-* [Lower Respiratory Infection (LRI) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/lri-africa-2019)
-* [Under-5 Mortality (U5M) - LMIC - 2019](https://github.com/ihmeuw/lbd/tree/u5m-lmic-2019)
-* [Vaccines (DPT) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/dpt-africa-2019)
-
-*Please note that code for previous versions of results may be found in the in the `Branch` dropdown menu*
-
-## Links to IHME and LBD
-
-* You may find the [main IHME website here](http://www.healthdata.org).
-* You may find the [main LBD website here](http://www.healthdata.org/lbd).
-* You may find [interactive LBD visualizations here](http://www.healthdata.org/lbd/data-visualizations).
+To see other published LBD code repositories, please visit our [LBD code homepage](https://github.com/ihmeuw/lbd).

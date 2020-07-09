@@ -1,0 +1,14 @@
+"","covariate","measure","include","gbd"
+"1","ANC4_coverage_prop","mean",TRUE,TRUE
+"2","access2","mean",TRUE,FALSE
+"3","aridity","mean",TRUE,FALSE
+"4","depratio","youngage",TRUE,FALSE
+"5","distriverslakes","mean",TRUE,FALSE
+"6","edu_mean_stage2","mean",TRUE,FALSE
+"7","elevation","mean",TRUE,FALSE
+"8","fertility","mean",TRUE,FALSE
+"9","ghslurbanicity","mean",TRUE,FALSE
+"10","herreronyield","vita",TRUE,FALSE
+"11","stunting_mod_b","mean",TRUE,FALSE
+"12","wasting_mod_b","mean",TRUE,FALSE
+"13","worldpop_raked","a0004t",TRUE,FALSE
