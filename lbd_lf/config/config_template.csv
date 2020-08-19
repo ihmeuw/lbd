@@ -1,0 +1,176 @@
+run_poly_resamp,TRUE
+run_full,TRUE
+pop_ras,default
+indicator_group,lf
+indicator_poly,had_lf_poly
+indicator_pts_poly,had_lf_w_resamp
+config_name,config_template
+jn,config_template
+mbg_model_script,launch
+parallel_code,parallel_model
+predict_code,run_predict_mbg_parallel
+poly_resamp_script,polygon_resampler
+poly_resamp_density,0.01
+archive_data_path,<<<< FILEPATH REDACTED >>>>
+timer_dir,<<<< FILEPATH REDACTED >>>>
+indicator_family,binomial
+keep_inla_files,FALSE
+fixed_effects,
+fixed_effects_measures,
+categorical_vars,
+categorical_vars_measures,
+cat_baseline,
+cat_prefix,mdaround
+gbd_fixed_effects,
+mbg_fixed_effects,
+samples,1000
+time_stamp,TRUE
+mesh_s_max_edge,"c(3, 5)"
+mesh_s_offset,"c(1, 5)"
+year_list,c(1990:2018)
+mesh_t_knots,"c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29)"
+t_mod_type,ar1
+t_mod_order,
+intercept_prior,0
+slots,15
+spat_strat,qt
+temp_strat,rand
+n_folds,5
+stacked_fixed_effects,gam + gbm + lasso
+model_type,full
+use_inla_nugget,TRUE
+use_child_country_fes,TRUE
+use_inla_country_fes,FALSE
+withtag,TRUE
+datatag,<<<< FILEPATH REDACTED >>>>
+use_geos_nodes,TRUE
+w_priors,FALSE
+theta1_mean,1.94
+theta1_sd,0.1
+region_list,lf_endem_afr
+inla_cores,20
+use_share,TRUE
+interval_mo,12
+n_stack_folds,5
+gbm_tc,5
+gbm_lr,0.005
+gbm_bf,0.75
+pop_measure,total
+st_targ,0.05
+target_type,less
+yr_col,year
+ss_col,weighted_n
+long_col,longitude
+lat_col,latitude
+n_ho_folds,5
+ho_ts,500
+ho_mb,10
+intstrat,eb
+constrain_children_0_inf,FALSE
+other_weight,
+transform,inverse-logit
+test_pct,1
+skiptoinla,FALSE
+skiptoinla_from_rundate,NULL
+yearload,annual
+use_inla_country_res,TRUE
+coefs_sum1,TRUE
+transform_emplogit,FALSE
+skipinla,FALSE
+skip.inla,FALSE
+rake_transform,none
+flattening,FALSE
+makeholdouts,FALSE
+use_inla_region_res,FALSE
+fit_with_tmb,FALSE
+use_stacking_covs,TRUE
+use_raw_covs,FALSE
+gbd_fixed_effects_age,'2 3 4 5'
+z_list,0
+zcol,z_column_default_blank
+summstats,"c('mean','lower','upper','cirange')"
+scale_gaussian_variance_N,TRUE
+sing_imagename,<<<< FILEPATH REDACTED >>>>
+nugget_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+ctry_re_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+from_run_date,NULL
+skip_to_aggregation,FALSE
+use_matern_new,FALSE
+pc_prior_rho0,0.3
+pc_prior_sig0,0.5
+rho_prior,"list(prior = 'normal', param = c(0, 1/(2.58^2)))"
+covs_name,<<<< FILEPATH REDACTED >>>>
+use_premade,FALSE
+modeling_shapefile_version,2020_02_20
+mesh_cutoff,0.25
+use_s2_mesh,TRUE
+s2_mesh_params,"c(50, 500, 1000)"
+use_mda_interaction,FALSE
+predict_years,c(1990:2018)
+raster_agg_factor,1
+skip_to_summary_rasters,FALSE
+m_mem_free_launch,1005
+m_mem_free_parallel,200
+m_mem_free_predict,300
+m_mem_free_agg,60
+fthread_launch,10
+fthread_parallel,5
+fthread_predict,5
+fthread_agg,5
+runtime_launch,144:00:00
+runtime_parallel,144:00:00
+runtime_predict,48:00:00
+runtime_agg,48:00:00
+subnat_country_to_get,NULL
+use_subnat_res,FALSE
+random_seed,123456
+restart_folds,NULL
+use_saved_imputations,FALSE
+pull_poly_method,fast
+minimum_clusters_per_polygon,10
+holdout_strategy,nids
+individual_countries,FALSE
+skip.stacking,FALSE
+stackers_in_transform_space,TRUE
+test,FALSE
+singularity_version,<<<< FILEPATH REDACTED >>>>
+max_chunk,50
+aggregate_serially_by_year,FALSE
+use_pc_priors_ar,TRUE
+impute_missing_covariates,FALSE
+use_bam,TRUE
+aggregate_stacker_preds,TRUE
+gbm_bounded_0_1,TRUE
+skip_submit_aggregation_script,FALSE
+skip_to_diagnostics,FALSE
+rake_gbd_pop,TRUE
+parallel_pred_agg,TRUE
+oos_preds_inla,TRUE
+is_run_date,NULL
+restart_predict_years,NULL
+pc_priors_ar_cor1,NULL
+run_pop_threshold_analysis,FALSE
+pop_threshold_levels,"c(1, 3)"
+ppp_region,lf_hispaniola
+predict_diagnostic,ict
+predict_age_start,0
+predict_age_end,94
+perform_initial_INLA_approx,FALSE
+initial_INLA_approx_levels,1
+clamp_covariates,FALSE
+fit_crosswalk_inla,FALSE
+pref_samp_pp_stages,"c('Mapping', 'SS/Spot', 'TAS')"
+covars_in_pp,FALSE
+country_re_pp,FALSE
+use_pref_samp_pp,FALSE
+use_gp,TRUE
+use_space_only_gp,FALSE
+use_nid_res,FALSE
+use_time_only_gmrf,FALSE
+use_age_only_gmrf,FALSE
+use_timebyctry_res,FALSE
+crosswalk_training_data_set,NULL
+use_river_size,FALSE
+use_rw1_crosswalk_covariates,FALSE
+use_age_diagnostics_in_stackers,FALSE
+skip_plot_stackers,FALSE
