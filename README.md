@@ -8,6 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
+* [Lower Respiratory Infection (LRI) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/lri-lmic-2020)
 * [Lymphatic Filariasis (LF) - Global - 2020](https://github.com/ihmeuw/lbd/tree/lf-global-2020)
 * [Water, Sanitation, and Handwashing - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/wash-lmic-2020)
 * [Oral Rehydration Therapies (ORT) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/ort-lmic-2020)
