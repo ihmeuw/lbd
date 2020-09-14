@@ -1,0 +1,160 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Set up
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% set document class to article
+\documentclass[12pt]{article}
+
+%% load packages
+\usepackage{amssymb, amsmath, amsfonts} % fonts, symbols, and formatting for equations
+\usepackage{xfrac}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry} % set margins
+\usepackage{titling}
+
+%% set counter depth
+\setcounter{secnumdepth}{0}
+
+%% no double space after period
+\frenchspacing
+
+%% block paragraphs
+\parindent0pt \parskip8pt
+
+%% make title
+\setlength{\droptitle}{-6em}
+\posttitle{\par\end{center}\vspace{-5em}}
+\title{SAE Models}
+
+%% begin document
+\begin{document}
+\maketitle
+
+\subsubsection{Model 1}
+
+	\begin{align*}
+		D_{j,t,a} &\sim \text{Poisson}(m_{j,t,a} \cdot P_{j,t,a}) \\
+		\\
+		\text{log}(m_{j,t,a}) &= \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,a,t} + \gamma_{2,j} + \gamma_{3,j} \cdot t + \gamma_{4,j} \cdot a \\
+		\gamma_{1,a,t} &\sim \text{LCAR}:\!\text{LCAR}(\sigma^2_1, \rho_{1,A}, \rho_{1,T}) \\
+		\gamma_{2,j} &\sim \text{LCAR}(\sigma^2_2, \rho_2) \\
+		\gamma_{3,j} &\sim \text{LCAR}(\sigma^2_3, \rho_3) \\
+		\gamma_{4,j} &\sim \text{LCAR}(\sigma^2_4, \rho_4) \\
+		\\
+		\sfrac{1}{\sigma^{2}_{i}} &\sim \text{Gamma}(1, 1000) \text{ for } i \in {1,2,3,4} \\
+		\text{logit}(\rho_{i}) &\sim \text{Normal}(0, 1.5) \text{ for } i \in {\text{1A},\text{1T},2,3,4}
+	\end{align*}
+
+	where:
+	\begin{description}
+		\setlength{\itemsep}{0pt}
+		\setlength{\parskip}{0pt}
+		\setlength{\parsep}{0pt}
+		\setlength{\itemindent}{5pt}
+		\item $D_{j,t,a}$ = events in area $j$, year $t$, and age group $a$; \\
+		\item $P_{j,t,a}$ = mid-year population in area $j$, year $t$, and age group $a$; \\
+		\item $m_{j,t,a}$ = event rate in area $j$, year $t$, and age group $a$; \\
+		\item and $\boldsymbol{X}_{j,t}$ = area-year-level covariates.
+	\end{description}
+
+	and where:
+	\begin{description}
+		\setlength{\itemsep}{0pt}
+		\setlength{\parskip}{0pt}
+		\setlength{\parsep}{0pt}
+		\setlength{\itemindent}{5pt}
+		\setlength{\itemindent}{5pt}
+		\item $\beta_0$ is the global intercept;
+		\item $\beta_1$ is the vector of covariate effects;
+		\item $\gamma_{1,a,t}$ describes the global age-time pattern;
+		\item $\gamma_{2,j}$ describes spatial patterns that persist over age and time;
+		\item $\gamma_{3,j} \cdot t$ describes area-specific deviations from the global time pattern;
+		\item and $\gamma_{4,j} \cdot a$ describes area-specific deviations from the global age pattern.
+	\end{description}
+
+	Finally, $\text{LCAR}(\sigma^2, \rho)$ implies the following conditional autoregressive distribution:
+	\begin{equation*}
+		\gamma_{i} | \boldsymbol{\gamma_{-i}}, \sigma^2, \rho \sim \text{Normal} \left (\frac{\rho \cdot \sum_{k \sim i} \gamma_k}{n_i \cdot \rho+ 1 - \rho}, \frac{\sigma^2}{n_i \cdot \rho + 1 - \rho} \right )
+	\end{equation*}
+
+	with $k \sim i$ indicating the set of $i$'s `neighbors' (for spatial terms, areas that shares a boarder; for temporal/age terms, adjacent years/age groups) and $n_{i}$ giving the number of neighbors.
+	$\rho$ can be interpreted as a correlation parameter and varies between 0 and 1; as $\rho \rightarrow 0$, $\text{LCAR}(\sigma^2, \rho)  \rightarrow N(0, \sigma^2)$ and as $\rho \rightarrow 1$, $\text{LCAR}(\sigma^2, \rho) \rightarrow ICAR(\sigma^2)$, an intrinsic conditional autoregressive distribution.
+	\text{LCAR}:\text{LCAR} signifies an interaction between two \text{LCAR} distributions.
+
+\subsubsection{Model 2}
+	Model 2 adds an IID Normal area-age-year-level random effect to model 1:
+
+	\begin{align*}
+		\text{log}(m_{j,t,a}) &= \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,a,t} + \gamma_{2,j} + \gamma_{3,j} \cdot t + \gamma_{4,j} \cdot a + \gamma_{5,j,a,t} \\
+		\gamma_{5,j,a,t} &\sim N(0, \sigma^2_5)
+	\end{align*}
+
+	The $\gamma_{5,j,a,t}$ term allows for additional variation beyond what is described by the global age-time pattern and area-level random slopes on age and year. This could include non-linearities in the area-specific deviations from the global age- and time-patterns as well as three-way interactions between area, year, and age.
+
+\subsubsection{Model 1b \& 2b}
+	Models 1b and 2b are the same as models 1 and 2, respectively, but with all terms related to age removed.
+	The linear component for model 1b is then:
+
+	\begin{equation*}
+		\text{log}(m_{j,t}) = \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,t} + \gamma_{2,j} + \gamma_{3,j} \cdot t
+	\end{equation*}
+
+	While the linear component for model 2b is:
+
+	\begin{equation*}
+		\text{log}(m_{j,t}) = \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,t} + \gamma_{2,j} + \gamma_{3,j} \cdot t + \gamma_{5,j,t}
+	\end{equation*}
+
+	i.e., $\gamma_1$ becomes a one-dimensional \text{LCAR} random effect for time only, $\gamma_4$ is dropped, and, in model 2b, $\gamma_5$ is changed to an IID model for each area-year.
+	These models are intended for cases where age is not a relevant factor (e.g., for a cause of death that only impacts one age group).
+
+\subsubsection{Model 3}
+	Model 3 is analagous to model 1, but with the interactions between area and year ($\gamma_{3,j} \cdot t$) and area and age group ($\gamma_{4,j} \cdot a$) removed:
+
+	\begin{equation*}
+		\text{log}(m_{j,t,a}) = \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,a,t} + \gamma_{2,j}
+	\end{equation*}
+
+	These models are intended to be used in cases where the data are too sparse to expect to be able to distinguish area-specific age and time trends.
+
+\subsubsection{Model 4}
+	Model 4 is analagous to model 3, but with the global age-time effect ($\gamma_{1,a,t}$) replaced with separable global age and global time effects:
+
+	\begin{equation*}
+		\text{log}(m_{j,t,a}) = \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,a} + \gamma_{2,t} + \gamma_{3,j}
+	\end{equation*}
+
+	These models are intended to be used in cases where the data are too sparse to disntiguish area-specific age and time trends and too sparse
+	to distiguish year-specific age trends (or, equivalently, age-specific temporal trends).
+
+\subsubsection{Model 5}
+	Model 5 is analagous to model 1, but replaces $\gamma_{2,j} + \gamma_{3,t} \cdot t$ with a single area-year-level random effect modeled as the interaction between two \text{LCAR} distributions: 
+
+	\begin{align*}
+		\text{log}(m_{j,t,a}) &= \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,a,t} + \gamma_{2,j,t} + \gamma_{3,j} \cdot a \\
+		\gamma_{2,j,t} &\sim \text{LCAR}:\text{LCAR}(\sigma^2_2,\rho_{2,J}, \rho_{2,T})
+	\end{align*}
+
+	This model allows for a more flexible interaction between area and time. In particular, a separate temporal trend is estimated for each area without the restriction that area-specific deviations from the global time trend be linear, as in model 1. 
+
+\subsubsection{Model 6}
+	Model 6 adds an IID Normal area-year-level random effect and an IID Normal area-age-level random effect to model 1:
+
+	\begin{align*}
+		\text{log}(m_{j,t,a}) &= \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,a,t} + \gamma_{2,j} + \gamma_{3,j} \cdot t + \gamma_{4,j} \cdot a + \gamma_{5,j,t} + \gamma_{6,j,a} \\
+		\gamma_{5,j,t} &\sim N(0, \sigma^2_5) \\
+		\gamma_{6,j,a} &\sim N(0, \sigma^2_6) 
+	\end{align*}
+
+	The $\gamma_{5,j,t}$  and $\gamma_{6,j,a}$ terms allow for area-specific non-linear deviations from the global age and time trend. In principle, this is similar to model 2, but without allowing for three-way interactions. At the same time, by pooling strength over all ages to estimate the area-time trends and over all years to estimate the area-age trends, it's possible that this model will pick up more variation in smaller areas than in model 2 where there is less pooling of strength. 
+
+\subsubsection{Model 7}
+	Model 7 is the same as model 6 but without the area-age interaction terms (i.e., $\gamma_{4,j} \cdot a$ and $\gamma_{6,j,a}$): 
+
+	\begin{align*}
+		\text{log}(m_{j,t,a}) &= \beta_0 + \boldsymbol{\beta_1} \cdot \boldsymbol{X}_{j,t} + \gamma_{1,a,t} + \gamma_{2,j} + \gamma_{3,j} \cdot t + \gamma_{5,j,t} \\
+	\end{align*}
+
+	This model may make sense if there's relatively little spatial variation in the age pattern, but there is still spatial variation in the temporal trends (if there isn't much spatial variation in either the age pattern or the temporal trend, 
+	then model 3 is likely more appropriate). 
+
+\end{document}  

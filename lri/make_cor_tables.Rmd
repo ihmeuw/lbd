@@ -1,0 +1,122 @@
+---
+title: "make_cor_tables"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r include = FALSE}
+# #Path setup
+personal_lib <- ifelse(grepl('health_fin', Sys.getenv("SINGULARITY_NAME")) ,
+"~/R/x86_64-pc-linux-gnu-library/3.5/",
+"~/R/x86_64-pc-linux-gnu-library/3.5geo/")
+if(!dir.exists(personal_lib)) dir.create(personal_lib, recursive = TRUE)
+Sys.setenv(R_LIBS_USER = personal_lib)
+.libPaths(c(Sys.getenv("R_LIBS_USER"), .libPaths()) )
+install.packages('kableExtra')
+
+library(kableExtra)
+library(tibble)
+library(dplyr)
+
+source('/share/code/geospatial/kwelgan/lri/adm_compare.R')
+```
+
+```{r include = FALSE}
+#pull correlation coefficients
+year_list <- c(2000:2017)
+inla_2_all_years <- admin_correlation_coefs(indicator <- 'has_lri',
+                                            indicator_group <- 'lri',
+                                            raked <- FALSE,
+                                            admin_lvl <- 1,
+                                            measure <- 'prevalence',
+                                            age <- 0,
+                                            holdout <- 0,
+                                            run_date_1 <- '2019_04_01_15_28_31',
+                                            run_date_2 <- '2019_04_25_15_49_17',
+                                            region_list <- c('cssa','essa','wssa','name','sssa'),
+                                            collapse_years <- T)
+
+inla_2_div_years <- admin_correlation_coefs(indicator <- 'has_lri',
+                                            indicator_group <- 'lri',
+                                            raked <- FALSE,
+                                            admin_lvl <- 1,
+                                            measure <- 'prevalence',
+                                            age <- 0,
+                                            holdout <- 0,
+                                            run_date_1 <- '2019_04_01_15_28_31',
+                                            run_date_2 <- '2019_04_25_15_49_17',
+                                            region_list <- c('cssa','essa','wssa','name','sssa'),
+                                            collapse_years <- F)
+
+inla_0.5_all_years <- admin_correlation_coefs(indicator <- 'has_lri',
+                                              indicator_group <- 'lri',
+                                              raked <- FALSE,
+                                              admin_lvl <- 1,
+                                              measure <- 'prevalence',
+                                              age <- 0,
+                                              holdout <- 0,
+                                              run_date_1 <- '2019_04_01_15_28_31',
+                                              run_date_2 <- '2019_04_25_15_50_13',
+                                              region_list <- c('cssa','essa','wssa','name','sssa'),
+                                              collapse_years <- T)
+
+inla_0.5_div_years <- admin_correlation_coefs(indicator <- 'has_lri',
+                                              indicator_group <- 'lri',
+                                              raked <- FALSE,
+                                              admin_lvl <- 1,
+                                              measure <- 'prevalence',
+                                              age <- 0,
+                                              holdout <- 0,
+                                              run_date_1 <- '2019_04_01_15_28_31',
+                                              run_date_2 <- '2019_04_25_15_50_13',
+                                              region_list <- c('cssa','essa','wssa','name','sssa'),
+                                              collapse_years <- F)
+```
+
+```{r include = FALSE}
+#make lookup table for region names <--> abbreviations
+region_table <- data_frame(region = c('name','essa','wssa','cssa','sssa'), name = c('Northern Africa','Eastern Sub-Saharan Africa', 'Western Sub-Saharan Africa', 'Central Sub-Saharan Africa', 'Southern Sub-Saharan Africa'))
+
+inla_2_all_years <- merge(inla_2_all_years, region_table, by.x = 'reg', by.y = 'region')
+inla_2_div_years <- merge(inla_2_div_years, region_table, by.x = 'reg', by.y = 'region')
+inla_0.5_all_years <- merge(inla_0.5_all_years, region_table, by.x = 'reg', by.y = 'region')
+inla_0.5_div_years <- merge(inla_0.5_div_years, region_table, by.x = 'reg', by.y = 'region')
+
+inla_2_all_years$reg <- NULL
+inla_2_div_years$reg <- NULL
+inla_0.5_all_years$reg <- NULL
+inla_0.5_div_years$reg <- NULL
+
+inla_2_all_years <- inla_2_all_years[c('name','cor')]
+inla_2_div_years <- inla_2_div_years[c('name','year','cor')]
+inla_0.5_all_years <- inla_0.5_all_years[c('name','cor')]
+inla_0.5_div_years <- inla_0.5_div_years[c('name','year','cor')]
+
+#filter for years 2000:2015:5
+inla_2_div_years <- filter(inla_2_div_years, year %in% c(2000,2005,2010,2015))
+inla_0.5_div_years <- filter(inla_0.5_div_years, year %in% c(2000,2005,2010,2015))
+
+```
+
+```{r echo = FALSE}
+kable(inla_2_all_years, digits = 4, booktabs = T, longtable = T, col.names = c('region', 'correlation coefficient'), caption = 'Correlation between admin 1 prevalence means: double priors (2000-2017)') %>%
+  kable_styling()
+```
+
+```{r echo = FALSE}
+kable(inla_2_div_years, digits = 4, booktabs = T, longtable = T, col.names = c('region', 'year', 'correlation coefficient'), caption = 'Correlation between admin 1 prevalence means: double priors (2000-2017)') %>%
+  kable_styling()
+```
+
+```{r echo = FALSE}
+kable(inla_0.5_all_years, digits = 4, booktabs = T, longtable = T, col.names = c('region', 'correlation coefficient'), caption = 'Correlation between admin 1 prevalence means: half priors (2000-2017)') %>%
+  kable_styling()
+```
+
+```{r echo = FALSE}
+kable(inla_0.5_div_years, digits = 4, booktabs = T, longtable = T, col.names = c('region', 'year', 'correlation coefficient'), caption = 'Correlation between admin 1 prevalence means: half priors (2000-2017)') %>%
+  kable_styling()
+```
+
+

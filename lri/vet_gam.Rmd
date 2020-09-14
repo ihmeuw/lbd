@@ -1,0 +1,40 @@
+---
+title: "GAM analysis"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r}
+#####################################################################
+# Summarize gam models and output model summaries
+# use vet_gam_launcher to launch automatically
+# Katie Welgan
+#####################################################################
+
+# Setup -------------------------------------------------------------
+run_date <- '2019_09_12_17_11_54'
+
+region_list <- c('dia_afr_horn', 'dia_cssa', 'dia_wssa', 'dia_name', 'dia_sssa',
+                'dia_mcaca', 'dia_central_asia',
+                'dia_se_asia', 'dia_malay','dia_mid_east', 'dia_essa')
+
+library(mgcv)
+
+```
+
+```{r}
+for (reg in region_list){
+
+  print(reg)
+  child_mod <- paste0('/share/geospatial/mbg/lri/has_lri/output/', run_date, '/child_model_list_', reg, '_0.RData')
+  load(child_mod)
+  gam <- child_models[['gam']]
+  print(summary(gam))
+  plot(gam)
+
+}
+
+
+```
