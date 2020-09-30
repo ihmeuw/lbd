@@ -1,0 +1,163 @@
+---
+title: "Results"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+  pdf_document:
+    toc: yes
+classoption: landscape
+params:
+  indicator_group: "no_default"
+  results_pull_time: "no_default"
+  ind: "no_default"
+---
+
+# Summary Results for Example Indicator
+
+```{r setup, include=TRUE}
+  
+# indicator_group<-"child_growth_failure"
+# results_pull_time<-"2017_08_18_15_02_20"
+# rmarkdown::render('results_markdown.rmd',
+#                   params= list(indicator_group= indicator_group,
+#                               results_pull_time=results_pull_time),
+#                   envir = new.env(),
+#                   output_file="<<<< FILEPATH REDACTED >>>>")
+# )
+
+  library(data.table)
+  library(MapSuite)
+  library(htmlTable)
+
+  # Pulling the indicator group and run date from the markdown parameters
+    # indicator_group<-params$indicator_group
+    # run_date<-params$results_pull_time
+      indicator_group<-"child_growth_failure"
+      results_pull_time<-"2017_08_18_15_02_20"
+      ind<-"Stunting"
+
+    root <- "<<<< FILEPATH REDACTED >>>>" 
+
+  # Load in results and differences, as well as results config file
+    load("<<<< FILEPATH REDACTED >>>>")
+    load("<<<< FILEPATH REDACTED >>>>")
+    
+    adm0_diffs[,level:=0];adm0[,level:=0]
+    adm1_diffs[,level:=1];adm1[,level:=1]
+    adm2_diffs[,level:=2];adm2[,level:=2]
+    diffs<-rbind(adm0_diffs,adm1_diffs,adm2_diffs,fill=T);rm(adm0_diffs,adm1_diffs,adm2_diffs)
+    estimates<-rbind(adm0,adm1,adm2,fill=T);rm(adm0,adm1,adm2)
+    
+  # Restrict data to only observations with valid mean estimates
+    diffs<-diffs[!is.na(mean)]
+    estimates<-estimates[!is.na(mean)]
+    
+  # Define a function to get the confidence intervals, formatted the way you want them in the paper 
+  #' @description This function adds a column to a data.table called "confint", which is a nicely formatted confidence interval.
+  #' @param results_table a data.table with lower, mean, and upper estimates, and columns named "lower", "mean", and "upper"
+  #' @param round_n the number of digits you want to round to after the decimal point.
+  #' @author Rebecca Stubbs
+  
+   add_confint<-function(results_table,
+              round_n=1, multiplier=100){
+    # Check to see if the results_table has the right columns
+    if(sum(c("mean","lower","upper") %in% names(results_table))!=3){
+      stop("Your results table is missing one or more columns named 'mean', 'lower', and 'upper'")
+    }
+    results_table[,confint:=paste0(formatC(round(multiplier*mean,round_n),format="f", digits=round_n),"%",
+                          " (",formatC(round(multiplier*lower,round_n),format="f", digits=round_n),"-",
+                          formatC(round(multiplier*upper,round_n),format="f", digits=round_n),")")] 
+  }
+    
+    add_confint(diffs,multiplier=1)
+    add_confint(estimates,multiplier=100)
+
+  #Transform data to wide versions:
+    estimates_wide<-dcast(estimates[year %in% c(2000,2005,2010,2015)],
+                    indicator+ADM0_NAME+ADM2_CODE+ADM1_NAME+ADM2_NAME+ADM1_CODE+ADM0_CODE+level~year,
+                    value.var=c("mean","confint","pop"))
+  
+    diffs_wide<-dcast(diffs,
+                    indicator+ADM0_NAME+ADM2_CODE+ADM1_NAME+ADM2_NAME+ADM1_CODE+ADM0_CODE+level~year,
+                    value.var=c("mean","confint"))
+    
+    est<-merge(estimates_wide, diffs_wide, by=c("ADM0_NAME","ADM0_CODE","ADM1_NAME","ADM1_CODE","ADM2_NAME","ADM2_CODE","level","indicator"),all.x=T)
+    rm(estimates_wide,diffs_wide,diffs,estimates)
+
+  # Fixing some names with unusual characters:
+      est[ADM0_NAME == "United Republic of Tanzania",ADM0_NAME:="Tanzania"]
+      est[ADM2_NAME == "Administrative unit not available",ADM2_NAME:="AdminNotAvail"]
+      est[ADM0_NAME == "C\xf4te d'Ivoire", ADM0_NAME := "Cote d'Ivoire"]
+      est[ADM1_NAME == "Extr\xeame - Nord", ADM1_NAME := "Extreme - Nord"]
+      est[ADM1_NAME == "F\xe8s - Boulemane", ADM1_NAME := "Fes - Boulemane"]
+      est[ADM1_NAME == "Gharb - Chrarda - B\xe9ni Hssen", ADM1_NAME := "Gharb - Chrarda - Beni Hssen"]
+      est[ADM1_NAME == "G\xf4h-Djiboua", ADM1_NAME := "Go-Djiboua"]
+      est[ADM1_NAME == "K\xe9mo", ADM1_NAME := "Kemo"]
+      est[ADM1_NAME == "La\xe2youne - Boujdour - Sakia El Hamra", ADM1_NAME := "Laayoune - Boujdour - Sakia El Hamra"]
+      est[ADM1_NAME == "Mamb\xe9r\xe9-Kad\xe9\xef", ADM1_NAME := "Mambere-Kadei"]
+      est[ADM1_NAME == "Mekn\xe8s - Tafilalet", ADM1_NAME := "Meknes - Tafilalet"]
+      est[ADM1_NAME == "Nana-Mamb\xe9r\xe9", ADM1_NAME := "Nana-Mambere"]
+      est[ADM1_NAME == "Ouham Pend\xe9", ADM1_NAME := "Ouham Pende"]
+      est[ADM1_NAME == "Rabat - Sal\xe9 - Zemmour - Zaer", ADM1_NAME := "Rabat - Sale - Zemmour - Zaer"]
+      est[ADM1_NAME == "Sangha-Mba\xe9r\xe9", ADM1_NAME := "Sangha-Mbaere"]
+      est[ADM1_NAME == "Tanger - T\xe9touan", ADM1_NAME := "Tanger - Tetouan"]
+      
+      # Shortening names
+      est[,ADM0_NAME:=substr(ADM0_NAME,1,30)]
+      est[,ADM1_NAME:=substr(ADM1_NAME,1,15)]
+
+  round_n<-1 # Set the number of digits you want your confidence intervals to be rounded to
+  top_n<-10 # How many observations do you want to show for each table?
+```
+
+```{r echo=FALSE}
+# Subset only the indicators that you really want to show:
+  plot_indicators<-results[final_set==1]$indicator_longname
+  plot_indicators<-c(plot_indicators)
+  ggplot(all_regions[indicator %in% plot_indicators], aes(year, mean,fill=indicator,color=indicator))+
+  geom_point()+
+  geom_line()+
+  labs(title="All Regions, All Indicators")+
+  geom_ribbon(
+              aes(ymin=lower,ymax=upper),
+              alpha=0.3)
+```
+
+Order by the value you are interested in, and then select the top number you care about, for each geographic region you desire-- for example: 
+
+## Highest
+
+```{r echo=FALSE}
+indic<-"Stunting"
+htmlTable(est[order(-mean_2015)][indicator==indic&level==0,
+          list(ADM0_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+htmlTable(est[order(-mean_2015)][indicator==indic&level==1,
+                  list(ADM0_NAME,ADM1_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+htmlTable(est[order(-mean_2015)][indicator==indic&level==2,
+                  list(ADM0_NAME,ADM1_NAME,ADM2_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+```
+
+## Lowest
+
+```{r echo=FALSE}
+htmlTable(est[order(mean_2015)][indicator==indic&level==0,
+          list(ADM0_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+htmlTable(est[order(mean_2015)][indicator==indic&level==1,
+                  list(ADM0_NAME,ADM1_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+htmlTable(est[order(mean_2015)][indicator==indic&level==2,
+                  list(ADM0_NAME,ADM1_NAME,ADM2_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+
+```
+
+## Improvements
+
+```{r echo=FALSE}
+htmlTable(est[order(mean_pct_2000_2015)][indicator==indic&level==0,
+          list(ADM0_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+htmlTable(est[order(mean_pct_2000_2015)][indicator==indic&level==1,
+                  list(ADM0_NAME,ADM1_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+htmlTable(est[order(mean_pct_2000_2015)][indicator==indic&level==2,
+                  list(ADM0_NAME,ADM1_NAME,ADM2_NAME,confint_2000,confint_2015,confint_pct_2000_2015)][1:top_n])
+```
