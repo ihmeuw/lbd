@@ -1,32 +1,18 @@
-# Local Burden of Disease
+# HAP - LMIC - 2020
 
-This is repository contains cleaned code that the LBD team used to generate results for their publications.
+This repo contains cleaned code used to generate estimates for Solid Fuel Use in Lower and Middle Income Countries.
 
-## Navigating this repository
+This repo contains five directories:
 
-By the time of each of our publications, cleaned code should be available in this repository. You can view the code for a particular publication by selecting the relevant banch from the dropdown menu, or by selecting a link below. For ease of navigation, direct links are only provided for the most recent publication for each topic.
+1) Cooking contains the code to produce the estimates for Solid Cooking Fuel Use
+2) Extract contains the code to clean and format the data in preperation for the model
+3) mbg_central contains LBD centralized code use to create LBD models
+4) modules containts code used in covariate selection
+5) post_estimation contains diagnostic plotting code
 
-### Links to recent publications
 
-* [Lower Respiratory Infection (LRI) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/lri-lmic-2020)
-* [Lymphatic Filariasis (LF) - Global - 2020](https://github.com/ihmeuw/lbd/tree/lf-global-2020)
-* [Water, Sanitation, and Handwashing - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/wash-lmic-2020)
-* [Oral Rehydration Therapies (ORT) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/ort-lmic-2020)
-* [Male Circumcision - Africa - 2020](https://github.com/ihmeuw/lbd/tree/male_circumcision-africa-2020)
-* [Child Growth Failure (CGF) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/cgf-lmic-2019)
-* [Diarrhea - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/diarrhea-lmic-2020)
-* [Double Burden of Malnutrition (DBM) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/dbm-lmic-2020)
-* [Educational Attainment (EDU) - LMIC - 2019](https://github.com/ihmeuw/lbd/tree/edu-lmic-2019)
-* [Exclusive Breastfeeding (EBF) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/ebf-africa-2019)
-* [HIV prevalence and the number of people living with HIV (PLHIV) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/hiv-africa-2019)
-* [Lower Respiratory Infection (LRI) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/lri-africa-2019)
-* [Under-5 Mortality (U5M) - LMIC - 2019](https://github.com/ihmeuw/lbd/tree/u5m-lmic-2019)
-* [Vaccines (DPT) - Africa - 2019](https://github.com/ihmeuw/lbd/tree/dpt-africa-2019)
+# Other LBD work
 
-*Please note that code for previous versions of results may be found in the in the `Branch` dropdown menu*
+To see what work our team has published, please visit the [main IHME LBD team page](http://www.healthdata.org/lbd).
 
-## Links to IHME and LBD
-
-* You may find the [main IHME website here](http://www.healthdata.org).
-* You may find the [main LBD website here](http://www.healthdata.org/lbd).
-* You may find [interactive LBD visualizations here](http://www.healthdata.org/lbd/data-visualizations).
+To see other published LBD code repositories, please visit our [LBD code homepage](https://github.com/ihmeuw/lbd).
