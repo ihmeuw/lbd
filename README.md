@@ -8,6 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
+* [Oncho Suitability - Africa - 2020](https://github.com/ihmeuw/lbd/tree/oncho_suitability)
 * [Tri-DALYS - Africa - 2020](https://github.com/ihmeuw/lbd/tree/tridalys-africa-2020)
 * [Household Air Pollution (HAP) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/hap-lmic-2020)
 * [Lower Respiratory Infection (LRI) - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/lri-lmic-2020)
