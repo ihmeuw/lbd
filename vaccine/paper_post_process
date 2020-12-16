@@ -1,0 +1,1398 @@
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                       MCV1 Stage 2 paper number plugging script                     #
+#                                     Alyssa Sbarra                                   #
+#                                    17 October 2019                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+
+## clear environment
+rm(list=ls())
+
+## Set repo location and indicator group
+user               <- 'USERNAME'
+core_repo          <- "FILEPATH"
+indic_repo         <- "FILEPATH"
+remote             <- 'origin'
+branch             <- 'develop'
+pullgit            <- FALSE
+
+## sort some directory stuff
+setwd(core_repo)
+commondir      <- sprintf("FILEPATH")
+package_list <- c(t(read.csv(sprintf('%s/package_list.csv',commondir),header=FALSE)))
+
+library(data.table)
+library(raster)
+
+# Load MBG packages and functions
+message('Loading in required R packages and MBG functions')
+source(paste0("FILEPATH"))
+mbg_setup(package_list = package_list, repos = core_repo)
+
+# Custom load indicator-specific functions
+source(paste0("FILEPATH"))
+source("FILEPATH")
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+#######################################################################
+#######################################################################
+library(data.table)
+library(raster)
+
+
+run_date <- '2020_08_05_16_17_29'
+file_path <- paste0("FILEPATH")
+
+
+## first national calculation
+read.draws <- function(me) {
+  path <- paste0("FILEPATH")
+  files <- list.files(path, full.names=TRUE)
+  if (length(files)==0) stop(paste0("No draws for this run_id (", run_id, ")"))
+  df <- mclapply(files, fread, mc.cores=10) %>% rbindlist(., use.names=TRUE)
+  key <- c("location_id", "year_id", "age_group_id", "sex_id")
+  setkeyv(df, cols=key)
+  df <- unique(df)
+  return(df)
+}
+
+
+df <- read.draws('vacc_mcv1')
+
+
+df <- subset(df, year_id %in% c(2000, 2019))
+dim(df)
+
+regs <- fread("FILEPATH")
+
+df <- merge(df, regs, by.x="location_id", by.y="loc_id")
+
+
+####### 
+#### which countries are we dropping??
+input <- fread("FILEPATH")
+regs <- fread("FILEPATH")
+id <- merge(input, regs, by.x="country", by.y="iso3")
+
+data_ctrys <- unique(id$country)
+
+modeled_list <- fread(paste0("FILEPATH"))
+modeled_list <- subset(modeled_list, ADM0_NAME != "Palestine")
+
+mod <- merge(modeled_list, regs, by.x="ADM0_CODE", by.y="gadm_geoid")
+
+mod_ctrys <- unique(mod$iso3)
+
+drop_iso <- setdiff(mod_ctrys, data_ctrys)
+extra <- setdiff(data_ctrys, mod_ctrys)
+
+drop_iso <- c(drop_iso, extra)
+
+drop_info <- data.table(drop_iso)
+drops <- merge(drop_info, regs, by.x="drop_iso", by.y="iso3", all.x=T, al.y=F)
+
+final_ctry_count <- length(setdiff(mod_ctrys, drop_iso))
+keep <- setdiff(mod_ctrys, drop_iso)
+drop_countries <- unique(drops$gadm_geoid)
+##### 
+
+
+
+
+head(df)
+
+df <- subset(df, iso3 %in% keep)
+
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+source("FILEPATH")
+populations <- get_population(location_id = unique(df$location_id), sex_id="3", year_id = c(2000, 2019), age_group_id=49, single_year_age = TRUE, gbd_round_id=6, decomp_step = "step4")
+
+df <- merge(df, populations, by=c("location_id", "year_id"))
+
+all_draws <- df
+
+
+draw_cols <- names(all_draws)[grepl("draw_[0-9]*", names(all_draws))]
+non_draw_cols <- setdiff(names(all_draws), draw_cols)
+
+# 5. Convert to counts (both coverage & population)
+all_draws[, (draw_cols) := .SD * population, .SDcols = draw_cols]
+
+# 6. Aggregate counts of children vaccinated & population by geography and year
+global_draws <- all_draws[, lapply(.SD, sum), by = c("year_id"), .SDcols = c(draw_cols, "population")]
+
+df <- global_draws
+
+# Get draw cols and non draw cols
+dcols <- names(df)[grepl("draw_[0-9]*", names(df))]
+ndcols <- setdiff(names(df), dcols)
+
+# Convert from counts to proportions
+df[, (draw_cols) := .SD / population, .SDcols = draw_cols]
+
+df[, mean := rowMeans(.SD), .SDcols = dcols]
+df[, lower := matrixStats::rowQuantiles(as.matrix(.SD), probs = 0.025), .SDcols = dcols]
+df[, upper := matrixStats::rowQuantiles(as.matrix(.SD), probs = 0.975), .SDcols = dcols]
+
+keep_cols <- names(df)[!(names(df) %in% dcols)]
+df <- subset(df, select = keep_cols)
+df
+
+####second gbd calculation
+read.draws <- function(me) {
+  path <- paste0("FILEPATH")
+  files <- list.files(path, full.names=TRUE)
+  if (length(files)==0) stop(paste0("No draws for this run_id (", run_id, ")"))
+  df <- mclapply(files, fread, mc.cores=10) %>% rbindlist(., use.names=TRUE)
+  key <- c("location_id", "year_id", "age_group_id", "sex_id")
+  setkeyv(df, cols=key)
+  df <- unique(df)
+  return(df)
+}
+
+
+df <- read.draws('vacc_mcv1')
+df <- subset(df, year_id %in% c(2000, 2019))
+regs <- fread('FILEPATH')
+df <- merge(df, regs, by.x="location_id", by.y="loc_id")
+df <- subset(df, iso3 %in% keep)
+
+all_draws <- df
+
+all_draws2000 <- subset(all_draws, year_id == 2000)
+all_draws2019 <- subset(all_draws, year_id == 2019)
+
+draw_cols2000 <- names(all_draws2000)[grepl("draw_[0-9]*", names(all_draws2000))]
+draw_cols2019 <- names(all_draws2019)[grepl("draw_[0-9]*", names(all_draws2019))]
+
+non_draw_cols <- setdiff(names(all_draws2000), draw_cols2000)
+
+all_draws2000 <- all_draws2000[,-non_draw_cols, with = FALSE]
+all_draws2019 <- all_draws2019[,-non_draw_cols, with = FALSE]
+
+diff_draws <-  all_draws2019 - all_draws2000
+
+
+
+df <- diff_draws
+
+# Get draw cols and non draw cols
+dcols <- names(df)[grepl("draw_[0-9]*", names(df))]
+ndcols <- setdiff(names(df), dcols)
+vect.t <- colSums(df, na.rm = TRUE, dims = 1)
+vect.t <- vect.t / length(which(!is.na(df[,1])))
+
+calc1a <- mean(vect.t)
+quantile(vect.t, probs=c(0.025, 0.975))
+
+
+length(which(df$mean > 0))
+
+#keep_cols <- names(df)[!(names(df) %in% dcols)]
+df <- subset(df, select = keep_cols)
+df
+
+# Get draw cols and non draw cols
+dcols <- names(df)[grepl("draw_[0-9]*", names(df))]
+ndcols <- setdiff(names(df), dcols)
+
+# Convert from counts to proportions
+df[, mean := rowMeans(.SD), .SDcols = dcols]
+df[, lower := matrixStats::rowQuantiles(as.matrix(.SD), probs = 0.025), .SDcols = dcols]
+df[, upper := matrixStats::rowQuantiles(as.matrix(.SD), probs = 0.975), .SDcols = dcols]
+
+keep_cols <- names(df)[!(names(df) %in% dcols)]
+df <- subset(df, select = keep_cols)
+
+df <- diff_draws
+df2000 <- subset(df, year_id == 2000)
+df2019 <- subset(df, year_id == 2019)
+
+all <- diff_draws
+#all <- all[,-c("location_id", "year_id", "age_group_id", "sex_id", "run_id", "covariate_id")]
+all.t <- ifelse(all > 0, 1, 0)
+
+vect.t <- colSums (all.t, na.rm = TRUE, dims = 1)
+vect.t <- vect.t / length(which(!is.na(all.t[,1])))
+
+calc1a <- mean(vect.t)
+calc1a
+quantile(vect.t, probs=c(0.025, 0.975))
+
+
+
+
+
+
+
+
+########### re-start with geospatial estimates
+
+rm(list=ls())
+
+user               <- Sys.info()['user']
+core_repo          <- sprintf('FILEPATH')
+indic_repo         <- sprintf('FILEPATH')
+remote             <- 'origin'
+branch             <- 'develop'
+pullgit            <- FALSE
+
+commondir      <- sprintf('FILEPATH')
+package_list <- c(t(read.csv(sprintf('%s/package_list.csv',commondir),header=FALSE)))
+
+# Ensure that required packages are loaded
+package_list <- unique(c(package_list,
+                         "fasterize",
+                         "sf", "stringr"))
+
+# Load MBG packages and functions
+message('Loading in required R packages and MBG functions')
+source(paste0(core_repo, '/mbg_central/setup.R'))
+mbg_setup(package_list = package_list, repos = core_repo)
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+source(paste0(indic_repo,'functions/misc_vaccine_functions.R'))
+source('FILEPATH')
+
+##### set up
+run_date <- '2020_08_05_16_17_29'
+file_path <- paste0('FILEPATH')
+
+
+#### which countries are we dropping??
+input <- fread('FILEPATH')
+regs <- fread('FILEPATH')
+id <- merge(input, regs, by.x="country", by.y="iso3")
+
+data_ctrys <- unique(id$country)
+
+modeled_list <- fread(paste0("FILEPATH"))
+modeled_list <- subset(modeled_list, ADM0_NAME != "Palestine")
+
+mod <- merge(modeled_list, regs, by.x="ADM0_CODE", by.y="gadm_geoid")
+
+mod_ctrys <- unique(mod$iso3)
+
+drop_iso <- setdiff(mod_ctrys, data_ctrys)
+extra <- setdiff(data_ctrys, mod_ctrys)
+
+drop_iso <- c(drop_iso, extra)
+
+drop_info <- data.table(drop_iso)
+drops <- merge(drop_info, regs, by.x="drop_iso", by.y="iso3", all.x=T, al.y=F)
+
+final_ctry_count <- length(setdiff(mod_ctrys, drop_iso))
+drop_countries <- c(unique(drops$gadm_geoid), 185)
+##### 
+
+##### results calculation #1 country-level increases with uncertainty (2018 - 2000)
+load(paste0(file_path, '/mcv1_cov_raked_admin_draws_eb_bin0_0.RData'))
+rm(admin_1)
+
+
+##### results calculation #2 district-level increases with uncertainty (2018 - 2000)
+
+admin_2_codes <- fread(paste0('FILEPATH'))
+admin_2_codes <- data.table(admin_2_codes$ADM0_NAME, admin_2_codes$ADM0_CODE, admin_2_codes$ADM1_NAME, admin_2_codes$ADM1_CODE, admin_2_codes$ADM2_NAME, admin_2_codes$ADM2_CODE)
+colnames(admin_2_codes) <- c("ADM0_NAME", "ADM0_CODE", "ADM1_NAME", "ADM1_CODE", "ADM2_NAME", "ADM2_CODE")
+admin_2_codes <- unique(admin_2_codes)
+
+df <- merge(admin_2, admin_2_codes, by="ADM2_CODE")
+df <- subset(df, ADM0_CODE %!in% drop_countries)
+df <- subset(df, !is.na(ADM2_CODE))
+
+
+draws0 <- df[which(df$year==2000),] 
+draws19 <- df[which(df$year==2019),] 
+
+draws0 <- draws0[,-c("pop", "ADM2_CODE", "year", "ADM0_NAME", "ADM0_CODE", "ADM1_NAME", "ADM1_CODE", "ADM2_NAME")]
+draws19 <- draws19[,-c("pop", "ADM2_CODE", "year", "ADM0_NAME", "ADM0_CODE", "ADM1_NAME", "ADM1_CODE", "ADM2_NAME")]
+
+
+all <- draws19 - draws0 
+all.t <- ifelse(all > 0, 1, 0)
+
+vect.t <- colSums (all.t, na.rm = TRUE, dims = 1)
+vect.t <- vect.t / length(which(!is.na(all.t[,1])))
+
+mean(vect.t)
+quantile(vect.t, probs=c(0.025, 0.975))
+
+
+length(unique(df$ADM2_CODE)) # how many districts are in the entire analysis? 
+
+
+##### results calculation #4
+means <- fread(paste0('FILEPATH'))
+admin_2_means <- means
+means2000 <- subset(means, year == 2000)
+means2019 <- subset(means, year == 2019)
+
+
+length(which(means2000$mean < 0.10))
+
+##### results calculation #5
+length(which(means2019$mean < 0.10))
+
+
+means2000[order(mean),][1:3,]
+means2019[order(mean),][1:3,]
+
+
+##### results calculation #6 district-level changed from 2000-2010 and 2010-2018
+draws10 <- df[which(df$year==2010),]
+draws10 <- draws10[,-c("pop", "ADM2_CODE", "year", "ADM0_NAME", "ADM0_CODE", "ADM1_NAME", "ADM1_CODE", "ADM2_NAME")]
+
+all_early <- draws10 - draws0 
+all_late <- draws19 - draws10 
+all.t.early <- ifelse(all_early > 0, 1, 0)
+all.t.late <- ifelse(all_late > 0, 1, 0)
+
+vect.t <- colSums (all.t.early, na.rm = TRUE, dims = 1)
+vect.t <- vect.t / length(which(!is.na(all.t.early[,1])))
+mean(vect.t)
+quantile(vect.t, probs=c(0.025, 0.975)) # early
+
+vect.t <- colSums (all.t.late, na.rm = TRUE, dims = 1)
+vect.t <- vect.t / length(which(!is.na(all.t.late[,1])))
+mean(vect.t)
+quantile(vect.t, probs=c(0.025, 0.975)) # late
+
+
+
+################## GVAP (80% coverage) targets
+
+psup <- fread(paste0('FILEPATH'))
+psup <- subset(psup, ADM0_CODE %!in% drop_countries)
+psup <- subset(psup, !is.na(p_above))
+
+psupe <- subset(psup, year == 2000)
+length(which(psupe$p_above >= 0.95)) / dim(psupe)[1]
+
+
+psupe <- subset(psup, year == 2019)
+length(which(psupe$p_above >= 0.95)) / dim(psupe)[1]
+
+bad <- subset(psupe, p_above < 0.95)
+length(setdiff(unique(psupe$ADM0_CODE), unique(bad$ADM0_CODE)))
+setdiff(unique(psupe$ADM0_NAME), unique(bad$ADM0_NAME))
+
+
+gvap_table <- compare_all_admin_target(ind_gp = 'vaccine', 
+                                       ind = 'mcv1_cov', 
+                                       rd = '2020_08_05_16_17_29',
+                                       measure = "prevalence",
+                                       target_year = 2019,
+                                       target = 0.8,
+                                       target_type = "greater",
+                                       admin_level = 2,
+                                       uselogit = T,
+                                       proj = F,
+                                       shapefile_version='2020_05_21')
+
+good <- subset(gvap_table, probability > 0.95)
+good <- subset(good, ADM0_CODE %!in% drop_countries)
+good
+
+
+
+##### discussion section includes information on indonesia
+
+ind <- subset(admin_2_means, ADM0_NAME == "Indonesia")
+ind0 <- subset(ind, year == 2000)
+length(which(ind0$mean >= 0.95))
+ind10 <- subset(ind, year == 2010)
+length(which(ind10$mean >= 0.95))
+ind18 <- subset(ind, year == 2019)
+length(which(ind18$mean >= 0.95))
+
+
+
+########################  GINI and ABSOLUTE INEQUALITY         ########################
+shp_version <- '2020_05_21'
+if(checking == F){
+  
+  library(data.table)
+  library(ggforce, lib.loc='FILEPATH')
+  
+  # Load MBG functions and other LBD functions
+  package_list <- fread(
+    paste0('FILEPATH'),
+    header=FALSE
+  )$V1
+  source(paste0(core_repo,'mbg_central/setup.R'))
+  mbg_setup(repos=core_repo, package_list=package_list)
+  # Load raster handling functions
+  source(paste0('FILEPATH'))
+  
+  # Load GBD functions
+  source('FILEPATH')
+  source('FILEPATH')
+  
+  # Set a folder for visualization outputs
+  viz_dir <- paste0('FILEPATH'))
+  dir.create(viz_dir, showWarnings=FALSE)
+  
+  # Load location metadata that will be used several times
+  shp_type <- detect_adm_shapefile_date_type( 
+    shpfile_path = get_admin_shapefile(version=shp_version)
+  )$shpfile_type
+  lookup_table <- load_adm0_lookup_table()
+  setnames(
+    lookup_table, 
+    c('GAUL_CODE','gadm_geoid','loc_id'), 
+    c('gaul','gadm','location_id')
+  )
+  setnames(lookup_table, shp_type, 'adm0_code')
+  regs <- fread('FILEPATH')
+  
+  ## ** DEFINE INPUTS **
+  core_repo <- 'FILEPATH'
+  
+  # Run date to pull raster from
+  # Associated shapefile version
+  years <- c(2000:2019)
+  indicator_group <- 'vaccine'
+  indicator <- 'mcv1_cov'
+  # indicator_name <- "LDI"
+  # WorldPop age group to weight population by
+  worldpop_age_group <- 'a0004t'
+  # Countries to consider for weighting
+  adm0_codes <- 'stage1+stage2-chn-bra-ven+arm+aze+kgz+mda+tjk+tkm+ukr+uzb+omn-pse'
+  
+  
+  # Load MBG model outputs
+  
+  r_fp_template <- paste0("FILEPATH")
+  r_edu <- raster::brick(r_fp_template)
+  
+  # Load population for full year range
+  r_pop <- load_and_crop_covariates_annual(
+    covs           = 'worldpop',
+    measures       = worldpop_age_group,
+    simple_polygon = r_edu,
+    start_year     = min(years),
+    end_year       = max(years),
+    interval_mo    = as.numeric(12)
+  )[[1]]
+  r_edu <- crop_set_mask(r_edu, r_pop[[1]])
+  
+  r_deaths <- r_edu*r_pop
+  
+  # Load shapefile overlay
+  library(fasterize)
+  shp_path <- get_admin_shapefile(version=shp_version)
+  # Read in standard admin0 shapefile as an SF object
+  shp_sf <- sf::st_read( dsn=shp_path )
+  # If specified, subset to specified adm0 codes
+  if( !is.null(adm0_codes) ){
+    shp_type <- detect_adm_shapefile_date_type( 
+      shpfile_path = shp_path
+    )$shpfile_type
+    adm0_subset <- get_adm0_codes(
+      adm0s = adm0_codes,
+      adm0_type = shp_type
+    )
+    shp_sf <- shp_sf[ shp_sf$ADM0_CODE %in% adm0_subset, ]
+  }
+  
+  shp_sf <- shp_sf[ shp_sf$ADM0_CODE %!in% drop_countries, ]
+  
+  
+  # Rasterize using fasterize and return
+  r_adm <- fasterize(
+    sf = shp_sf,
+    raster = r_edu[[1]],
+    field = 'ADM0_CODE',
+    fun = 'first'
+  )
+  
+  # template_raster <- r_edu
+  
+  source('FILEPATH')
+  
+  # Input data
+  lorenz_data <- data.table(
+    d = as.vector(r_deaths),
+    pop = as.vector(r_pop),
+    country = as.vector(r_adm),
+    year = rep(years, each = prod(dim(r_edu)[1:2]) )
+  )
+  lorenz_data <- na.omit(lorenz_data)
+  
+  # Run that analysis
+  lorenz_data <- lorenz_data[ year %in% c(2000,2019)]
+  lorenz_data[, mr := d/pop]
+  lorenz_data <- lorenz_data[order(country, year, mr)]
+  # Get the Gini coefficient for each year
+  gini_data <- lorenz_data[, 
+                           .(gini = calc_gini(sorted_pop=pop, sorted_var=d),
+                             mr = weighted.mean(mr, pop)), 
+                           by=.(country, year)
+                           ]
+  gini_data[,aaid := gini*mr*2]
+  gini_numerator_data <- lorenz_data[, 
+                                     .(gini = calc_gini_numerator(sorted_pop=pop, sorted_var=d)), 
+                                     by=.(country, year)
+                                     ]
+  #calculate global average 
+  admin0_df <- fread(paste0('FILEPATH'))
+  a.m <- merge(gini_data, admin0_df, by.x = c('country', 'year'), by.y = c('ADM0_CODE', 'year'))
+  
+  a.m[,mean_inc:=floor(mean*20)/20]
+  ps.gini <- a.m[,.(p10=quantile(gini,probs = .1),
+                    p50=quantile(gini,probs = .5),
+                    p90=quantile(gini,probs = .9),
+                    mean=mean(gini)),.(mean_inc)]
+  
+  
+  
+  ps.aaid <- a.m[,.(p10=quantile(aaid,probs = .1),
+                    p50=quantile(aaid,probs = .5),
+                    p90=quantile(aaid,probs = .9),
+                    mean=mean(aaid)),.(mean_inc)]
+  
+  
+  
+  ps.gini[,p10_smooth:=predict(loess(p10~mean_inc,data=ps.gini, span=1.5))]
+  ps.gini[,p50_smooth:=predict(loess(p50~mean_inc,data=ps.gini, span=1.5))]
+  ps.gini[,p90_smooth:=predict(loess(p90~mean_inc,data=ps.gini, span=1.5))]
+  
+  
+  
+  ps.aaid[,p10_smooth:=predict(loess(p10~mean_inc,data=ps.aaid))]
+  ps.aaid[,p50_smooth:=predict(loess(p50~mean_inc,data=ps.aaid))]
+  ps.aaid[,p90_smooth:=predict(loess(p90~mean_inc,data=ps.aaid))]
+  
+  
+  ps.gini <- ps.gini[,c("p10_smooth","p50_smooth","p90_smooth","mean_inc")]
+  ps.aaid <- ps.aaid[,c("p10_smooth","p50_smooth","p90_smooth","mean_inc")]
+  
+  a.m.gini <- merge(a.m,ps.gini,by='mean_inc')
+  a.m.gini <- merge(a.m.gini, regs, by.x = 'country', by.y = 'gadm_geoid')
+  
+  a.m.aaid <- merge(a.m,ps.aaid,by='mean_inc')
+  a.m.aaid <- merge(a.m.aaid, regs, by.x = 'country', by.y = 'gadm_geoid')
+  
+  
+  
+  library(ggrepel)
+  #plot AAID by year
+  
+  a.m.gini <- a.m.gini[which(a.m.gini$spr_reg_nm != "null"),]
+  a.m.aaid <- a.m.aaid[which(a.m.aaid$spr_reg_nm != "null"),]
+  
+  #### save file for other comparisons with hot spots
+  dir.create(paste0("FILEPATH"))
+  dir.create(paste0("FILEPATH"))
+  
+  write.csv(a.m.gini, paste0("FILEPATH"))
+  write.csv(a.m.aaid, paste0("FILEPATH"))
+  
+  
+  ### for supplement
+  library(data.table)
+  df <- fread(paste0("FILEPATH"))
+  df <- data.table(df$ADM0_NAME, df$mean, df$gini, df$year)
+  colnames(df) <- c("Country", "Mean MCV1 Coverage", "Gini coefficient", "Year")
+  write.csv(df, paste0("FILEPATH"))
+  
+}
+
+## now for number plugging part
+df <- fread(paste0("FILEPATH"))
+
+
+aaid <- df[which(df$year==2000),]
+dfl <- df[which(df$year==2019),]
+
+add <- data.table(dfl$location_name, dfl$aaid, dfl$mean)
+colnames(add) <- c("location_name", "aaid2019", "cov2019")
+
+
+df <- data.table(aaid$location_name, aaid$aaid, add$aaid2019, aaid$mean, add$cov2019)
+colnames(df) <- c("location_name", "aaid2000", "aaid2019", "cov2000", "cov2019")
+
+# RUN THIS FIRST
+### for discussion 
+df_calc <- subset(df, aaid2000 > aaid2019)
+df_calc <- subset(df_calc, cov2000 < cov2019)
+dim(df_calc)
+
+
+source(file.path("FILEPATH"))
+source(file.path("FILEPATH"))
+
+year_end = 2019
+decomp_step = "step4"
+gbd_round = 6
+
+if(checking==F){
+  
+  # all locations
+  locations <- get_location_metadata(gbd_round_id=gbd_round, location_set_id=22)[, 
+                                                                                 .(location_id, ihme_loc_id, location_name, location_ascii_name, region_id, super_region_id, level, location_type, parent_id, sort_order)]
+  # subsets to locations country level or smaller
+  pop_locs <- unique(locations[level >= 3, location_id])
+  
+  
+}
+
+df$daaid <- df$aaid2019 - df$aaid2000
+df$dcov <- df$cov2019 - df$cov2000
+
+### correlation
+cor.test(df$daaid, df$dcov, use="complete.obs")
+
+if(checking==F){
+  
+  
+  # Load location metadata that will be used several times
+  shp_type <- detect_adm_shapefile_date_type( 
+    shpfile_path = get_admin_shapefile(version='current')
+  )$shpfile_type
+  lookup_table <- load_adm0_lookup_table()
+  setnames(
+    lookup_table, 
+    c('GAUL_CODE','gadm_geoid','loc_id'), 
+    c('gaul','gadm','location_id')
+  )
+  setnames(lookup_table, shp_type, 'adm0_code')
+  regs <- fread("FILEPATH")
+  
+  
+  spr_names <- data.table(cbind(regs$location_name, regs$spr_reg_nm, as.numeric(regs$loc_id)))
+  colnames(spr_names) <- c("location_name", "spr_reg_nm", "location_id")
+  
+  df <- merge(df, spr_names, by="location_name")
+  df <- df[which(df$spr_reg_nm != "null"),]
+  df$location_id <- as.numeric(df$location_id)
+  
+  
+  source("FILEPATH")
+  under_5 <- get_population(age_group_id = 1, location_id = c(df$location_id), year_id = 2019, gbd_round_id = 6, decomp_step = 'iterative', sex_id = 3) 
+  colnames(under_5) <- c("age_group_id2",  "location_id", "year", "sex_id", "u5", "run_id2")
+  
+  pops <- data.table(as.numeric(under_5$location_id), under_5$u5)
+  colnames(pops) <- c("location_id", "pop")
+  df<- merge(df, pops, by="location_id")
+  
+  
+  
+  annotations <- data.frame(
+    xpos = c(-Inf,-Inf,Inf,Inf),
+    ypos =  c(-Inf, Inf,-Inf,Inf),
+    annotateText = c("↓ coverage,\n ↓ inequality","↓ coverage,\n ↑ inequality"
+                     ,"↑ coverage,\n ↓ inequality","↑ coverage,\n ↑ inequality"),
+    hjustvar = c(-0.15,-0.15,1,1) ,
+    vjustvar = c(-1,1,-1,1)) #<- adjust
+  
+  options(scipen=10000)
+  library(ggrepel)
+  gg <- ggplot(df, aes(x=dcov, y=daaid, label=location_name)) + 
+    annotate("segment", x = 0, xend = 0.55, y = 0, yend = -0.15, colour = "lightgrey", size=1, alpha=0.6, arrow=arrow()) + 
+    annotate("text", x = c(0.45), y = c(-0.115), label = c("Goal trajectory") , color="lightgrey", size=5 , angle=311, fontface="bold")+
+    geom_vline(xintercept=0, col="grey40") + 
+    geom_hline(yintercept = 0, col="grey40") +
+    geom_point(alpha=.8, aes(color=spr_reg_nm,size=pop*2), show.legend = T) +
+    geom_text_repel(
+      data          = subset(df, location_name %in% c("Chad","Papua New Guinea","Liberia","India","Ethiopia","Angola", "Nigeria", "Kenya", "Burkina Faso", "Pakistan")),
+      segment.size  = 0.2,
+      segment.color = "grey50",
+      direction     = "x"
+    ) +
+    theme_classic() +   scale_size_area(max_size = 12) +
+    scale_color_manual(values=c('#EE6677', '#228833', '#4477AA', '#CCBB44', '#66CCEE', '#AA3377')) + 
+    labs(y="Change in Absolute Geographic Inequality (2019 - 2000)", x="Change in MCV1 Coverage (2019 - 2000)", color = "Regions", size= "Under-5 population size") +  
+    theme(panel.border = element_blank(),axis.line = element_line(colour = "black"),panel.background = element_rect(fill="white"),text = element_text(size=20), legend.position="right")+
+    geom_text(data=annotations,aes(x=xpos,y=ypos,hjust=hjustvar,vjust=vjustvar,label=annotateText),col="grey40", size=3) 
+  
+  
+  png(file = paste0("FILEPATH"),
+      width = 13.5,
+      height = 7.5,
+      units = "in", 
+      res = 600, 
+      type = "cairo")
+  plot(gg)
+  dev.off()    
+  
+}
+
+
+#### save file for other comparisons with hot spots
+df <- fread(paste0("FILEPATH"))
+
+t <- df[which(df$aaid > 0.15 & year == 2000),]
+sort(unique(t$location_name))
+t2000 <- copy(t)
+t2000$aaid2000 <- t2000$aaid
+t <- df[which(df$aaid > 0.15 & year == 2019),]
+sort(unique(t$location_name))
+t2019 <- copy(t)
+t2019$aaid2019 <- t2019$aaid
+
+
+
+
+t2000 <- df[which(year == 2000),]
+t2000$aaid2000 <- t2000$aaid
+
+
+t2019 <-  df[which(year == 2019),]
+t2019$aaid2019 <- t2019$aaid
+
+df <- merge(t2000, t2019, by="country")
+
+diff <- df$aaid2000 - df$aaid2019
+df$diff <- diff
+bad <- df[which(df$diff <0),]
+sort(unique(bad$ADM0_NAME.x ))
+length(unique(bad$ADM0_NAME.x ))
+
+nga <- subset(df, ADM0_NAME.x == "Nigeria")
+nga$aaid2000
+nga$aaid2019
+ind <- subset(df, ADM0_NAME.x == "India")
+ind$aaid2000
+ind$aaid2019
+
+eth <- subset(df, ADM0_NAME.x == "Ethiopia")
+eth$aaid2000
+eth$aaid2019
+eth$mean.x
+eth$mean.y
+
+tcd <- subset(df, ADM0_NAME.x == "Chad")
+tcd$aaid2000
+tcd$aaid2019
+tcd$mean.x
+tcd$mean.y
+
+
+ago <- subset(df, ADM0_NAME.x == "Angola")
+ago$aaid2000
+ago$aaid2019
+ago$mean.x
+ago$mean.y
+
+good <- subset(df, diff > 0)
+good2 <- subset(df, mean.y > mean.x)
+good3 <- subset(good2, diff > 0)
+dim(good3)
+
+####
+gbd <- readRDS(paste0("FILEPATH"))
+head(gbd)
+##philippines
+subset(gbd, location_id == 16)
+
+
+
+###############################################################################################
+##### geographic remoteness analysis -- starting over with clean slate
+###############################################################################################
+
+
+rm(list=ls())
+
+## Set repo location and indicator group
+user               <- Sys.info()['user']
+core_repo          <- sprintf('FILEPATH')
+indic_repo         <- sprintf('FILEPATH')
+remote             <- 'origin'
+branch             <- 'develop'
+pullgit            <- FALSE
+
+## sort some directory stuff
+commondir      <- sprintf('FILEPATH')
+package_list <- c(t(read.csv(sprintf('%s/package_list.csv',commondir),header=FALSE)))
+
+# Load MBG packages and functions
+message('Loading in required R packages and MBG functions')
+source(paste0(core_repo, '/mbg_central/setup.R'))
+mbg_setup(package_list = package_list, repos = core_repo)
+
+# Custom load indicator-specific functions
+source(paste0(indic_repo,'functions/misc_vaccine_functions.R'))
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+#### define urban and last-mile populations based on distribution of kids by travel time globally 
+#### i.e. 10% of kids live in places with travel time < X1 and 10% of kids live with in travel time > Y
+
+# first, we need to combine the 2018 population rasters with the access variable
+
+pop <- raster('FILEPATH')
+access <- raster('FILEPATH')
+coverage <- brick('FILEPATH')
+coverage <- coverage[[20]]
+
+### need to crop the rasters to countries included in the paper
+##### set up
+file_path <- paste0('FILEPATH')
+
+
+#### which countries are we dropping??
+input <- fread('FILEPATH')
+regs <- fread('FILEPATH')
+id <- merge(input, regs, by.x="country", by.y="iso3")
+
+data_ctrys <- unique(id$country)
+
+modeled_list <- fread(paste0('FILEPATH'))
+mod <- merge(modeled_list, regs, by.x="ADM0_CODE", by.y="gadm_geoid")
+
+mod_ctrys <- unique(mod$iso3)
+
+drop_iso <- setdiff(mod_ctrys, data_ctrys)
+extra <- setdiff(data_ctrys, mod_ctrys)
+
+drop_iso <- c(drop_iso, extra)
+
+drop_info <- data.table(drop_iso)
+drops <- merge(drop_info, regs, by.x="drop_iso", by.y="iso3", all.x=T, al.y=F)
+
+final_ctry_count <- length(setdiff(mod_ctrys, drop_iso))
+estimate_ctrys <- fread(paste0('FILEPATH'))
+estimate_ctrys <- unique(estimate_ctrys$ADM0_CODE)
+
+drop_ctrys <- unique(drops$gadm_geoid)
+
+keep <- setdiff(estimate_ctrys, drop_ctrys)
+length(keep)
+
+
+ashp <- sf::st_read('FILEPATH') 
+ashp <- subset(ashp, ADM0_CODE %in% keep)
+ashp <- subset(ashp, ADM0_NAME != "Palestine")
+
+# # ### this part takes a long time
+masked_pop <- mask(pop, ashp)
+cropped_pop <- crop(masked_pop, extent(ashp))
+
+masked_access <- mask(access, ashp)
+cropped_access <- crop(masked_access, extent(ashp))
+
+masked_coverage <- mask(coverage, ashp)
+cropped_coverage <- crop(masked_coverage, extent(ashp))
+
+#### now make into a data frame 
+
+pop_vec <- as.vector(cropped_pop)
+access_vec <- as.vector(cropped_access)
+coverage_vec <- as.vector(cropped_coverage)
+
+
+df <- data.table(cbind(pop_vec, access_vec, coverage_vec))
+df <- subset(df, !is.na(pop_vec))
+df <- subset(df, !is.na(access_vec))
+df <- subset(df, !is.na(coverage_vec))
+
+newdata <- df[order(access_vec),]
+
+
+head(newdata)
+
+rural_cutoff <- 180
+urban_cutoff <- 30
+
+
+#### then look at the proportion of unvaccinated kids who fall into one of those two categories
+#### i.e. 40% of unvaccinated children live in remote rural, or urban 
+newdata$rural_binary <- ifelse(newdata$access_vec >= rural_cutoff, 1, 0)
+newdata$urban_binary <- ifelse(newdata$access_vec <= urban_cutoff, 1, 0)
+
+
+head(newdata)
+newdata$mcv0 <- 1 - newdata$coverage_vec
+
+newdata$unvaccinated <- newdata$pop_vec * newdata$mcv0
+
+newdata$cum_unvacc <- cumsum(newdata$unvaccinated)
+newdata$prop_unvacc <- newdata$cum_unvacc / sum(newdata$unvaccinated, na.rm=T)
+newdata$prop_unvacc_raw <- newdata$unvaccinated / sum(newdata$unvaccinated, na.rm=T)
+
+df_all <- newdata %>%
+  slice(which(row_number() %% 1000 == 1))
+
+
+
+rural_df_sub <- subset(newdata, access_vec >= 180)
+urban_df_sub <- subset(newdata, access_vec <= 30)
+a <- sum(rural_df_sub$unvaccinated, na.rm=T) / sum(newdata$unvaccinated, na.rm=T)
+b <- sum(urban_df_sub$unvaccinated, na.rm=T) / sum(newdata$unvaccinated, na.rm=T)
+
+d <- sum(rural_df_sub$unvaccinated, na.rm=T) / sum(rural_df_sub$pop_vec, na.rm=T)
+e <- sum(urban_df_sub$unvaccinated, na.rm=T) / sum(urban_df_sub$pop_vec, na.rm=T)
+
+f <- sum(rural_df_sub$unvaccinated, na.rm=T)
+g <- sum(urban_df_sub$unvaccinated, na.rm=T)
+h <- sum(newdata$unvaccinated, na.rm=T) - sum(urban_df_sub$unvaccinated, na.rm=T) - sum(rural_df_sub$unvaccinated, na.rm=T)
+
+
+a
+b
+d
+e
+
+
+  
+  gg_test <- ggplot(df_all, aes(x=access_vec/60, y=prop_unvacc_raw)) + geom_line(aes(col='darkgrey'), lwd=1) + theme_classic(base_size = 25) +
+    xlab("Travel time (in hours)") + ylab("Proportion of unvaccinated children") + xlim(0,15) +
+    scale_color_identity(name = "Regions",
+                         breaks = c("darkgrey"),
+                         labels = c("LMICs"),
+                         guide = "legend")
+  
+
+
+
+##### now to do the analysis by country!
+ashp <- sf::st_read('FILEPATH')
+ashp <- subset(ashp, ADM0_CODE %in% keep)
+
+
+reg_ashp <- merge(ashp, regs, by.x="ADM0_CODE", by.y="gadm_geoid")
+
+
+reg_list <- unique(reg_ashp$spr_reg_nm)
+df_list <- list()
+df_list2 <- list()
+total_table <- data.table()
+
+
+### this part also takes a long time, so some files saved to disk to be able to pull easily later 
+
+for(i in 1:length(reg_list)){
+
+  c <- reg_list[i]
+  message(c)
+
+
+  subset_ashp <- subset(reg_ashp, spr_reg_nm == c)
+
+
+  masked <- mask(cropped_coverage, subset_ashp)
+  cropped_sub_coverage <- crop(masked, extent(subset_ashp))
+
+  masked <- mask(cropped_access, subset_ashp)
+  cropped_sub_access <- crop(masked, extent(subset_ashp))
+
+  masked <- mask(cropped_pop, subset_ashp)
+  cropped_sub_pop <- crop(masked, extent(subset_ashp))
+
+  sub_pop_vec <- as.vector(cropped_sub_pop)
+  sub_access_vec <- as.vector(cropped_sub_access)
+  sub_coverage_vec <- as.vector(cropped_sub_coverage)
+
+
+  df_sub <- data.table(cbind(sub_pop_vec, sub_access_vec, sub_coverage_vec))
+  df_sub <- subset(df_sub, !is.na(sub_pop_vec))
+  df_sub <- subset(df_sub, !is.na(sub_access_vec))
+  df_sub <- subset(df_sub, !is.na(sub_coverage_vec))
+
+
+  df_sub$mcv0 <- 1 - df_sub$sub_coverage_vec
+  df_sub$unvaccinated <- df_sub$mcv0 * df_sub$sub_pop_vec
+
+  df_sub <- df_sub[order(sub_access_vec),]
+
+  df_sub$cum_unvacc <- cumsum(df_sub$unvaccinated)
+  df_sub$prop_unvacc_raw <- df_sub$unvaccinated / sum(df_sub$unvaccinated, na.rm=T)
+  df_sub$prop_unvacc <- df_sub$cum_unvacc / sum(df_sub$unvaccinated, na.rm=T)
+
+  # ##### for table
+  rural_df_sub <- subset(df_sub, sub_access_vec >= 180)
+  urban_df_sub <- subset(df_sub, sub_access_vec <= 30)
+  a <- sum(rural_df_sub$unvaccinated, na.rm=T) / sum(newdata$unvaccinated, na.rm=T)
+  b <- sum(urban_df_sub$unvaccinated, na.rm=T) / sum(newdata$unvaccinated, na.rm=T)
+
+  d <- sum(rural_df_sub$unvaccinated, na.rm=T) / sum(rural_df_sub$sub_pop_vec, na.rm=T)
+  e <- sum(urban_df_sub$unvaccinated, na.rm=T) / sum(urban_df_sub$sub_pop_vec, na.rm=T)
+
+  f <- sum(rural_df_sub$unvaccinated, na.rm=T)
+  g <- sum(urban_df_sub$unvaccinated, na.rm=T)
+  h <- sum(df_sub$unvaccinated, na.rm=T) - sum(urban_df_sub$unvaccinated, na.rm=T) - sum(rural_df_sub$unvaccinated, na.rm=T)
+
+  row_to_add <- cbind(as.character(c), a, b, d, e, f, g, h)
+  colnames(row_to_add) <- c("region", "all_rural", "all_urban", "local_rural", "local_urban", "rural_count", "urban_count", "between_count")
+  total_table <- rbind(total_table, row_to_add)
+
+
+
+  message("..... now saving for plots")
+  df_sub2 <- df_sub %>%
+    slice(which(row_number() %% 1000 == 1))
+  df_list2[[i]] <- df_sub2
+  df_list[[i]] <- df_sub
+}
+
+
+saveRDS(df_list, 'FILEPATH')
+saveRDS(df_list2, 'FILEPATH')
+
+saveRDS(df_all, 'FILEPATH')
+saveRDS(newdata, 'FILEPATH')
+
+
+df_list <- readRDS('FILEPATH')
+df_all <- readRDS('FILEPATH')
+newdata <- readRDS('FILEPATH')
+
+
+newdata$reg <- "LMICs"
+
+all <- data.table(cbind(newdata$pop_vec, as.numeric(as.character(newdata$access_vec)), newdata$coverage_vec, newdata$mcv0, newdata$unvaccinated, newdata$prop_unvacc_raw, newdata$cum_unvacc, newdata$prop_unvacc, newdata$reg))
+colnames(all) <- c("sub_pop_vec", "sub_access_vec", "sub_coverage_vec", "mcv0", "unvaccinated", "prop_unvacc_raw", "cum_unvacc","prop_unvacc", "reg")
+
+df_list[[1]]$reg <- "North Africa and Middle East"
+df_list[[2]]$reg <- "Sub-Saharan Africa"
+df_list[[3]]$reg <- "Central Europe, Eastern Europe, and Central Asia"
+df_list[[4]]$reg <- "South Asia"
+df_list[[5]]$reg <- "Latin America and Caribbean"
+df_list[[6]]$reg <- "Southeast Asia, East Asia, and Oceania"
+
+df_huge <- rbind(all, df_list[[1]], df_list[[2]], df_list[[3]], df_list[[4]], df_list[[5]], df_list[[6]])
+
+df_huge$sub_access_vec <- as.numeric(df_huge$sub_access_vec)
+df_huge$acc_hours <- df_huge$sub_access_vec/60
+
+test <- copy(df_huge)
+
+test$access_bins <- round(test$acc_hours, 1)
+test$access_bins <- round(test$acc_hours/0.5)*0.5
+
+full_reg_list <- c("LMICs", reg_list)
+aggdata <- list()
+for (i in 1:length(full_reg_list)){
+  reg_spec <- full_reg_list[[i]]
+  message(reg_spec)
+  test_reg <- subset(test, reg == reg_spec)
+  test_sum <- data.table(cbind(test_reg$unvaccinated, test_reg$access_bins, test_reg$sub_pop_vec))
+  colnames(test_sum) <- c("unvaccinated", "access_bins", "pop")
+  test_sum$unvaccinated <- as.numeric(test_sum$unvaccinated)
+  test_sum$pop <- as.numeric(test_sum$pop)
+  test_sum$access_bins <- as.numeric(test_sum$access_bins)
+  
+  aggdata[[i]] <-aggregate(test_sum, by=list(test_sum$access_bins),
+                           FUN=sum, na.rm=TRUE)
+  aggdata[[i]]$unvacc_prop <- aggdata[[i]]$unvaccinated / sum(aggdata[[i]]$unvaccinated)
+  aggdata[[i]]$coverage <- 1 - (aggdata[[i]]$unvaccinated / aggdata[[i]]$pop )
+  aggdata[[i]]$reg <- reg_spec
+}
+
+agg_huge <- rbind(aggdata[[1]], aggdata[[2]], aggdata[[3]], aggdata[[4]], aggdata[[5]], aggdata[[6]], aggdata[[7]])
+
+  
+  coverage_gg <- ggplot(aggdata[[1]], aes(x=Group.1, y=coverage) )+ xlim(0,20) + theme_classic(base_size = 25) + 
+    geom_line(aes(color="darkgrey"),lwd=4, alpha = 0.8) +  xlab("Travel time (in hours)") + ylab("MCV1 Coverage") +
+    geom_vline(lty=2, lwd=1, xintercept = 3, color="darkgrey") + geom_vline(lty=2, lwd=1, xintercept = 0.5, color="darkgrey") + 
+    geom_line(data = aggdata[[2]],
+              mapping = aes(x=Group.1, y=coverage, col="#EE6677"), lwd=2)  + 
+    geom_line(data = aggdata[[3]],
+              mapping = aes(x=Group.1, y=coverage, col="#228833"), lwd=2)  +
+    geom_line(data = aggdata[[4]],
+              mapping = aes(x=Group.1, y=coverage, col="#4477AA"), lwd=2)  +
+    geom_line(data = aggdata[[5]],
+              mapping = aes(x=Group.1, y=coverage, col="#CCBB44"), lwd=2)  +
+    geom_line(data = aggdata[[6]],
+              mapping = aes(x=Group.1, y=coverage, col="#66CCEE"), lwd=2)  +
+    geom_line(data = aggdata[[7]],
+              mapping = aes(x=Group.1, y=coverage, col="#AA3377"), lwd=2)  +
+    scale_color_identity(name = "Regions",
+                         breaks = c("darkgrey", "#EE6677", "#228833", "#4477AA", "#CCBB44", "#66CCEE", "#AA3377"),
+                         labels = c("LMICs", reg_list),
+                         guide = "legend")
+  
+  coverage_gg 
+  coverage_gg <- coverage_gg + labs(title="", color="Regions")
+  
+  
+  gg <- ggplot(df_all, aes(x=access_vec/60, y=prop_unvacc)) + geom_line(aes(col='darkgrey'), lwd=4) + theme_classic(base_size = 25) +
+    xlab("Travel time (in hours)") + ylab("Cumulative proportion of unvaccinated children") + xlim(0,10) 
+  
+  gg <- gg + geom_line(data = df_list[[1]],
+                       mapping = aes(x = sub_access_vec/60, y = prop_unvacc, col="#EE6677"), lwd=2) + 
+    geom_line(data = df_list[[2]],
+              mapping = aes(x = sub_access_vec/60, y = prop_unvacc, col="#228833"), lwd=2) +
+    geom_line(data = df_list[[3]],
+              mapping = aes(x = sub_access_vec/60, y = prop_unvacc, col="#4477AA"), lwd=2) +
+    geom_line(data = df_list[[4]],
+              mapping = aes(x = sub_access_vec/60, y = prop_unvacc, col="#CCBB44"), lwd=2) +
+    geom_line(data = df_list[[5]],
+              mapping = aes(x = sub_access_vec/60, y = prop_unvacc, col="#66CCEE"), lwd=2) +
+    geom_line(data = df_list[[6]],
+              mapping = aes(x = sub_access_vec/60, y = prop_unvacc, col="#AA3377"), lwd=2) +
+    scale_color_identity(name = "Regions",
+                         breaks = c("darkgrey", "#EE6677", "#228833", "#4477AA", "#CCBB44", "#66CCEE", "#AA3377"),
+                         labels = c("LMICs", reg_list),
+                         guide = "legend")
+  
+  gg_panel_a <- gg + geom_vline(xintercept = 3, lwd=1, lty=2, col="darkgrey") + geom_vline(xintercept = 0.5, lwd=1, lty=2, col="darkgrey") + labs(title="", color="Regions")
+  
+  
+  png(file=paste0('FILEPATH'), width=1600, height=800, pointsize = 50)
+  plot(gg_panel_a)
+  dev.off()
+  
+  
+  png(file=paste0('FILEPATH'), width=1600, height=800, pointsize = 50)
+  plot(coverage_gg)
+  dev.off()
+  
+
+
+##################################################################################
+##### panel b -- Chad
+
+c <- "Chad"
+message(c)
+subset_ashp <- subset(ashp, ADM0_NAME == c)
+
+
+masked <- mask(cropped_coverage, subset_ashp)
+cropped_sub_coverage <- crop(masked, extent(subset_ashp))
+
+masked <- mask(cropped_access, subset_ashp)
+cropped_sub_access <- crop(masked, extent(subset_ashp))
+
+masked <- mask(cropped_pop, subset_ashp)
+cropped_sub_pop <- crop(masked, extent(subset_ashp))
+
+sub_pop_vec <- as.vector(cropped_sub_pop)
+sub_access_vec <- as.vector(cropped_sub_access)
+sub_coverage_vec <- as.vector(cropped_sub_coverage)
+
+
+df_sub <- data.table(cbind(sub_pop_vec, sub_access_vec, sub_coverage_vec))
+df_sub <- subset(df_sub, !is.na(sub_pop_vec))
+df_sub <- subset(df_sub, !is.na(sub_access_vec))
+df_sub <- subset(df_sub, !is.na(sub_coverage_vec))
+
+
+df_sub$mcv0 <- 1 - df_sub$sub_coverage_vec
+df_sub$unvaccinated <- df_sub$mcv0 * df_sub$sub_pop_vec
+
+df_sub <- df_sub[order(sub_access_vec),]
+
+df_sub$cum_unvacc <- cumsum(df_sub$unvaccinated)
+df_sub$prop_unvacc <- df_sub$cum_unvacc / sum(df_sub$unvaccinated, na.rm=T)
+
+results1 <- subset(df_sub, sub_access_vec > 180)
+1 -head(results1)$prop_unvacc[1]
+# XX % of unvacc live in remote rural
+results2 <- subset(df_sub, sub_access_vec < 30)
+tail(results2)$prop_unvacc[5]# YY % live in urban
+
+
+
+df <- newdata
+
+  
+  message("..... now plotting")
+  
+  
+  df_sub2 <- df_sub %>%
+    slice(which(row_number() %% 100 == 1))
+  
+  
+  gg <- ggplot(df, aes(x=access_vec/60, y=prop_unvacc)) + geom_line(col='darkgrey', lwd=2) + theme_classic(base_size = 25) +
+    xlab("Travel time (in hours)") + ylab("Proportion of unvaccinated children") + xlim(0,24)
+  gg <- gg + geom_line(data = df_sub2,
+                       mapping = aes(x = sub_access_vec/60, y = prop_unvacc), col="#1f78b4", lwd=2)
+  gg_panel_b <- gg + geom_vline(xintercept = 3, lwd=1, lty=2, col="darkgrey") + labs(title=paste0("b. ", as.character(c)))
+  
+  
+  png(file=paste0('FILEPATH'), width=1000, height=800, pointsize = 100)
+  plot(gg_panel_b)
+  dev.off()
+##################################################################################
+##### panel c -- madagascar
+
+  c <- "Madagascar"
+  message(c)
+  subset_ashp <- subset(ashp, ADM0_NAME == c)
+  
+  
+  masked <- mask(cropped_coverage, subset_ashp)
+  cropped_sub_coverage <- crop(masked, extent(subset_ashp))
+  
+  masked <- mask(cropped_access, subset_ashp)
+  cropped_sub_access <- crop(masked, extent(subset_ashp))
+  
+  masked <- mask(cropped_pop, subset_ashp)
+  cropped_sub_pop <- crop(masked, extent(subset_ashp))
+  
+  sub_pop_vec <- as.vector(cropped_sub_pop)
+  sub_access_vec <- as.vector(cropped_sub_access)
+  sub_coverage_vec <- as.vector(cropped_sub_coverage)
+  
+  
+  df_sub <- data.table(cbind(sub_pop_vec, sub_access_vec, sub_coverage_vec))
+  df_sub <- subset(df_sub, !is.na(sub_pop_vec))
+  df_sub <- subset(df_sub, !is.na(sub_access_vec))
+  df_sub <- subset(df_sub, !is.na(sub_coverage_vec))
+  
+  
+  df_sub$mcv0 <- 1 - df_sub$sub_coverage_vec
+  df_sub$unvaccinated <- df_sub$mcv0 * df_sub$sub_pop_vec
+  
+  df_sub <- df_sub[order(sub_access_vec),]
+  
+  df_sub$cum_unvacc <- cumsum(df_sub$unvaccinated)
+  df_sub$prop_unvacc <- df_sub$cum_unvacc / sum(df_sub$unvaccinated, na.rm=T)
+  
+  
+  message("..... now plotting")
+  
+  df_sub2 <- df_sub %>%
+    slice(which(row_number() %% 100 == 1))
+  
+  gg <- ggplot(df, aes(x=access_vec/60, y=prop_unvacc)) + geom_line(col='darkgrey', lwd=2) + theme_classic(base_size = 25) +
+    xlab("Travel time (in hours)") + ylab("Proportion of unvaccinated children") + xlim(0,24)
+  gg <- gg + geom_line(data = df_sub2,
+                       mapping = aes(x = sub_access_vec/60, y = prop_unvacc), col="#1f78b4", lwd=2)
+  gg_panel_c <- gg + geom_vline(xintercept = 3, lwd=1, lty=2, col="darkgrey") + labs(title=paste0("c. ", as.character(c)))
+  
+  png(file=paste0('FILEPATH'), width=1000, height=800, pointsize = 100)
+  plot(gg_panel_c)
+  dev.off()
+}
+
+##################################################################################
+##### panel d -- india
+
+  c <- "India"
+  message(c)
+  subset_ashp <- subset(ashp, ADM0_NAME == c)
+  
+  masked <- mask(cropped_coverage, subset_ashp)
+  cropped_sub_coverage <- crop(masked, extent(subset_ashp))
+  
+  masked <- mask(cropped_access, subset_ashp)
+  cropped_sub_access <- crop(masked, extent(subset_ashp))
+  
+  masked <- mask(cropped_pop, subset_ashp)
+  cropped_sub_pop <- crop(masked, extent(subset_ashp))
+  
+  sub_pop_vec <- as.vector(cropped_sub_pop)
+  sub_access_vec <- as.vector(cropped_sub_access)
+  sub_coverage_vec <- as.vector(cropped_sub_coverage)
+  
+  
+  df_sub <- data.table(cbind(sub_pop_vec, sub_access_vec, sub_coverage_vec))
+  df_sub <- subset(df_sub, !is.na(sub_pop_vec))
+  df_sub <- subset(df_sub, !is.na(sub_access_vec))
+  df_sub <- subset(df_sub, !is.na(sub_coverage_vec))
+  
+  
+  df_sub$mcv0 <- 1 - df_sub$sub_coverage_vec
+  df_sub$unvaccinated <- df_sub$mcv0 * df_sub$sub_pop_vec
+  
+  df_sub <- df_sub[order(sub_access_vec),]
+  
+  df_sub$cum_unvacc <- cumsum(df_sub$unvaccinated)
+  df_sub$prop_unvacc <- df_sub$cum_unvacc / sum(df_sub$unvaccinated, na.rm=T)
+  
+  
+  message("..... now plotting")
+  df_sub2 <- df_sub %>%
+    slice(which(row_number() %% 100 == 1))
+  
+  
+  gg <- ggplot(df, aes(x=access_vec/60, y=prop_unvacc)) + geom_line(col='darkgrey', lwd=2) + theme_classic(base_size = 25) +
+    xlab("Travel time (in hours)") + ylab("Proportion of unvaccinated children") + xlim(0,24)
+  gg <- gg + geom_line(data = df_sub2,
+                       mapping = aes(x = sub_access_vec/60, y = prop_unvacc), col="#1f78b4", lwd=2)
+  gg_panel_d <- gg + geom_vline(xintercept = 3, lwd=1, lty=2, col="darkgrey") + labs(title=paste0("d. ", as.character(c)))
+  
+  
+  png(file=paste0('FILEPATH'), width=1000, height=800, pointsize = 100)
+  plot(gg_panel_d)
+  dev.off()
+
+
+##################################################################################
+##### panel c -- mexico
+
+c <- "Mexico"
+message(c)
+subset_ashp <- subset(ashp, ADM0_NAME == c)
+
+
+masked <- mask(cropped_coverage, subset_ashp)
+cropped_sub_coverage <- crop(masked, extent(subset_ashp))
+
+masked <- mask(cropped_access, subset_ashp)
+cropped_sub_access <- crop(masked, extent(subset_ashp))
+
+masked <- mask(cropped_pop, subset_ashp)
+cropped_sub_pop <- crop(masked, extent(subset_ashp))
+
+sub_pop_vec <- as.vector(cropped_sub_pop)
+sub_access_vec <- as.vector(cropped_sub_access)
+sub_coverage_vec <- as.vector(cropped_sub_coverage)
+
+
+df_sub <- data.table(cbind(sub_pop_vec, sub_access_vec, sub_coverage_vec))
+df_sub <- subset(df_sub, !is.na(sub_pop_vec))
+df_sub <- subset(df_sub, !is.na(sub_access_vec))
+df_sub <- subset(df_sub, !is.na(sub_coverage_vec))
+
+
+df_sub$mcv0 <- 1 - df_sub$sub_coverage_vec
+df_sub$unvaccinated <- df_sub$mcv0 * df_sub$sub_pop_vec
+
+df_sub <- df_sub[order(sub_access_vec),]
+
+df_sub$cum_unvacc <- cumsum(df_sub$unvaccinated)
+df_sub$prop_unvacc <- df_sub$cum_unvacc / sum(df_sub$unvaccinated, na.rm=T)
+
+
+results1 <- subset(df_sub, sub_access_vec > 180)
+1 - head(results1)$prop_unvacc[1]
+# XX % of unvacc live in remote rural
+results2 <- subset(df_sub, sub_access_vec < 30)
+tail(results2)$prop_unvacc[5]# YY % live in urban
+
+
+  message("..... now plotting")
+  
+  
+  df_sub2 <- df_sub %>%
+    slice(which(row_number() %% 100 == 1))
+  
+  
+  gg <- ggplot(df, aes(x=access_vec/60, y=prop_unvacc)) + geom_line(col='darkgrey', lwd=2) + theme_classic(base_size = 25) +
+    xlab("Travel time (in hours)") + ylab("Proportion of unvaccinated children") + xlim(0,24)
+  gg <- gg + geom_line(data = df_sub2,
+                       mapping = aes(x = sub_access_vec/60, y = prop_unvacc), col="#1f78b4", lwd=2)
+  gg_panel_e <- gg + geom_vline(xintercept = 3, lwd=1, lty=2, col="darkgrey") + labs(title=paste0("e. ", as.character(c)))
+  
+  
+  png(file=paste0('FILEPATH'), width=1000, height=800, pointsize = 100)
+  plot(gg_panel_e)
+  dev.off()
+
+
+
+
+
+
+soas <- aggdata[[5]]
+head(soas)
+urban <- subset(soas, Group.1 < 1)
+1 - (sum(urban$unvaccinated) / sum(urban$pop))
+
+
+rural <- subset(soas, Group.1 > 2.5)
+1 - (sum(rural$unvaccinated) / sum(rural$pop))
+
+sum(urban$unvaccinated) / sum(rural$unvaccinated)
+

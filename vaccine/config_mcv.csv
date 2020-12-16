@@ -1,0 +1,98 @@
+indicator_family,binomial
+check_cov_pixelcount,FALSE
+coefs_sum1,TRUE
+constrain_children_0_inf,FALSE
+countries_not_to_rake,ESH+GUF
+countries_not_to_subnat_rake,PHL+NGA+PAK
+ctry_re_prior,"list(prior = 'loggamma', param = c(1, 5e-4))"
+datatag,NULL
+gbd_date,best
+gbm_bf,0.75
+gbm_bounded_0_1,TRUE
+gbm_lr,0.005
+gbm_tc,3
+ho_mb,10
+ho_ts,500
+holdout_rundate,2018_02_07_17_23_18
+holdout_strategy,nid
+individual_countries,FALSE
+inla_cores,10
+intercept_prior,0
+interval_mo,12
+intstrat,eb
+jn,sprintf('')
+keep_inla_files,FALSE
+lat_col,latitude
+load_other_holdouts,FALSE
+long_col,longitude
+makeholdouts,FALSE
+mesh_s_max_edge,"c(0.5, 5)"
+mesh_s_offset,"c(1, 5)"
+mesh_t_knots,"c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)"
+modeling_shapefile_version,2020_05_21
+n_ho_folds,5
+n_stack_folds,5
+nugget_prior,"list(prior = 'loggamma', param = c(1, 5e-4))"
+other_weight,
+pop_measure,a0004t
+rake_transform,logit
+raking_shapefile_version,2020_05_21
+Regions,"c( 'vax_ansa', 'vax_caeu','vax_crbn', 'vax_cssa', 'vax_ctam', 'vax_eaas', 'vax_essa', 'vax_name', 'vax_seas', 'vax_soas', 'vax_sssa', 'vax_wssa', 'vax_trsa')"
+resume_broken,TRUE
+samples,1000
+scale_gaussian_variance_N,TRUE
+skipinla,FALSE
+skiptoinla,FALSE
+skiptoinla_from_rundate,2019_12_16_16_53_44
+slots,16
+ss_col,weighted_n
+st_targ,0.8
+stacked_fixed_effects,gam + lasso + gbm
+stackers_in_transform_space,TRUE
+subnational_raking,TRUE
+summstats,"c('mean', 'cirange', 'upper', 'lower', 'cfb')"
+target_type,greater
+test,FALSE
+test_pct,5
+time_stamp,TRUE
+transform,inverse-logit
+use_child_country_fes,TRUE
+use_gp,TRUE
+use_inla_country_fes,FALSE
+use_inla_country_res,TRUE
+use_inla_nugget,TRUE
+use_nid_res,FALSE
+use_raw_covs,FALSE
+use_s2_mesh,TRUE
+use_share,FALSE
+use_stacking_covs,TRUE
+validation_metrics_only,FALSE
+withtag,FALSE
+year_list,c(2000:2019)
+yearload,annual
+yr_col,year
+z_list,0
+zcol,'z_column_default_blank'
+use_subnat_res,FALSE
+use_geos_nodes,TRUE
+spat_strat,qt
+subnat_country_to_get,
+temp_strat,prop
+rho_prior,"list(prior = 'normal', param = c(0, 1/(2.58^2)))"
+run_time,16:00:00:00
+s2_mesh_params,"c(25, 500, 1000)"
+skip.inla,0
+skip.stacking,0
+memory,10
+metric_space,current
+queue,long.q
+rake_countries,TRUE
+fit_with_tmb,FALSE
+fixed_effects,
+fixed_effects_measures,'mean + total'
+gbd_fixed_effects,
+gbd_fixed_effects_age,"c(2, 3, 4, 5)"
+gbd_fixed_effects_measures,
+use_adm2_res,FALSE
+pop_release,2020_03_20
+no_nugget_predict,FALSE
