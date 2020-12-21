@@ -1,0 +1,90 @@
+variable,default_value,description
+check_cov_pixelcount,TRUE,Logical: Should covariates with more NA pixels be automatically dropped to avoid NAs coming through in prediction? Threshold for dropping is 95% of max non-NA pixels a covariate has within the simplified modeling boundary.
+coefs_sum1,TRUE,Logical: Should the coefficients on the stackers sum-to-1? Should probably be TRUE if running a model with stackers. For other models (e.g. GP only or raw/non-stacked covariates) should be FALSE
+constrain_children_0_inf,FALSE,Logical: Force the coefficient on the stackers to be positive? EXPERIMENTAL! Does not work with coefs_sum1==TRUE
+countries_not_to_rake,ESH+GUF,String: Countries to not rake at all. Default: French Guiana and Western Sahara
+countries_not_to_subnat_rake,PHL+NGA+PAK+ETH+KEN,"String: Countries to not do subnational raking to GBD. Default: PHL, NGA, PAK, IND, KEN"
+ctry_re_prior,"list(prior = 'loggamma', param = c(1, 5e-5))","String of R list notation containing an INLA style prior. Note that this prior is actually placed on on the precision for the error. NOTE: for somewhat historical reasons, the default is set to: """"list(prior = 'loggamma', param = c(2, 1))"""". which is probably NOT a good prior. Please investigate and set your own."
+datatag,,String: Name of tag of custom dataset if using withtag='TRUE'. i.e. regular_data_set_name_<datatag>.csv. Can otherwise be left blank.
+fit_with_tmb,FALSE,Logical: Fit model with TMB instead of INLA?
+fixed_effects,,"String: in particular format of """"cov1 + cov2 + ... + cov_n"""" Note the spaces around the plus signs! This specifies which geospatial fixed effects to load if you're not using the separate cov config."
+fixed_effects_measures,mean + total,"String: in particular format of """"meas1 + meas2 + ... + meas_n"""" Note the spaces around the plus signs! This specifies the measure associated with fixed_effects if cov_config is not used. Measures can be mean, median, total …"
+gbd_fixed_effects,,String: analogous to fixed_effects
+gbd_fixed_effects_age,"c(2, 3, 4, 5)",String of R vector notation containing integers: Collapse GBD age ranges.
+gbd_fixed_effects_measures,,String: analogous to fixed_effects_measures listed above
+gbm_bf,0.75,Real between 0 and 1: Bagging fraction in BRT fit
+gbm_lr,5.00E-03,Real between 0 and 1: Learning rate in BRT fit
+gbm_tc,3,Integer > 0: Tree complexity in BRT fit
+ho_mb,10,Integer: Used in quad-tree holdouts. Is the minimum number of points allowed in any one rectangle (min in box)
+ho_ts,500,Integer: Used in quad-tree holdouts. Is the target total sample size within each quadtree rectangle
+holdout_strategy,nids,String: TO BE FILLED IN
+indicator_family,binomial,String: Data likelihood family. Only binomial and gaussian are currently available. More could be added by users if the need arises
+individual_countries,FALSE,Logical: Should every country in each region by run by itself? Usually set to false unless you want country-specific models for some reason (e.g. using model outputs from individual country fits to generate regions with similar fitted model properties).
+inla_cores,5,Integer: Number of cores available to INLA inside the parallel script. NOTE: Not currently used!!
+intercept_prior,0,Real: Prior mean of intercept in INLA fit
+interval_mo,12,"Integer: Number of months between 'years'. Leave at 12 for annual 'year_load', 60 for 5-year bins"
+intstrat,eb,"String: Integration strategy of hyperparmeters in INLA. 'eb'=Empirical Bayes is the fastest by far, but only uses modal values of hyperparams and doesn't integrate over them. 'ccd' performs a smart numerical grid integration strategy but takes much longer then 'eb' and the time scales poorly with the number of hyperparameters in model."
+jn,sprintf(''),String. Additional string to be appended to the job names.
+keep_inla_files,FALSE,Logical: Do you want to keep the intermediate INLA files? Strongly suggested to set to FALSE.
+lat_col,latitude,String: Name of column to use in making space(-time) holdouts using methods that use lat-lon
+long_col,longitude,String: Name of column to use in making space(-time) holdouts using methods that use lat-lon
+makeholdouts,FALSE,Logical: Run with holdouts?
+memory,10,Integer: Memory to be allocated in GB
+mesh_s_max_edge,"c(0.2, 5)","String of R vector notation containing two positive reals: First number represents max triangle edge length in mesh inside modeling domain. Second number represents max triangle edge length in mesh outside modeling domain. Increase the first number for testing purposes (for comp speedup but it comes with increased approximation error and mesh artifacts in final predictions)."""" Units are in lat-long degrees."
+mesh_s_offset,"c(1, 5)",String of R vector notation containing two reals: Provides an inner and an optional outer extension distance. If negative it is interpreted as a factor relative to the approximate data diameter. If positive it is the extension distance on same scale unit to the coordinates provided. Units are in lat-long degrees.
+mesh_t_knots,"c(1, 6, 11, 16)","String of R vector notation containing integer indicies of year_list to place time mesh points. For example, the default """"year_list"""" is c(2000:2015), or the 16 consecutive years 2000-2015, inclusive. The default of c(1, 6, 11, 16) for mesh_t_knots would place a time mesh point at year 2000, 2005, 2010, and 2015. At a minimum, place mesh points in the first and last years."
+metric_space,rates,String. Measure of your variable; must be one of 'rates' or 'counts'. Default: 'rates'
+modeling_shapefile_version,'current',String: specifies the 'YYYY_MM_DD' version date of a global shapefile set to use in modeling.
+n_ho_folds,5,"Integer: If makeholdouts=='TRUE', how many holdouts would you like to make. Usually 5 is selected. Can be any integer greater than 1 (though mostly untested)."
+n_stack_folds,5,Integer: Number of folds to use in stacking cross-validation
+nugget_prior,"list(prior = 'loggamma', param = c(1, 5e-5))","String of R list notation containing an INLA style prior. Note that this prior is actually placed on on the precision for the error. NOTE: for somewhat historical reasons, the default is set to: """"list(prior = 'loggamma', param = c(2, 1))"""". which is probably NOT a good prior. Please investigate and set your own."
+other_weight,,String: Name of second weight column. Will be multiplied against the usual weight column to create a combination weighting using both weight columns. Leave blank if you don't plan to use.
+pop_measure,a0004t,String: Population measure to use from the world pop rasters for pop-weighted aggregation type calculations
+queue,long.q,String. The queue to be used for the new cluster. Default: long.q
+rake_countries,TRUE,Logical: Should we rake countries at all? Default: TRUE
+rake_transform,none,String: Could also be 'logit' if you want to perform logit raking
+raking_shapefile_version,'current',String: specifies the 'YYYY_MM_DD' version date of a global shapefile set to use in raking and then in post-estimation.
+rho_prior,"list(prior = 'normal', param = c(0, 1/(2.58^2)))",String of R list notation containing an INLA style prior. Note that this prior is actually placed on on the transformed parameter: theta = log((1+rho)/(1-rho))
+run_time,16:00:00:00,String. The run_time to be used for the new cluster. Default: 16 days
+s2_mesh_params,"c(25, 500, 1000)","String of R vector notation containing three positive reals: The first number defines the minimum triangle edge length allowed, the second argument defines how far the mesh should extend past the boundary, and the third argument defines the maximum allowed triangle edge length. All units are in easy to grok kilometers!"
+samples,250,Integer. Number of posterior samples (i.e. candidate maps) to draw from the INLA fit. Usually in the range 250 - 1000.
+scale_gaussian_variance_N,TRUE,"Logical: If TRUE and if using a Gaussian likelihood, should the observational variance be scaled by the sample size of the observation? CURRENTLY ONLY AVAILABLE IN TMB"
+singularity_version,default,"String: Singularity image version to be used in jobs. Defaults to 'default', which is the latest image detected in '<<<< FILEPATH REDACTED >>>>'"
+skip.inla,0,DEPRECATED; use skipinla
+skip.stacking,0,DEPRECATED; use skiptoinla
+skipinla,FALSE,Logical: Skip the INLA fit? Useful to skip straight to predicting if a parallel_model was killed post-INLA fit but before predictions were saved.
+skiptoinla,FALSE,"Logical: Skip past stacking and straight to INLA in parallel model? Used in conjunction with skiptoinla_from_run_date. If TRUE, stacking is skipped and stackers from skiptoinla_from_run_date will be used."
+skiptoinla_from_rundate,NULL,"run_date string: This should be of the form """"2018_01_04_16_25_58"""" (4:25:58 pm on January 4th, 2018). Used if skiptoinla==TRUE to load stacking results from older runs. Will attempt to copy the model image history file: /<<<< FILEPATH REDACTED >>>>/<skiptoinla_from_run_date>_bin<age>_<reg>_<holdout>.RData into the model_image_history directory for the current run date and load it."
+slots,10,Integer: Number of slots to request for each parallel job. 10 slots on geos gets you ~10 cores & ~200gb RAM. 40 slots on prod gets you ~30 cores and ~80gb RAM. Must scale depending on size of problem and where you plan to launch the jobs.
+spat_strat,qt,String: TO BE FILLED IN
+ss_col,weighted_n,String: Name of column to use while making holdouts using methods that use datapoint sample size
+st_targ,0.05,Real: Target relevant to your indicator. e.g. WHO global nutrition targets state that by 2025 wasting should be less than 0.05*100%
+stacked_fixed_effects,gam + lasso + gbm,"String: Available stackers separated by spaces and plus signs. Dictates which stackers will be fit and available for use in INLA/TMB fit. Current available options are: gbm, gam, lasso, ridge, enet, xgboost"
+stackers_in_transform_space,TRUE,Logical: Should the stackers enter the INLA fit in transform space (e.g. if you want the stackers be in logit space when using a binomial model). This almost always should be TRUE unless you have good reason otherwise.
+subnat_country_to_get,"""""""""",String: ISO3 code of the country to implement random effects on; CURRENTLY ONLY A SINGLE COUNTRY IS SUPPORTED
+subnational_raking,TRUE,"Logical: If TRUE, should subnational raking be performed in geogrpahies where GBD makes subnational estimates? We are mandated to keep this set to TRUE to align with GBD unless we have good reason to do otherwise."
+summstats,"c('mean', 'cirange', 'upper', 'lower')","String of R vector notation containing strings of summary metrics. For each of these summary metrics, a summary raster object will be created in post-estimation by calculating the metric for each pixel across all draws. This object can also be passed to summarize_admins to create these metrics for each admin across admin draws. Possible values are all vectorized functions(!) since the summstats are simple passed to an apply() function over the cell/admin_pred rows. Common choices include: mean, median, lower, upper, cirange"
+target_type,less,"String: 'less' or 'greater'. Describes which side of st_targ signifies sucess of goal. e.g. wasting less than 0.05, vaccination greater than 80."
+temp_strat,prop,String: TO BE FILLED IN
+test,FALSE,"Logical: If TRUE, only a subset of your data (test_pct percent of it) is used and samples defaults to 100."
+test_pct,5,"Integer: Number 0-100. if test==TRUE, what percent of your data should be kept for model fitting. Useful for quick testing iterations."
+time_stamp,TRUE,Logical: TRUE (this tells the code to make a custom date-time stamp to save this run. It should always be true and we should delete this option).
+transform,inverse-logit,String: naming type of transform to perform post-prediction to get back to the correct space you expect as an output. For binomial models this should be left as 'inverse-logit'
+use_child_country_fes,FALSE,Logical: Should child country fixed effects be included in STACKING formulas (where applicable - at the moment this only works/makes sense in BRT)
+use_geos_nodes,TRUE,Logical: Use the lbd-cluster-* nodes?
+use_gp,TRUE,Logical: Include the space-time Gaussian Process (i.e. space-time correlated Matern error structure) in the INLA fit?
+use_inla_country_fes,FALSE,Logical: Include country FIXED effects in INLA. SHOULD ONLY BE USED IF YOU HAVE DATA IN ALL COUNTRIES IN THE REGION BEING FIT.
+use_inla_country_res,TRUE,Logical: Use country RANDOM effects in the INLA fit?
+use_inla_nugget,TRUE,Logical: Include a nugget effect (i.e. irreducible error) in the INLA fit?
+use_nid_res,FALSE,Logical: add in NID random effects. CURRENTLY ONLY AVAILABLE IN TMB
+use_raw_covs,FALSE,Logical: Use raw covariates (i.e. non-stacked geospatial and non-stacked gbd covs) in the INLA fit?
+use_s2_mesh,FALSE,"Logical: If true, the SPDE FEM mesh is generated on a spherical (S^2) manifold instead of on the flat plane (R^2). For large regions this is suggested. Furthermore, this config argument will generate a non-constant mesh where areas with less observed data will have larger triangles."
+use_share,TRUE,Logical: Use <<<< FILEPATH REDACTED >>>> and save all outputs. Strongly suggested to set to TRUE.
+use_stacking_covs,TRUE,Logical: Use stacking covariates in INLA?
+use_subnat_res,FALSE,Logical: Use subnational random effects in INLA?
+withtag,FALSE,Logical: Load a custom data matrix that is not named with the default indicator_group name?
+year_list,c(2000:2017),Vector of Integers: Vector consisting of all years for which we aim to produce predictions
+yearload,annual,String: Determine if model is run annually ('annual') or in 5-year bins ('five-year'). Strongly suggested to run annually.
+yr_col,year,String: Name of column to use in making (space-)time holdouts
+z_list,0,Ordered vector of items in your zcol. Ordering describes the relationship in among them. CURRENTLY ONLY AVAILABLE IN TMB
+zcol,z_column_default_blank',String specifying name of column to use for 3rd dimension in Gaussian Process residual errors. CURRENTLY ONLY AVAILABLE IN TMB
