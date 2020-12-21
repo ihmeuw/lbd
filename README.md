@@ -8,6 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
+* [Oral Rehydration Therapies - Senegal, Mali, and Sierra Leone - 2020](https://github.com/ihmeuw/lbd/tree/ort-sen-mli-sle-2020)
 * [MCV1 - LMIC - 2020](https://github.com/ihmeuw/lbd/tree/mcv1-lmic-2020)
 * [Oncho Suitability - Africa - 2020](https://github.com/ihmeuw/lbd/tree/oncho_suitability)
 * [Tri-DALYS - Africa - 2020](https://github.com/ihmeuw/lbd/tree/tridalys-africa-2020)
