@@ -1,0 +1,16 @@
+model,6
+area_var,mcnty
+years,2000:2014
+ages,"c(0,1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95)"
+sexes,"c(1, 2)"
+covars,"c(""edu_hs"", ""ethn_hisp"", ""race_black"", ""race_other"", ""reservations_all"", ""income_median"", ""pop_density"")"
+covars_trans,"c(income_median = ""log(x)"", pop_density = ""log(x)"")"
+n.sims,1000
+adjmat_file,<<<< FILEPATH REDACTED >>>>/adjacency_matrix.rdata
+events_file,<<<< FILEPATH REDACTED >>>>/deaths.rdata
+pop_file,<<<< FILEPATH REDACTED >>>>/pop.rdata
+covar_file,<<<< FILEPATH REDACTED >>>>/prepped_covariates.rdata
+geoagg_files,"c(state = ""<<<< FILEPATH REDACTED >>>>/mcnty_to_state_by_age_sex.rdata"")"
+shape_file,<<<< FILEPATH REDACTED >>>>/mcnty_mapping_shape_file.rdata
+age_std_file,<<<< FILEPATH REDACTED >>>>/census_age_weights.csv
+temp_dir,<<<< FILEPATH REDACTED >>>>

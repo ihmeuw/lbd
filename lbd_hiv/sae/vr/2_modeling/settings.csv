@@ -1,0 +1,19 @@
+model_class,tmb_models
+model,6
+area_var,uid
+years,2009:2016
+ages,"c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80)"
+sexes,"c(1, 2)"
+covars,"c(""access"", ""urbanicity"", ""nightlight"", ""pop_density"")"
+covars_trans,NULL
+n.sims,1000
+adjmat_file,<<<< FILEPATH REDACTED >>>>/adj_matrix.rdata
+events_file,<<<< FILEPATH REDACTED >>>>/mort_events.rdata
+pop_file,<<<< FILEPATH REDACTED >>>>/pop.rdata
+covar_file,<<<< FILEPATH REDACTED >>>>/covariates_sae.rdata
+shape_file,<<<< FILEPATH REDACTED >>>>/shape.rdata
+shape_file_levels,"c(area_map = ""shp"")"
+age_std_file,<<<< FILEPATH REDACTED >>>>/age_wts.csv
+temp_dir,<<<< FILEPATH REDACTED >>>>/lbd_hiv/sae/2_modeling/
+geoagg_files,<<<< FILEPATH REDACTED >>>>
+raked,"c(country = ""cri"", cause_id = ""298"", gbd_round_id = ""5"")"

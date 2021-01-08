@@ -1,0 +1,5 @@
+covariate,measure,agg_method,include,release
+access,mean,pop_weight,TRUE,2019_06_10
+dmspntl,mean,pop_weight,TRUE,2019_06_10
+ghslurbanicity,mean,pop_weight,TRUE,2019_06_10
+worldpop,total,sum,TRUE,2020_03_20
