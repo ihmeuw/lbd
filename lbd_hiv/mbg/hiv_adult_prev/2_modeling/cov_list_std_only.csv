@@ -1,0 +1,7 @@
+covariate,measure,gbd,include,release
+access2,mean,FALSE,TRUE,2019_06_10
+dmspntlcalib,mean,FALSE,TRUE,2019_06_10
+ghslurbanicity,mean,FALSE,TRUE,2019_06_10
+map_pf_incidence,mean,FALSE,TRUE,2019_06_10
+worldpop,total,FALSE,TRUE,2017_04_27
+year_cov,median,FALSE,TRUE,2019_06_10
