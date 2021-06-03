@@ -8,6 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
+* [Exclusive Breastfeeding - LMIC -2020](https://github.com/ihmeuw/lbd/tree/ebf-lmic-2021)
 * [HIV incidence and mortality - Sub-Saharan Africa - 2021](https://github.com/ihmeuw/lbd/tree/hiv-inc-mort-africa-2021)
 * [HIV - Latin America - 2020](https://github.com/ihmeuw/lbd/tree/hiv-la-2020)
 * [Oral Rehydration Therapies - Senegal, Mali, and Sierra Leone - 2020](https://github.com/ihmeuw/lbd/tree/ort-sen-mli-sle-2020)
