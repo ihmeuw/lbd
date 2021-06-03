@@ -1,0 +1,11 @@
+,covariate,measure,gbd,include
+1,access2,mean,F,T
+2,anc4_coverage_prop,mean,T,T
+3,dmspntl,mean,F,T
+4,edu_mean_stage2,mean,F,T
+5,fertility,mean,F,T
+6,haqi,mean,T,F
+7,hdi,mean,F,T
+8,herreronyield,vita,F,T
+9,landcover,proportionalclass13,F,T
+10,worldpop_raked,total,F,T
