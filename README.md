@@ -8,6 +8,7 @@ By the time of each of our publications, cleaned code should be available in thi
 
 ### Links to recent publications
 
+* [Onchocerciasis Prevalence – Africa and Yemen – 2022](https://github.com/ihmeuw/lbd/tree/oncho-africa-2020)
 * [Exclusive Breastfeeding - LMIC -2021](https://github.com/ihmeuw/lbd/tree/ebf-lmic-2021)
 * [HIV incidence and mortality - Sub-Saharan Africa - 2021](https://github.com/ihmeuw/lbd/tree/hiv-inc-mort-africa-2021)
 * [HIV - Latin America - 2020](https://github.com/ihmeuw/lbd/tree/hiv-la-2020)
