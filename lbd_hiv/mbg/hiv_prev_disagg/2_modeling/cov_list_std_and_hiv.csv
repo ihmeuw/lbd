@@ -1,0 +1,15 @@
+covariate,measure,gbd,include,release
+access2,mean,FALSE,TRUE,2019_06_10
+dmspntlcalib,mean,FALSE,TRUE,2019_06_10
+ghslurbanicity,mean,FALSE,TRUE,2020_05_12
+map_pf_incidence,mean,FALSE,TRUE,2019_06_10
+worldpop,total,FALSE,TRUE,2020_03_20
+year_cov,median,FALSE,TRUE,2019_10_24
+male_circumcision,mean,FALSE,TRUE,2020_04_14
+sti_symptoms,mean,FALSE,TRUE,2020_02_28
+condom_last_time,mean,FALSE,TRUE,2020_02_28
+had_intercourse,mean,FALSE,TRUE,2020_02_28
+partner_away,mean,FALSE,TRUE,2020_02_28
+in_union,mean,FALSE,TRUE,2020_02_28
+partners_year_mn,mean,FALSE,TRUE,2020_02_28
+partners_year_wn,mean,FALSE,TRUE,2020_02_28

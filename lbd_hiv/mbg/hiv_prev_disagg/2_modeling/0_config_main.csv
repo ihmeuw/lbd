@@ -1,0 +1,153 @@
+V1,V2
+anc_correction,none
+anc_in_stacking,FALSE
+check_cov_pixelcount,TRUE
+coefs_sum1,FALSE
+constrain_children_0_inf,FALSE
+ctry_re_prior, "list(prior = 'pc.prec', param = c(5, 0.05))"
+datatag,_age-poly-ag_data_disaggregated
+fit_with_tmb,TRUE
+gbd_fixed_effects_age,24
+gbm_bf,0.75
+gbm_lr,0.005
+gbm_tc,3
+geo_re_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+gp_sum_to_zero,FALSE
+ho_mb,10
+ho_ts,500
+holdout_strategy,nids
+indicator_family,binomial
+individual_countries,FALSE
+inla_cores,5
+intercept_prior,0
+interval_mo,12
+intstrat,eb
+keep_inla_files,FALSE
+lat_col,latitude
+long_col,longitude
+makeholdouts,TRUE
+memory,30
+mesh_s_max_edge,"c(0.25, 5)"
+mesh_s_offset,"c(1, 5)"
+mesh_t_knots,c(1:19)
+metric_space,rates
+modeling_shapefile_version,2020_02_20
+n_ho_folds,5
+n_stack_folds,5
+nid_re_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+no_nugget_predict,FALSE
+non_pred_fes,
+nugget_prior,"list(prior = 'loggamma', param = c(1, 5e-5))"
+other_weight,
+pc_prior,FALSE
+queue,geospatial.q
+rake_transform,none
+raking_shapefile_version,2020_02_20
+range_lower_tail,
+Regions,"c('cssa', 'sssa', 'wssa-CPV-STP-MRT', 'essa_sdn-COM')"
+rho_prior,"list(prior = 'normal', param = c(2, 1/(1.44)))"
+run_time,01:00:00:00
+s2_mesh_params_int,"c(35, 500, 500)"
+s2_mesh_params_s,"c(35, 500, 500)"
+samples,1000
+SGE_ENV, prod-el7
+shapefile_version,2020_02_20
+sigma_upper_tail,
+skipinla,FALSE
+skiptoinla,FALSE
+skiptoinla_from_rundate,
+skipped_inla_rundate,
+slots,10
+sparse_ordering,TRUE
+ss_col,weighted_n
+st_targ,0.05
+stacked_fixed_effects,gam + xgboost + lasso
+stackers_in_transform_space,TRUE
+summstats,"c('mean', 'lower', 'upper', 'cirange')"
+subnational_raking,TRUE
+target_type,less
+test,FALSE
+test_pct,5
+time_stamp,TRUE
+transform,inverse-logit
+use_child_country_fes,FALSE
+use_geo_res,FALSE
+use_gp,TRUE
+use_inla_country_fes,FALSE
+use_country_res,FALSE
+use_inla_nugget,FALSE
+use_nid_res,FALSE
+use_raw_covs,FALSE
+use_s2_mesh,TRUE
+use_share,FALSE
+use_stacking_covs,TRUE
+withtag,TRUE
+year_list,c(2000:2018)
+yearload,annual
+yr_col,year
+zcol,agebin
+z_list,c(1:9)
+clamp_covs,TRUE
+rake_countries,TRUE
+rake_subnational,TRUE
+subnational_raking,TRUE
+countries_not_to_subnat_rake,"c('KEN')"
+number_of_fthread,1
+mesh_z_knots,c(1:9)
+use_space_only_gp,FALSE
+use_time_only_gmrf,FALSE
+use_age_only_gmrf,FALSE
+use_sex_only_gmrf,FALSE
+time_only_gmrf_type,ar1
+sex_col,sex_id
+sex_list,c(1:2)
+spde_prior_s,"list(type = 'pc', prior = list(sigma = c(5, 0.05), range = c(0.01, 0.05)))"
+spde_prior_int,"list(type = 'pc', prior = list(sigma = c(5, 0.05), range = c(0.01, 0.05)))"
+site_iid_prior, "list(prior = 'pc.prec', param = c(3, 0.05))"
+error_iid_prior, "list(prior = 'pc.prec', param = c(3, 0.05))"
+t_sigma_prior,"list(prior = 'pc.prec', param = c(5, 0.05))"
+z_sigma_prior,"list(prior = 'pc.prec', param = c(5, 0.05))"
+x_sigma_prior,"list(prior = 'pc.prec', param = c(7, 0.05))"
+int2_sigma_prior,"list(prior = 'pc.prec', param = c(5, 0.05))"
+trho_prior,"list(prior = 'normal', param = c(2, 1/(1.44)))"
+trho_me_prior,"list(prior = 'normal', param = c(2, 1/(1.44)))"
+zrho_prior,"list(prior = 'normal', param = c(2, 1/(1.44)))"
+xrho_prior,"list(prior = 'normal', param = c(2, 1/(1.44)))"
+pop_release,2020_03_20
+use_anc_fe,FALSE
+use_z_fes,FALSE
+interacting_gp_1_effects,"c('space','year')"
+interacting_gp_2_effects,"c('year', 'age', 'sex')"
+poly_ag,TRUE
+use_anc_corrections,TRUE
+z_map_file,<<<< FILEPATH REDACTED >>>>/lbd_hiv/mbg/hiv_prev_disagg/2_modeling/z_map_1564.csv
+zcol_ag,agebin_ag
+method,nothing
+stop_after_fit,TRUE
+stop_before_fit,TRUE
+agesex_in_stacking,FALSE
+adult_prev_run_date,
+use_adult_prev_stackers,FALSE
+remake_adult_prev_stackers,TRUE
+low_weight_multiplier,2
+drop_low_weight,TRUE
+use_sz_gp,FALSE
+use_sx_gp,FALSE
+use_tx_gp,FALSE
+use_zx_gp,FALSE
+use_ar2,FALSE
+use_cre_z_gp,TRUE
+use_cre_x_gp,FALSE
+cre_z_sigma_prior,"list(prior = 'pc.prec', param = c(5, 0.05))"
+cre_zrho_prior,"list(prior = 'normal', param = c(2, 1/(1.44)))"
+cre_x_sigma_prior,"list(prior = 'pc.prec', param = c(10, 0.05))"
+cre_xrho_prior,"list(prior = 'normal', param = c(2, 1/(1.44)))"
+use_cre_specific_params,FALSE
+drop_age_agg_data,FALSE
+use_gbd_covariate,FALSE
+create_gbd_covariate_raster,FALSE
+use_error_iid_re,TRUE
+drop_outlier_unaids,TRUE
+use_cyzx_error_iid,FALSE
+use_observation_level_error_iid,TRUE
+create_holdout_files,TRUE
